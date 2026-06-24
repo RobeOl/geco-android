@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeCo-Tools</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: url('GeCo-Tools_image.png') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: #fff;
+            padding: 30px;
+        }
+
+        .left-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 25px;
+            max-width: 420px;
+            width: 100%;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 12px 25px;
+            border-radius: 50px;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            width: 100%;
+        }
+
+        header img {
+            height: 45px;
+            width: auto;
+            object-fit: contain;
+            filter: drop-shadow(0px 2px 5px rgba(0,0,0,0.5));
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: #f3e5ab;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .menu-container {
+            background: rgba(30, 25, 20, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .app-btn {
+            display: block;
+            text-align: center;
+            text-decoration: none;
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 14px 20px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .app-btn:hover {
+            background: rgba(243, 229, 171, 0.2);
+            border-color: #f3e5ab;
+            color: #f3e5ab;
+            transform: translateX(5px);
+            box-shadow: 0 6px 15px rgba(243, 229, 171, 0.25);
+        }
+
+        .app-btn:active {
+            transform: translateX(2px);
+        }
+
+        .menu-divider {
+            border: none;
+            border-top: 1px solid rgba(255, 255, 255, 0.12);
+            margin: 2px 0;
+        }
+
+        .app-btn--guide {
+            font-size: 0.95rem;
+            font-style: italic;
+            padding: 10px 20px;
+            color: rgba(255, 255, 255, 0.7);
+            border-color: rgba(243, 229, 171, 0.3);
+        }
+
+        .app-btn--guide:hover {
+            color: #f3e5ab;
+            border-color: #f3e5ab;
+        }
+
+        /* Dropdown */
+        .guide-dropdown {
+            position: relative;
+            width: 100%;
+        }
+
+        .guide-menu {
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 8px;
+            padding: 10px;
+            background: rgba(20, 15, 10, 0.85);
+            border: 1px solid rgba(243, 229, 171, 0.25);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .guide-menu.open {
+            display: flex;
+        }
+
+        .guide-menu a {
+            display: block;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 0.92rem;
+            font-style: italic;
+            padding: 9px 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.25s ease;
+        }
+
+        .guide-menu a:hover {
+            background: rgba(243, 229, 171, 0.15);
+            border-color: #f3e5ab;
+            color: #f3e5ab;
+            transform: translateX(4px);
+        }
+
+        footer {
+            width: 100%;
+            text-align: right;
+            margin-top: auto;
+            padding-top: 20px;
+        }
+
+        .tagline {
+            display: block;
+            color: #f3e5ab;
+            font-size: 1.2rem;
+            font-style: italic;
+            margin-bottom: 8px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9);
+        }
+
+        .authors {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                justify-content: flex-start;
+                gap: 20px;
+                padding: 15px;
+            }
+            .left-container { max-width: 100%; }
+            header h1 { font-size: 1.8rem; }
+            footer { text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="left-container">
+        <header>
+            <h1>GeCo-Tools</h1>
+            <img src="penta.png" alt="GeCo-Tools Logo">
+        </header>
+
+        <main class="menu-container">
+            <a href="GeCo-Tool.html" class="app-btn">Compose by Interval Matrix</a>
+            <a href="K-random.html" class="app-btn">Random generation and practice</a>
+            <a href="twelve-tone-calculator.html" class="app-btn">Twelve-tone studies</a>
+            <a href="GeCo-Join.html" class="app-btn">Sequence Join</a>
+            <a href="Practice.html" class="app-btn">Practice</a>
+
+            <hr class="menu-divider">
+
+            <div class="guide-dropdown">
+                <button class="app-btn app-btn--guide" onclick="toggleGuide()">▶&nbsp; Guides &amp; Tutorials</button>
+                <div class="guide-menu" id="guideMenu">
+                    <a href="GeCo-Tools-Manual.html" target="_blank" rel="noopener">📖&nbsp; Manual</a>
+                    <a href="https://youtu.be/ypyrEERe81w?si=YUlf2tcc1nV2qasK" target="_blank" rel="noopener">▶&nbsp; Video Tutorials</a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        <span class="tagline">A toolbox for music generation and practice</span>
+        <span class="authors">R. Olmi & M. Bittelli</span>
+    </footer>
+
+    <script>
+        function toggleGuide() {
+            const menu = document.getElementById('guideMenu');
+            menu.classList.toggle('open');
+        }
+
+        // Chiude il menu cliccando fuori
+        document.addEventListener('click', function(e) {
+            const dropdown = document.querySelector('.guide-dropdown');
+            if (!dropdown.contains(e.target)) {
+                document.getElementById('guideMenu').classList.remove('open');
+            }
+        });
+    </script>
+    <div style="text-align:center; padding:8px; font-size:11px; color:#999;">
+        Build: __BUILD_INFO__
+    </div>
+
+</body>
+</html>
