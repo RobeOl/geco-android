@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Binary Explorations — GeCo-Tool</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    color: #222;
+    line-height: 1.75;
+}
+header {
+    background: #2980b9;
+    color: white;
+    padding: 36px 40px 28px;
+    text-align: center;
+}
+header h1 { font-size: 32px; letter-spacing: 1px; margin-bottom: 6px; }
+header p.subtitle { font-size: 15px; opacity: 0.85; }
+header p.authors { margin-top: 12px; font-size: 13px; font-style: italic; opacity: 0.75; }
+.page {
+    max-width: 960px;
+    margin: 40px auto 60px;
+    padding: 0 20px;
+}
+section {
+    background: white;
+    border-radius: 10px;
+    padding: 32px 36px;
+    margin-bottom: 28px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+section h2 {
+    color: #2980b9;
+    font-size: 20px;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #eaf4fb;
+}
+section h3 {
+    color: #3498db;
+    font-size: 16px;
+    margin-top: 26px;
+    margin-bottom: 8px;
+}
+section p { margin-bottom: 12px; font-size: 14px; }
+.formula {
+    background: #f0f4ff;
+    border-left: 4px solid #3498db;
+    border-radius: 4px;
+    padding: 12px 18px;
+    font-family: 'Georgia', serif;
+    font-size: 15px;
+    margin: 16px auto;
+    color: #1a3a6a;
+    text-align: center;
+}
+table.data-table {
+    border-collapse: collapse;
+    font-size: 13px;
+    margin: 16px auto;
+}
+table.data-table th {
+    background: #eaf4fb;
+    color: #2980b9;
+    text-align: center;
+    padding: 9px 16px;
+    border: 1px solid #d0e8f5;
+}
+table.data-table td {
+    padding: 8px 16px;
+    border: 1px solid #eee;
+    vertical-align: middle;
+    text-align: center;
+}
+table.data-table tr:hover td { background: #f8fcff; }
+table.score-table {
+    border-collapse: collapse;
+    font-size: 13px;
+    margin: 16px auto;
+    width: 100%;
+}
+table.score-table th {
+    background: #eaf4fb;
+    color: #2980b9;
+    text-align: center;
+    padding: 9px 16px;
+    border: 1px solid #d0e8f5;
+}
+table.score-table td {
+    padding: 4px 8px;
+    border: 1px solid #eee;
+    vertical-align: middle;
+}
+table.matrix-table {
+    border-collapse: collapse;
+    font-size: 11px;
+    margin: 16px auto;
+}
+table.matrix-table th {
+    background: #2980b9;
+    color: white;
+    padding: 6px 8px;
+    border: 1px solid #1a6a9a;
+    text-align: center;
+    white-space: nowrap;
+}
+table.matrix-table td {
+    padding: 5px 7px;
+    border: 1px solid #d0e8f5;
+    text-align: center;
+    white-space: nowrap;
+    font-family: monospace;
+    font-size: 11px;
+}
+table.matrix-table tr:first-child td { background: #eaf4fb; font-weight: bold; color: #2980b9; }
+table.matrix-table tr td:first-child { background: #eaf4fb; font-weight: bold; color: #2980b9; }
+.matrix-wrap { overflow-x: auto; }
+.fig-caption {
+    text-align: center;
+    font-size: 12px;
+    color: #666;
+    font-style: italic;
+    margin-top: -10px;
+    margin-bottom: 18px;
+}
+.math { font-style: italic; font-family: 'Georgia', serif; }
+.back-btn {
+    display: inline-block;
+    margin-bottom: 24px;
+    background: #2980b9;
+    color: white;
+    padding: 8px 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+}
+.back-btn:hover { background: #1a6a9a; }
+footer {
+    text-align: center;
+    font-size: 12px;
+    color: #aaa;
+    padding: 20px 0 40px;
+}
+</style>
+</head>
+<body>
+
+<header>
+    <h1>🎵 Binary Explorations</h1>
+    <p class="subtitle">Systematic analysis of binary sequences in GeCo-Tool</p>
+    <p class="authors">R. Olmi &amp; M. Bittelli — Generative Compositional Framework</p>
+</header>
+
+<div class="page">
+<!-- <a class="back-btn" href="GeCo-Tool.html">← Back to the App</a> -->
+<a class="back-btn" href="#" onclick="window.close(); return false;">← Back to the App</a>
+
+<section>
+<h2>Systematic Analysis of Binary Sequences</h2>
+<p>
+In the following section we describe some relevant properties of <strong>binary sequences</strong>,
+i.e. series of notes created by cyclically applying an operator
+(<span class="math">I<sub>m</sub></span>, <span class="math">J<sub>n</sub></span>)
+to a starting pitch, by using the web application GeCo-Tool based on the Interval Matrix.
+</p>
+
+<h3>Investigating Sequence Length</h3>
+<p>
+It is quite obvious that the length of a binary sequence depends on the interval (I) and leap (J) parameters.
+What is less obvious is what this dependency is.
+</p>
+<p>
+Let us start with an example. The binary sequence
+(<span class="math">I<sub>3</sub></span>, <span class="math">J<sub>−1</sub></span>)
+is that shown in Figure 1.
+</p>
+<img src="figures/Binary_3-1.png" alt="Figure 1: Binary sequence for I3 and J-1" style="max-width:100%; display:block; margin:18px auto;">
+<p class="fig-caption">Figure 1 — Binary sequence for <em>I</em><sub>3</sub> and <em>J</em><sub>−1</sub>.</p>
+
+<p>
+First of all, we note that a different (complementary) interpretation of the succession of interval and leaps
+can be established in terms of interval between the starting note and the successive, and of jump between
+the same note and the third one. In other words, when we apply the binary operation (3, −1) to the note "C"
+we generate the sequence:
+</p>
+<div class="formula">C → E♭ → D</div>
+<p>
+where we apply a minor third (3m) interval to the first note "C", followed by a descending minor second
+leap (−2m) to the second note "E♭". Looking at the whole sequence of Figure 1 we can also interpret this
+as 3m intervals with tonal <em>movements</em>, i.e. one-tone leaps <strong>this time</strong> starting from
+the initial notes (C, D, E, F♯, G♯, B♭). This picture is better explained in Figure 2.
+</p>
+<img src="figures/Binary_3-1bis.png" alt="Figure 2: A different interpretation of the I3 J-1 binary operation" style="max-width:100%; display:block; margin:18px auto;">
+<p class="fig-caption">Figure 2 — A different interpretation of the (<em>I</em><sub>3</sub>, <em>J</em><sub>−1</sub>) binary operation.</p>
+
+<p>
+The red and blue lines highlight the presence of two parallel sequences of tones — two hexatonal scales —
+separated by a minor third interval, or equivalently, a sequence of minor third intervals with one-tone movement.
+(The <em>jump</em> is referred to the first note, while the <em>leap</em> in GeCo-Tool refers to the second one.)
+It should also be clear that the "jump" consists in the algebraic sum of the interval I and the leap J.
+Indeed, in the example 3 + (−1) = 2. We will call <strong>S</strong> this sum:
+</p>
+<div class="formula">S = m + n &nbsp;&nbsp; for a (<em>I<sub>m</sub></em>, <em>J<sub>n</sub></em>) operation</div>
+
+<h3>Notable Properties of Binary Sequences</h3>
+<p>
+We are interested in investigating the dependence of the sequence length from the interval/leap parameters.
+It is rather simple to verify, by means of GeCo-Tool, that <strong>all sequences sharing the same S have the same length</strong>.
+Therefore, a sequence obtained applying a major second interval (m = 2) followed by a fourth leap (n = 5),
+i.e. having S = 7, consists of major second intervals with fifth movements, as Figure 3 shows.
+</p>
+<img src="figures/Binary_25.png" alt="Figure 3: Binary sequence for I2 and J5" style="max-width:100%; display:block; margin:18px auto;">
+<p class="fig-caption">Figure 3 — Binary sequence for <em>I</em><sub>2</sub> and <em>J</em><sub>5</sub>.</p>
+
+<p>
+We can count the notes: they are 25, or 24 plus the final one coinciding with the first by the well-known
+"closure" property. In fact, the length of the
+(<span class="math">I<sub>2</sub></span>, <span class="math">J<sub>5</sub></span>) sequence is the same
+as that of (<span class="math">I<sub>7</sub></span>, <span class="math">J<sub>0</sub></span>), which consists
+of perfect fifth intervals (7 semitones) with perfect fifth jumps, i.e. with "repeated notes", as Figure 4 clearly shows.
+</p>
+<img src="figures/Binary_70.png" alt="Figure 4: Binary sequence for I7 and J0" style="max-width:100%; display:block; margin:18px auto;">
+<p class="fig-caption">Figure 4 — Binary sequence for <em>I</em><sub>7</sub> and <em>J</em><sub>0</sub>.</p>
+
+<p>
+It is clear that we are going through the <strong>circle of fifths</strong>, which consists of 12 notes;
+therefore (as every note is played two times) the total length is 2 × 12 + 1 = 25.
+</p>
+<p>
+Ultimately, to determine the length of all possible binary sequences, it suffices to calculate the length of the
+"constant-sum" sequences with repeated terms:
+(<span class="math">I<sub>2</sub></span>, <span class="math">J<sub>0</sub></span>),
+(<span class="math">I<sub>3</sub></span>, <span class="math">J<sub>0</sub></span>),
+… (<span class="math">I<sub>11</sub></span>, <span class="math">J<sub>0</sub></span>).
+Table 1 shows all those lengths as a function of S = m + n (coinciding with m, as n = 0).
+As S measures the jump width — the <em>intensity</em> of the "movement" — the length is a non-linear function of S.
+</p>
+
+<table class="data-table">
+<tr><th>Binary operator</th><th>S</th><th>Sequence length</th></tr>
+<tr><td><em>I</em><sub>2</sub> <em>J</em><sub>0</sub></td><td>2</td><td>13</td></tr>
+<tr><td><em>I</em><sub>3</sub> <em>J</em><sub>0</sub></td><td>3</td><td>9</td></tr>
+<tr><td><em>I</em><sub>4</sub> <em>J</em><sub>0</sub></td><td>4</td><td>7</td></tr>
+<tr><td><em>I</em><sub>5</sub> <em>J</em><sub>0</sub></td><td>5</td><td>25</td></tr>
+<tr><td><em>I</em><sub>6</sub> <em>J</em><sub>0</sub></td><td>6</td><td>5</td></tr>
+<tr><td><em>I</em><sub>7</sub> <em>J</em><sub>0</sub></td><td>7</td><td>25</td></tr>
+<tr><td><em>I</em><sub>8</sub> <em>J</em><sub>0</sub></td><td>8</td><td>7</td></tr>
+<tr><td><em>I</em><sub>9</sub> <em>J</em><sub>0</sub></td><td>9</td><td>9</td></tr>
+<tr><td><em>I</em><sub>10</sub> <em>J</em><sub>0</sub></td><td>10</td><td>13</td></tr>
+<tr><td><em>I</em><sub>11</sub> <em>J</em><sub>0</sub></td><td>11</td><td>25</td></tr>
+</table>
+<p class="fig-caption">Table 1 — Length of binary sequences as a function of the jump width S.</p>
+
+<p>
+Some of the results in Table 1 are quite obvious upon closer inspection. For example, whenever S is a
+submultiple of 12, as in cases <em>I</em><sub>4</sub><em>J</em><sub>0</sub> and <em>I</em><sub>3</sub><em>J</em><sub>0</sub>.
+In the former we have only 3 different notes, each played twice, plus the last note: 3 × 2 + 1 = 7.
+In the latter, we have 4 different notes, each played twice, plus the last note: 4 × 2 + 1 = 9.
+The two cases are compared in Figure 5.
+</p>
+<img src="figures/comparison.png" alt="Figure 5: Binary sequences for I4J0 and I3J0" style="max-width:100%; display:block; margin:18px auto;">
+<p class="fig-caption">Figure 5 — Binary sequences for <em>I</em><sub>4</sub><em>J</em><sub>0</sub> and <em>I</em><sub>3</sub><em>J</em><sub>0</sub>.</p>
+
+<h3>Movements</h3>
+<p>
+Of course binary sequences having a zero leap are not so interesting. The meaningfulness of sequences
+suddenly increases if we replicate the results of the above table with a descending semi-tonal leap
+<span class="math">J<sub>−1</sub></span>. Table 2 shows what happens in that case, in terms of intervals
+and jumps (algebraic sums of intervals and constant leap = −1).
+</p>
+
+<table class="data-table">
+<tr><th>Binary operator</th><th>S</th><th>Sequence length</th><th style="text-align:left; padding-left:16px;">Annotations</th></tr>
+<tr><td><em>I</em><sub>1</sub> <em>J</em><sub>−1</sub></td><td>0</td><td>3</td><td style="text-align:left; font-size:13px;">three notes, ex. C C♯ C — of no interest</td></tr>
+<tr><td><em>I</em><sub>2</sub> <em>J</em><sub>−1</sub></td><td>1</td><td>25</td><td style="text-align:left; font-size:13px;">major second interval, with semi-tonal jumps</td></tr>
+<tr><td><em>I</em><sub>3</sub> <em>J</em><sub>−1</sub></td><td>2</td><td>13</td><td style="text-align:left; font-size:13px;">minor third interval, with one-tone jumps</td></tr>
+<tr><td><em>I</em><sub>4</sub> <em>J</em><sub>−1</sub></td><td>3</td><td>9</td><td style="text-align:left; font-size:13px;">major third interval, with minor third jumps</td></tr>
+<tr><td><em>I</em><sub>5</sub> <em>J</em><sub>−1</sub></td><td>4</td><td>7</td><td style="text-align:left; font-size:13px;">perfect fourth interval, with major third jumps</td></tr>
+<tr><td><em>I</em><sub>6</sub> <em>J</em><sub>−1</sub></td><td>5</td><td>25</td><td style="text-align:left; font-size:13px;">diminished fifth interval, with perfect fourth jumps</td></tr>
+<tr><td><em>I</em><sub>7</sub> <em>J</em><sub>−1</sub></td><td>6</td><td>5</td><td style="text-align:left; font-size:13px;">perfect fifth interval, with diminished fifth jumps</td></tr>
+<tr><td><em>I</em><sub>8</sub> <em>J</em><sub>−1</sub></td><td>7</td><td>25</td><td style="text-align:left; font-size:13px;">augmented fifth interval, with perfect fifth jumps</td></tr>
+<tr><td><em>I</em><sub>9</sub> <em>J</em><sub>−1</sub></td><td>8</td><td>7</td><td style="text-align:left; font-size:13px;">sixth interval, with augmented fifth jumps</td></tr>
+<tr><td><em>I</em><sub>10</sub> <em>J</em><sub>−1</sub></td><td>9</td><td>9</td><td style="text-align:left; font-size:13px;">minor seventh interval, with sixth jumps</td></tr>
+<tr><td><em>I</em><sub>11</sub> <em>J</em><sub>−1</sub></td><td>10</td><td>13</td><td style="text-align:left; font-size:13px;">major seventh interval, with minor seventh jumps</td></tr>
+<tr><td><em>I</em><sub>12</sub> <em>J</em><sub>−1</sub></td><td>11</td><td>25</td><td style="text-align:left; font-size:13px;">octave interval, with major seventh jumps</td></tr>
+</table>
+<p class="fig-caption">Table 2 — Characteristics of binary sequences (<em>I<sub>n</sub>J</em><sub>−1</sub>).</p>
+
+<p>The results of Table 2 are summarized in Table 3 below.</p>
+
+<table class="score-table">
+<tr><th style="width:40px;">S</th><th style="width:120px;">Operator</th><th>Score</th></tr>
+<tr><td style="padding:6px 12px; font-weight:bold;">0</td><td style="padding:6px 12px; color:#555; white-space:nowrap;">I<sub>1</sub>J<sub>−1</sub></td><td style="padding:6px;"><img src="figures/Binary_1-1.png" alt="S=0" style="max-height:80px; vertical-align:middle;"></td></tr>
+<tr><td style="padding:6px 12px; font-weight:bold;">1</td><td style="padding:6px 12px; color:#555; white-space:nowrap;">I<sub>2</sub>J<sub>−1</sub></td><td style="padding:6px;"><img src="figures/Binary_2-1.png" alt="S=1" style="max-height:80px; vertical-align:middle;"></td></tr>
+<tr><td style="padding:6px 12px; font-weight:bold;">2</td><td style="padding:6px 12px; color:#555; white-space:nowrap;">I<sub>3</sub>J<sub>−1</sub></td><td style="padding:6px;"><img src="figures/Binary_3-1.png" alt="S=2" style="max-height:80px; vertical-align:middle;"></td></tr>
+<tr><td style="padding:6px 12px; font-weight:bold;">3</td><td style="padding:6px 12px; color:#555; white-space:nowrap;">I<sub>4</sub>J<sub>−1</sub></td><td style="padding:6px;"><img src="figures/Binary_4-1.png" alt="S=3" style="max-height:80px; vertical-align:middle;"></td></tr>
+<tr><td style="padding:6px 12px; font-weight:bold;">4</td><td style="padding:6px 12px; color:#555; white-space:nowrap;">I<sub>5</sub>J<sub>−1</sub></td><td style="padding:6px;"><img src="figures/Binary_5-1.png" alt="S=4" style="max-height:80px; vertical-align:middle;"></td></tr>
+<tr><td style="padding:6px 12px; font-weight:bold;">5</td><td style="padding:6px 12px; color:#555; white-space:nowrap;">I<sub>6</sub>J<sub>−1</sub></td><td style="padding:6px;"><img src="figures/Binary_6-1.png" alt="S=5" style="max-height:80px; vertical-align:middle;"></td></tr>
+<tr><td style="padding:6px 12px; font-weight:bold;">6</td><td style="padding:6px 12px; color:#555; white-space:nowrap;">I<sub>7</sub>J<sub>−1</sub></td><td style="padding:6px;"><img src="figures/Binary_7-1.png" alt="S=6" style="max-height:80px; vertical-align:middle;"></td></tr>
+<tr><td style="padding:6px 12px; font-weight:bold;">7</td><td style="padding:6px 12px; color:#555; white-space:nowrap;">I<sub>8</sub>J<sub>−1</sub></td><td style="padding:6px;"><img src="figures/Binary_8-1.png" alt="S=7" style="max-height:80px; vertical-align:middle;"></td></tr>
+<tr><td style="padding:6px 12px; font-weight:bold;">8</td><td style="padding:6px 12px; color:#555; white-space:nowrap;">I<sub>9</sub>J<sub>−1</sub></td><td style="padding:6px;"><img src="figures/Binary_9-1.png" alt="S=8" style="max-height:80px; vertical-align:middle;"></td></tr>
+<tr><td style="padding:6px 12px; font-weight:bold;">9</td><td style="padding:6px 12px; color:#555; white-space:nowrap;">I<sub>10</sub>J<sub>−1</sub></td><td style="padding:6px;"><img src="figures/Binary_10-1.png" alt="S=9" style="max-height:80px; vertical-align:middle;"></td></tr>
+<tr><td style="padding:6px 12px; font-weight:bold;">10</td><td style="padding:6px 12px; color:#555; white-space:nowrap;">I<sub>11</sub>J<sub>−1</sub></td><td style="padding:6px;"><img src="figures/Binary_11-1.png" alt="S=10" style="max-height:80px; vertical-align:middle;"></td></tr>
+<tr><td style="padding:6px 12px; font-weight:bold;">11</td><td style="padding:6px 12px; color:#555; white-space:nowrap;">I<sub>12</sub>J<sub>−1</sub></td><td style="padding:6px;"><img src="figures/Binary_12-1.png" alt="S=11" style="max-height:80px; vertical-align:middle;"></td></tr>
+
+</table>
+<p class="fig-caption">Table 3 — Binary sequences (<em>I<sub>n</sub>J</em><sub>−1</sub>).</p>
+
+</section>
+
+<section>
+<h2>Ascending and Descending Interval Pairing</h2>
+<p>
+It's time to delve into the realm of applications: the focus of this section is a systematic study of
+<strong>interval pairing</strong>.
+</p>
+<p>
+We will show by means of examples how to use the binary system to generate interval pairs. It is a very
+powerful tool to practice intervals on any instrument and exploring different sounds. New ideas can be
+developed to be used for <em>improvisation</em> or <em>compositions</em> on both tonal or atonal music.
+It can also be used for <em>ear training</em>: a sequence is generated, the user can sing it and then
+play it with GeCo-Tool. By lowering the BPM, the user can sing along the sequence to improve intonation.
+</p>
+<p>
+By using the transformations, the intervals can be played as ascending–ascending, ascending–descending,
+descending–ascending and descending–descending. For instance, a sequence of major seconds (interval) played
+by ascending fourths (leap) can also be played as descending major seconds by ascending fourths, or ascending
+major seconds by descending fourths, and so on.
+</p>
+</section>
+
+<section>
+<h2>Theoretical Rule</h2>
+<p>
+The present formulation is specifically constructed to preserve <strong>ascending intervallic identities</strong>
+within each binary unit. By applying <span class="math">I<sub>n</sub></span> and
+<span class="math">J<sub>m</sub></span> to a reference pitch, the interval is generated independently of
+the displacement mechanism that governs the progression of the sequence. This separation ensures that
+interval classes are consistently realized as ascending structures, while the jump defines the movement
+of the generative framework itself.
+</p>
+<p>
+In Forte's <strong>pitch-class set theory</strong>, intervals are understood not according to their traditional
+tonal function, but through their abstract distance relationships measured in semitones. A central concept is
+that of the <em>interval class</em> (IC), which groups together intervals that are inversionally equivalent.
+Rather than distinguishing between, for example, a major second and a minor seventh, Forte theory considers
+both as manifestations of the same intervallic identity because they complement each other within the octave.
+Thus, intervals are reduced to the smallest possible distance within the twelve-tone chromatic system.
+The six interval classes are therefore defined as:
+</p>
+<div class="formula">IC<sub>1</sub>, IC<sub>2</sub>, IC<sub>3</sub>, IC<sub>4</sub>, IC<sub>5</sub>, IC<sub>6</sub></div>
+<div class="formula">1 ↔ 11 &nbsp;&nbsp; 2 ↔ 10 &nbsp;&nbsp; 3 ↔ 9 &nbsp;&nbsp; 4 ↔ 8 &nbsp;&nbsp; 5 ↔ 7 &nbsp;&nbsp; 6 ↔ 6</div>
+<p>
+This abstraction allows pitch-class sets to be analyzed independently of register, ordering, or tonal hierarchy,
+emphasizing instead the internal intervallic structure of musical collections.
+</p>
+<p>
+Consequently, the system maintains intervallic coherence at the local level, while enabling flexible and
+directional evolution at the global level. Based on this concept, for instance, to generate an interval of
+a major second with respect to the first note of the couple, it is possible to compute the number of semitones
+from the second note to descend to the target note.
+</p>
+<p>Each cell of the interval matrix contains a binary operator:</p>
+<div class="formula"><em>I<sub>n</sub>J<sub>m</sub></em></div>
+<p>where <span class="math">I<sub>n</sub></span> generates the second note of the pair, while
+<span class="math">J<sub>m</sub></span> connects that second note to the first note of the next pair.</p>
+<p>If the next starting pitch is displaced by <em>s</em> semitones from the original pitch, then:</p>
+<div class="formula"><em>m</em> = <em>s</em> − <em>n</em></div>
+<p>Thus:</p>
+<div class="formula"><em>X</em> → <em>X</em> + <em>n</em> → <em>X</em> + <em>s</em></div>
+<p>and the leap is:</p>
+<div class="formula"><em>J<sub>m</sub></em> = <em>J</em><sub><em>s</em>−<em>n</em></sub></div>
+<p>For example, major sevenths moving by minor seconds are represented by:</p>
+<div class="formula"><em>I</em><sub>11</sub><em>J</em><sub>−10</sub></div>
+<p>because:</p>
+<div class="formula">C → B → C♯</div>
+<p>where C♯ is a half step above C, and: 1 − 11 = −10. In set-class theory they both belong to IC<sub>1</sub>.</p>
+<p>
+Although the present matrix is constructed to preserve ascending intervallic identities within each local
+binary structure, every generated sequence may also be realized in descending form through transpositional
+and inversional operations. In GeCo-Tool, this process is implemented through pitch-class transformations
+derived from serial music theory, particularly inversion <strong>I</strong> and transposition <strong>T</strong>.
+</p>
+<p>
+The inversion operation reflects the intervallic profile around the first pitch of the sequence, transforming
+ascending motions into descending ones while preserving interval-class relationships. Subsequent transposition
+allows the transformed structure to be repositioned onto any pitch-class level without altering its internal organization.
+</p>
+<p>
+Consequently, the interval matrix should not be interpreted as a collection of fixed melodic contours, but
+rather as a system of <strong>intervallic operators</strong> capable of generating multiple directional
+realizations. The ascending formulation therefore represents the canonical structural form, while descending
+configurations emerge as transformed equivalents preserving the same intervallic identity.
+</p>
+<p>For this reason, from the major seventh, the leap must be negative. Table 4 lists all the combinations in the interval matrix.</p>
+
+<div class="matrix-wrap">
+<table class="matrix-table">
+<tr><th></th><th>unison</th><th>2m</th><th>2M</th><th>3m</th><th>3M</th><th>4</th><th>5♭</th><th>5</th><th>5♯</th><th>6</th><th>7m</th><th>7M</th></tr>
+<tr><td>unison</td><td><em>I</em><sub>0</sub><em>J</em><sub>0</sub></td><td><em>I</em><sub>0</sub><em>J</em><sub>1</sub></td><td><em>I</em><sub>0</sub><em>J</em><sub>2</sub></td><td><em>I</em><sub>0</sub><em>J</em><sub>3</sub></td><td><em>I</em><sub>0</sub><em>J</em><sub>4</sub></td><td><em>I</em><sub>0</sub><em>J</em><sub>5</sub></td><td><em>I</em><sub>0</sub><em>J</em><sub>6</sub></td><td><em>I</em><sub>0</sub><em>J</em><sub>7</sub></td><td><em>I</em><sub>0</sub><em>J</em><sub>8</sub></td><td><em>I</em><sub>0</sub><em>J</em><sub>9</sub></td><td><em>I</em><sub>0</sub><em>J</em><sub>10</sub></td><td><em>I</em><sub>0</sub><em>J</em><sub>11</sub></td></tr>
+<tr><td>2m</td><td><em>I</em><sub>1</sub><em>J</em><sub>−1</sub></td><td><em>I</em><sub>1</sub><em>J</em><sub>0</sub></td><td><em>I</em><sub>1</sub><em>J</em><sub>1</sub></td><td><em>I</em><sub>1</sub><em>J</em><sub>2</sub></td><td><em>I</em><sub>1</sub><em>J</em><sub>3</sub></td><td><em>I</em><sub>1</sub><em>J</em><sub>4</sub></td><td><em>I</em><sub>1</sub><em>J</em><sub>5</sub></td><td><em>I</em><sub>1</sub><em>J</em><sub>6</sub></td><td><em>I</em><sub>1</sub><em>J</em><sub>7</sub></td><td><em>I</em><sub>1</sub><em>J</em><sub>8</sub></td><td><em>I</em><sub>1</sub><em>J</em><sub>9</sub></td><td><em>I</em><sub>1</sub><em>J</em><sub>10</sub></td></tr>
+<tr><td>2M</td><td><em>I</em><sub>2</sub><em>J</em><sub>−2</sub></td><td><em>I</em><sub>2</sub><em>J</em><sub>−1</sub></td><td><em>I</em><sub>2</sub><em>J</em><sub>0</sub></td><td><em>I</em><sub>2</sub><em>J</em><sub>1</sub></td><td><em>I</em><sub>2</sub><em>J</em><sub>2</sub></td><td><em>I</em><sub>2</sub><em>J</em><sub>3</sub></td><td><em>I</em><sub>2</sub><em>J</em><sub>4</sub></td><td><em>I</em><sub>2</sub><em>J</em><sub>5</sub></td><td><em>I</em><sub>2</sub><em>J</em><sub>6</sub></td><td><em>I</em><sub>2</sub><em>J</em><sub>7</sub></td><td><em>I</em><sub>2</sub><em>J</em><sub>8</sub></td><td><em>I</em><sub>2</sub><em>J</em><sub>9</sub></td></tr>
+<tr><td>3m</td><td><em>I</em><sub>3</sub><em>J</em><sub>−3</sub></td><td><em>I</em><sub>3</sub><em>J</em><sub>−2</sub></td><td><em>I</em><sub>3</sub><em>J</em><sub>−1</sub></td><td><em>I</em><sub>3</sub><em>J</em><sub>0</sub></td><td><em>I</em><sub>3</sub><em>J</em><sub>1</sub></td><td><em>I</em><sub>3</sub><em>J</em><sub>2</sub></td><td><em>I</em><sub>3</sub><em>J</em><sub>3</sub></td><td><em>I</em><sub>3</sub><em>J</em><sub>4</sub></td><td><em>I</em><sub>3</sub><em>J</em><sub>5</sub></td><td><em>I</em><sub>3</sub><em>J</em><sub>6</sub></td><td><em>I</em><sub>3</sub><em>J</em><sub>7</sub></td><td><em>I</em><sub>3</sub><em>J</em><sub>8</sub></td></tr>
+<tr><td>3M</td><td><em>I</em><sub>4</sub><em>J</em><sub>−4</sub></td><td><em>I</em><sub>4</sub><em>J</em><sub>−3</sub></td><td><em>I</em><sub>4</sub><em>J</em><sub>−2</sub></td><td><em>I</em><sub>4</sub><em>J</em><sub>−1</sub></td><td><em>I</em><sub>4</sub><em>J</em><sub>0</sub></td><td><em>I</em><sub>4</sub><em>J</em><sub>1</sub></td><td><em>I</em><sub>4</sub><em>J</em><sub>2</sub></td><td><em>I</em><sub>4</sub><em>J</em><sub>3</sub></td><td><em>I</em><sub>4</sub><em>J</em><sub>4</sub></td><td><em>I</em><sub>4</sub><em>J</em><sub>5</sub></td><td><em>I</em><sub>4</sub><em>J</em><sub>6</sub></td><td><em>I</em><sub>4</sub><em>J</em><sub>7</sub></td></tr>
+<tr><td>4</td><td><em>I</em><sub>5</sub><em>J</em><sub>−5</sub></td><td><em>I</em><sub>5</sub><em>J</em><sub>−4</sub></td><td><em>I</em><sub>5</sub><em>J</em><sub>−3</sub></td><td><em>I</em><sub>5</sub><em>J</em><sub>−2</sub></td><td><em>I</em><sub>5</sub><em>J</em><sub>−1</sub></td><td><em>I</em><sub>5</sub><em>J</em><sub>0</sub></td><td><em>I</em><sub>5</sub><em>J</em><sub>1</sub></td><td><em>I</em><sub>5</sub><em>J</em><sub>2</sub></td><td><em>I</em><sub>5</sub><em>J</em><sub>3</sub></td><td><em>I</em><sub>5</sub><em>J</em><sub>4</sub></td><td><em>I</em><sub>5</sub><em>J</em><sub>5</sub></td><td><em>I</em><sub>5</sub><em>J</em><sub>6</sub></td></tr>
+<tr><td>5♭</td><td><em>I</em><sub>6</sub><em>J</em><sub>−6</sub></td><td><em>I</em><sub>6</sub><em>J</em><sub>−5</sub></td><td><em>I</em><sub>6</sub><em>J</em><sub>−4</sub></td><td><em>I</em><sub>6</sub><em>J</em><sub>−3</sub></td><td><em>I</em><sub>6</sub><em>J</em><sub>−2</sub></td><td><em>I</em><sub>6</sub><em>J</em><sub>−1</sub></td><td><em>I</em><sub>6</sub><em>J</em><sub>0</sub></td><td><em>I</em><sub>6</sub><em>J</em><sub>1</sub></td><td><em>I</em><sub>6</sub><em>J</em><sub>2</sub></td><td><em>I</em><sub>6</sub><em>J</em><sub>3</sub></td><td><em>I</em><sub>6</sub><em>J</em><sub>4</sub></td><td><em>I</em><sub>6</sub><em>J</em><sub>5</sub></td></tr>
+<tr><td>5</td><td><em>I</em><sub>7</sub><em>J</em><sub>−7</sub></td><td><em>I</em><sub>7</sub><em>J</em><sub>−6</sub></td><td><em>I</em><sub>7</sub><em>J</em><sub>−5</sub></td><td><em>I</em><sub>7</sub><em>J</em><sub>−4</sub></td><td><em>I</em><sub>7</sub><em>J</em><sub>−3</sub></td><td><em>I</em><sub>7</sub><em>J</em><sub>−2</sub></td><td><em>I</em><sub>7</sub><em>J</em><sub>−1</sub></td><td><em>I</em><sub>7</sub><em>J</em><sub>0</sub></td><td><em>I</em><sub>7</sub><em>J</em><sub>1</sub></td><td><em>I</em><sub>7</sub><em>J</em><sub>2</sub></td><td><em>I</em><sub>7</sub><em>J</em><sub>3</sub></td><td><em>I</em><sub>7</sub><em>J</em><sub>4</sub></td></tr>
+<tr><td>5♯</td><td><em>I</em><sub>8</sub><em>J</em><sub>−8</sub></td><td><em>I</em><sub>8</sub><em>J</em><sub>−7</sub></td><td><em>I</em><sub>8</sub><em>J</em><sub>−6</sub></td><td><em>I</em><sub>8</sub><em>J</em><sub>−5</sub></td><td><em>I</em><sub>8</sub><em>J</em><sub>−4</sub></td><td><em>I</em><sub>8</sub><em>J</em><sub>−3</sub></td><td><em>I</em><sub>8</sub><em>J</em><sub>−2</sub></td><td><em>I</em><sub>8</sub><em>J</em><sub>−1</sub></td><td><em>I</em><sub>8</sub><em>J</em><sub>0</sub></td><td><em>I</em><sub>8</sub><em>J</em><sub>1</sub></td><td><em>I</em><sub>8</sub><em>J</em><sub>2</sub></td><td><em>I</em><sub>8</sub><em>J</em><sub>3</sub></td></tr>
+<tr><td>6</td><td><em>I</em><sub>9</sub><em>J</em><sub>−9</sub></td><td><em>I</em><sub>9</sub><em>J</em><sub>−8</sub></td><td><em>I</em><sub>9</sub><em>J</em><sub>−7</sub></td><td><em>I</em><sub>9</sub><em>J</em><sub>−6</sub></td><td><em>I</em><sub>9</sub><em>J</em><sub>−5</sub></td><td><em>I</em><sub>9</sub><em>J</em><sub>−4</sub></td><td><em>I</em><sub>9</sub><em>J</em><sub>−3</sub></td><td><em>I</em><sub>9</sub><em>J</em><sub>−2</sub></td><td><em>I</em><sub>9</sub><em>J</em><sub>−1</sub></td><td><em>I</em><sub>9</sub><em>J</em><sub>0</sub></td><td><em>I</em><sub>9</sub><em>J</em><sub>1</sub></td><td><em>I</em><sub>9</sub><em>J</em><sub>2</sub></td></tr>
+<tr><td>7m</td><td><em>I</em><sub>10</sub><em>J</em><sub>−10</sub></td><td><em>I</em><sub>10</sub><em>J</em><sub>−9</sub></td><td><em>I</em><sub>10</sub><em>J</em><sub>−8</sub></td><td><em>I</em><sub>10</sub><em>J</em><sub>−7</sub></td><td><em>I</em><sub>10</sub><em>J</em><sub>−6</sub></td><td><em>I</em><sub>10</sub><em>J</em><sub>−5</sub></td><td><em>I</em><sub>10</sub><em>J</em><sub>−4</sub></td><td><em>I</em><sub>10</sub><em>J</em><sub>−3</sub></td><td><em>I</em><sub>10</sub><em>J</em><sub>−2</sub></td><td><em>I</em><sub>10</sub><em>J</em><sub>−1</sub></td><td><em>I</em><sub>10</sub><em>J</em><sub>0</sub></td><td><em>I</em><sub>10</sub><em>J</em><sub>1</sub></td></tr>
+<tr><td>7M</td><td><em>I</em><sub>11</sub><em>J</em><sub>−11</sub></td><td><em>I</em><sub>11</sub><em>J</em><sub>−10</sub></td><td><em>I</em><sub>11</sub><em>J</em><sub>−9</sub></td><td><em>I</em><sub>11</sub><em>J</em><sub>−8</sub></td><td><em>I</em><sub>11</sub><em>J</em><sub>−7</sub></td><td><em>I</em><sub>11</sub><em>J</em><sub>−6</sub></td><td><em>I</em><sub>11</sub><em>J</em><sub>−5</sub></td><td><em>I</em><sub>11</sub><em>J</em><sub>−4</sub></td><td><em>I</em><sub>11</sub><em>J</em><sub>−3</sub></td><td><em>I</em><sub>11</sub><em>J</em><sub>−2</sub></td><td><em>I</em><sub>11</sub><em>J</em><sub>−1</sub></td><td><em>I</em><sub>11</sub><em>J</em><sub>0</sub></td></tr>
+</table>
+</div>
+<p class="fig-caption">Table 4 — Interval matrix used to compute pairs of ascending intervals.</p>
+
+</section>
+
+<section>
+<h2>Examples</h2>
+
+<p>Below an example is provided where intervals of <strong>minor seconds</strong> are generated by jumps of <strong>perfect fourths</strong>:</p>
+<div class="formula"><em>I</em><sub>1</sub><em>J</em><sub>4</sub></div>
+<img src="figures/I1J4.png" alt="Score: I1J4" style="max-width:100%; display:block; margin:18px auto;">
+<p class="fig-caption">Minor second intervals with perfect fourth movements (<em>I</em><sub>1</sub><em>J</em><sub>4</sub>).</p>
+
+<p>The next example generates <strong>minor thirds</strong> at leaps of ascending <strong>major seconds</strong>. Note that the first two eighth notes are a minor third apart and the third note is a major second from the first note, and so forth:</p>
+<div class="formula"><em>I</em><sub>3</sub><em>J</em><sub>−1</sub></div>
+<img src="figures/I3J-1.png" alt="Score: I3J-1" style="max-width:100%; display:block; margin:18px auto;">
+<p class="fig-caption">Minor third intervals with major second movements (<em>I</em><sub>3</sub><em>J</em><sub>−1</sub>).</p>
+
+<p>By inverting this binary sequence,</p>
+<div class="formula"><em>I</em>(<em>I</em><sub>3</sub><em>J</em><sub>−1</sub>)</div>
+<p>the intervals are <strong>descending minor thirds</strong>: the first two notes are a descending minor third apart, and the third note is a whole tone from the first note. In tonal music it would be a minor seventh, but in pitch-class set theory this interval belongs to the same interval class as the major second.</p>
+<img src="figures/I3J-1_inverted_.png" alt="Score: I(I3J-1) inverted" style="max-width:100%; display:block; margin:18px auto;">
+<p class="fig-caption">Descending minor thirds — inversion of <em>I</em><sub>3</sub><em>J</em><sub>−1</sub>.</p>
+
+<p>The following example depicts <strong>diminished fifths</strong> ascending by <strong>perfect fourths</strong> (IC<sub>6</sub> followed by IC<sub>5</sub>):</p>
+<div class="formula"><em>I</em><sub>6</sub><em>J</em><sub>−5</sub></div>
+<img src="figures/I6J-5.png" alt="Score: I6J-5" style="max-width:100%; display:block; margin:18px auto;">
+<p class="fig-caption">Diminished fifth intervals with perfect fourth movements (<em>I</em><sub>6</sub><em>J</em><sub>−5</sub>).</p>
+
+<p>The following example depicts <strong>minor sevenths</strong> ascending by <strong>perfect fifths</strong>. In pitch-class theory the minor seventh and the major second belong to the same interval class IC<sub>2</sub>. Therefore it is IC<sub>2</sub> followed by IC<sub>5</sub>, where IC<sub>5</sub> is the interval with respect to the first note of the binary group:</p>
+<div class="formula"><em>I</em><sub>10</sub><em>J</em><sub>−3</sub></div>
+<img src="figures/I10J-3.png" alt="Score: I10J-3" style="max-width:100%; display:block; margin:18px auto;">
+<p class="fig-caption">Minor seventh intervals with perfect fifth movements (<em>I</em><sub>10</sub><em>J</em><sub>−3</sub>).</p>
+
+</section>
+
+<!-- <a class="back-btn" href="GeCo-Tool.html">← Back to the App</a> -->
+<a class="back-btn" href="#" onclick="window.close(); return false;">← Back to the App</a>
+</div>
+
+<footer>R. Olmi &amp; M. Bittelli — GeCo-Tool: Generative Compositional Framework</footer>
+</body>
+</html>

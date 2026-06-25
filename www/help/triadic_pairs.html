@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Triadic Pairs – GeCo</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;1,8..60,300&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:       #1a1710;
+    --paper:     #f5f0e8;
+    --gold:      #8b6914;
+    --gold-lt:   #c9a84c;
+    --staff:     #d4c9a8;
+    --accent:    #3a2e1a;
+    --mono-bg:   #ede8dc;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    line-height: 1.75;
+    min-height: 100vh;
+  }
+
+  /* ── decorative staff lines across top ── */
+  .staff-header {
+    width: 100%;
+    height: 40px;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 0;
+  }
+  .staff-header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 5px,
+      var(--staff) 5px,
+      var(--staff) 6px
+    );
+  }
+  /* treble-clef ornament using pure CSS */
+  .staff-header .clef {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 52px;
+    line-height: 1;
+    top: -8px;
+    color: var(--gold);
+    opacity: 0.35;
+    user-select: none;
+  }
+
+  /* ── page wrapper ── */
+  .page {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 48px 40px 80px;
+  }
+
+  /* ── title block ── */
+  header {
+    text-align: center;
+    padding: 32px 0 40px;
+    border-bottom: 2px solid var(--gold);
+    margin-bottom: 48px;
+    position: relative;
+  }
+  header::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 3px;
+    background: var(--gold-lt);
+    margin: 12px auto 0;
+    border-radius: 2px;
+  }
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.8rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--accent);
+    line-height: 1.15;
+  }
+  .subtitle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-top: 10px;
+  }
+
+  /* ── section headings ── */
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin: 52px 0 18px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--staff);
+    position: relative;
+  }
+  h2::before {
+    content: '§';
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--gold-lt);
+    margin-right: 10px;
+  }
+
+  /* ── body text ── */
+  p { margin-bottom: 1.1em; }
+  em { font-style: italic; color: var(--accent); }
+
+  /* ── inline musical notation blocks ── */
+  .notation {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.88rem;
+    background: var(--mono-bg);
+    border: 1px solid var(--staff);
+    border-left: 3px solid var(--gold);
+    padding: 4px 14px;
+    border-radius: 4px;
+    margin: 4px 0;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* ── formula / path block ── */
+  .formula-block {
+    text-align: center;
+    margin: 28px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--accent);
+    background: var(--mono-bg);
+    border: 1px solid var(--staff);
+    border-radius: 8px;
+    padding: 18px 24px;
+    letter-spacing: 0.06em;
+  }
+  .formula-block .label {
+    display: block;
+    font-size: 0.68rem;
+    font-family: 'Source Serif 4', serif;
+    font-weight: 300;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+
+  /* ── unordered list ── */
+  ul {
+    list-style: none;
+    margin: 8px 0 20px 0;
+    padding: 0;
+  }
+  ul li {
+    padding: 5px 0 5px 24px;
+    position: relative;
+  }
+  ul li::before {
+    content: '♩';
+    position: absolute;
+    left: 0;
+    color: var(--gold-lt);
+    font-size: 0.9em;
+  }
+
+  /* ── blockquote / italic note ── */
+  .note-italic {
+    font-style: italic;
+    font-family: 'Source Serif 4', serif;
+    font-weight: 300;
+    color: #5a4e2e;
+    font-size: 0.93rem;
+    margin: 16px 0 24px;
+    padding-left: 16px;
+    border-left: 2px solid var(--staff);
+  }
+
+  /* ── math inline ── */
+  .math {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9em;
+    background: var(--mono-bg);
+    padding: 1px 6px;
+    border-radius: 3px;
+    color: var(--accent);
+  }
+
+  /* center block for tensions */
+  .center-block {
+    text-align: center;
+    margin: 18px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1rem;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+  }
+
+  /* ── tables ── */
+  .table-wrap {
+    overflow-x: auto;
+    margin: 28px 0 36px;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(100,80,20,0.09);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.87rem;
+    background: #fff;
+  }
+  thead th {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    background: var(--accent);
+    color: var(--gold-lt);
+    padding: 12px 14px;
+    text-align: left;
+    white-space: nowrap;
+  }
+  tbody tr {
+    border-bottom: 1px solid var(--staff);
+    transition: background 0.15s;
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #f9f5ec; }
+  tbody td {
+    padding: 10px 14px;
+    vertical-align: top;
+    font-family: 'Source Serif 4', serif;
+    line-height: 1.5;
+  }
+  tbody td.mono {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    color: var(--accent);
+  }
+
+  /* ── footer staff ── */
+  footer {
+    margin-top: 64px;
+    border-top: 2px solid var(--gold);
+    padding-top: 16px;
+    text-align: center;
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    color: var(--gold);
+    text-transform: uppercase;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* animations */
+  .page { animation: fadeIn 0.6s ease both; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+
+  @media (max-width: 600px) {
+    .page { padding: 28px 20px 60px; }
+    h1 { font-size: 2rem; }
+    table { font-size: 0.78rem; }
+  }
+</style>
+
+<style>
+  .back-btn {
+  display: inline-block;
+  margin-bottom: 24px;
+  background: #2980b9;
+  color: white;
+  padding: 8px 18px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 14px;
+}
+.back-btn:hover { background: #1a6a9a; }
+</style>
+
+</head>
+<body>
+
+<div class="staff-header"><span class="clef">𝄞</span></div>
+
+<div class="page">
+
+  <a class="back-btn" href="#" onclick="window.close(); return false;">← Back to the App</a> 
+
+  <header>
+    <h1>Triadic Pairs</h1>
+    <p class="subtitle">GeCo Triadic Generator System</p>
+  </header>
+
+  <!-- ── Introduction ── -->
+  <h2>Introduction</h2>
+
+  <p>
+    Traditional jazz improvisation is often taught through scales, modes,
+    and chord-scale relationships. In this approach, the improviser learns
+    to associate a specific collection of notes with a particular chord or
+    harmonic situation and develops melodic lines by moving through that
+    collection.
+  </p>
+  <p>
+    While this method remains fundamental, many modern improvisers also
+    employ an intervallic approach. Instead of thinking primarily in terms
+    of scales, they organize musical material into smaller structures such
+    as triads, triad pairs, and other interval-based patterns. These
+    structures provide a different way of navigating harmony and often
+    produce lines with greater intervallic variety and a more contemporary
+    sound.
+  </p>
+  <p>
+    A triad pair may be viewed as a compact representation of a larger
+    pitch collection. Rather than using all the notes of a parent scale,
+    the improviser selects two complementary triads whose combined notes
+    capture the characteristic color of the underlying harmonic context.
+  </p>
+  <p>
+    The objective is not to replace scalar improvisation, but to complement
+    it. Scale-based and interval-based approaches can coexist and enrich
+    one another. In practice, many musicians move freely between these two
+    perspectives depending on the musical situation.
+  </p>
+  <p>
+    GeCo extends the concept of triad pairs by introducing a cyclic
+    generation process. Two triads are not treated merely as a collection
+    of notes, but as a structured path through pitch-class space. By
+    traversing the notes of each triad according to a predefined rule,
+    GeCo generates closed melodic cycles that can be explored,
+    transposed, and transformed systematically.
+  </p>
+  <p>
+    The purpose of this document is to present the triadic generator
+    systems currently implemented in GeCo and to provide practical
+    examples of their use in modal, tonal, and contemporary harmonic
+    environments. GeCo-Tool can generate melodic paths through pairs of
+    triads. Rather than constructing melodic material from scales, the
+    system uses two interacting triads that generate a cyclic path.
+    Generation terminates when the starting note is encountered again.
+  </p>
+
+  <p>For example, the triad pair</p>
+  <div class="formula-block">F + G</div>
+  <p>contains the two triads</p>
+  <div class="formula-block">F = {F, A, C} &nbsp;&nbsp;&nbsp; G = {G, B, D}</div>
+  <p>The resulting GeCo path is</p>
+  <div class="formula-block">
+    <span class="label">GeCo Path</span>
+    F – A – C – G – B – D – (F)
+  </div>
+  <p>
+    The last note is included in parentheses since it closes the cycle
+    when the starting pitch is reached again.
+  </p>
+
+  <p>
+    Although triads have always been a fundamental component of Western
+    music, their systematic use as melodic generators became particularly
+    important in modern jazz improvisation.
+  </p>
+  <p>
+    John Coltrane was among the first major improvisers to explore highly
+    structured intervallic concepts. During the late 1950s and 1960s his
+    improvisational language increasingly relied on triadic structures,
+    pentatonic cells, interval cycles, and harmonic superimpositions.
+    Many of the melodic ideas found in works such as <em>So What</em>,
+    <em>Impressions</em>, <em>Mr. P.C.</em>, <em>Giant Steps</em>,
+    and <em>Countdown</em> can be interpreted through intervallic and
+    triadic thinking rather than purely scalar approaches.
+  </p>
+  <p>
+    The pedagogical formalization of these ideas was later developed by
+    educators such as Jerry Bergonzi. Through his work on Hexatonics and
+    Triad Pairs, Bergonzi demonstrated how two triads can be combined to
+    create compact melodic resources applicable to modal, tonal, altered,
+    and symmetrical harmonic situations.
+  </p>
+  <p>
+    Another important figure in the development of intervallic
+    improvisation is George Garzone. Through his Triadic Chromatic
+    Approach (TCA), Garzone demonstrated how triads can function as
+    independent melodic building blocks capable of moving freely across
+    harmonic environments. His work further reinforced the idea that
+    triads can serve not only as harmonic structures but also as generators
+    of melodic vocabulary.
+  </p>
+  <p>
+    The GeCo Triadic Generator System is inspired by these intervallic
+    traditions. However, GeCo extends the concept by introducing explicit
+    cyclic traversal rules. In this framework, a pair of triads is
+    transformed into a closed melodic path, allowing systematic
+    generation, transposition, and exploration of intervallic material.
+  </p>
+
+  <!-- ── Generation Rule ── -->
+  <h2>The GeCo Generation Rule</h2>
+
+  <p>
+    Given two triads <span class="math">T₁</span> and
+    <span class="math">T₂</span>, a GeCo path is obtained by traversing
+    the notes of the first triad followed by the notes of the second triad.
+    The sequence is generated in pitch-class space and is therefore
+    independent of octave placement.
+  </p>
+  <p>
+    The final note is shown in parentheses because it is not part of the
+    generated collection itself. Its function is to indicate the closure
+    of the cycle by returning to the starting pitch.
+  </p>
+  <p>In general:</p>
+  <div class="formula-block">
+    <span class="label">General Formula</span>
+    R₁ – T₁ – F₁ – R₂ – T₂ – F₂ – (R₁)
+  </div>
+  <p>
+    where <strong>R</strong> indicates the root, <strong>T</strong> indicates the third
+    and <strong>F</strong> indicates the fifth. The note in parentheses marks the point
+    at which GeCo encounters the starting pitch again and terminates the
+    generation process.
+  </p>
+
+  <!-- ── Triadic Generator Families ── -->
+  <h2>Triadic Generator Families</h2>
+
+  <p>A triadic generator is defined by three elements:</p>
+  <ul>
+    <li>the quality of the first triad;</li>
+    <li>the quality of the second triad;</li>
+    <li>the intervallic distance between their roots.</li>
+  </ul>
+  <p>
+    Different combinations of these parameters produce distinct melodic
+    and harmonic environments. The following families represent the core
+    generator models currently used in GeCo.
+    In the examples below, most generators are built on the fourth and
+    fifth degrees of the reference collection. This makes the relationship
+    between the parent scale and the triadic generator immediately visible.
+  </p>
+  <p class="note-italic">
+    For clarity, note names within triadic generators are written according
+    to their triadic function rather than strict scalar spelling. This
+    choice makes the underlying triadic structure immediately visible to
+    the reader.
+  </p>
+
+  <p>
+    The following table summarizes the principal generator families
+    currently implemented in GeCo.
+    Only one reference collection is shown for each family. Since GeCo
+    supports automatic transposition, all remaining keys can be generated
+    directly from the corresponding reference model.
+  </p>
+
+  <!-- Table 1 -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Family</th>
+          <th>Formula</th>
+          <th>Reference Collection</th>
+          <th>Generator</th>
+          <th>Application</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Church Modes</td>
+          <td class="mono">M + M</td>
+          <td>C Major</td>
+          <td class="mono">F + G</td>
+          <td class="mono">Dm7, G7, Cmaj7, Fmaj7#11, Bm7b5</td>
+        </tr>
+        <tr>
+          <td>Melodic Minor</td>
+          <td class="mono">M + Aug</td>
+          <td>A Melodic Minor</td>
+          <td class="mono">D + Eaug</td>
+          <td class="mono">AmMaj7, D7#11, E7alt</td>
+        </tr>
+        <tr>
+          <td>Harmonic Minor</td>
+          <td class="mono">m + M</td>
+          <td>A Harmonic Minor</td>
+          <td class="mono">Fm + G</td>
+          <td class="mono">AmMaj7, E7(b9)</td>
+        </tr>
+        <tr>
+          <td>Harmonic Major</td>
+          <td class="mono">M + Aug</td>
+          <td>C Harmonic Major</td>
+          <td class="mono">G + Abaug</td>
+          <td class="mono">Cmaj7(b6), G7(b9)</td>
+        </tr>
+        <tr>
+          <td>Whole Tone</td>
+          <td class="mono">Aug + Aug</td>
+          <td>C Whole Tone</td>
+          <td class="mono">Caug + Daug</td>
+          <td class="mono">C7#5, C7#11</td>
+        </tr>
+        <tr>
+          <td>Diminished</td>
+          <td class="mono">M + M</td>
+          <td>C Diminished</td>
+          <td class="mono">C + F#</td>
+          <td class="mono">Cdim7, C7(b9)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="note-italic">
+    The generator column identifies the reference triad pair used by GeCo.
+    All remaining keys can be obtained through transposition.
+  </p>
+
+  <!-- Table 2 -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Reference</th>
+          <th>Pair</th>
+          <th>GeCo Directional Sequence</th>
+          <th>Sound</th>
+          <th>GeCo Path</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>C Major</td>
+          <td class="mono">F + G</td>
+          <td class="mono">4 3 −5 4 3 3</td>
+          <td>Church Modes</td>
+          <td class="mono">F–A–C–G–B–D–(F)</td>
+        </tr>
+        <tr>
+          <td>A Melodic Minor</td>
+          <td class="mono">D + Eaug</td>
+          <td class="mono">4 3 −5 4 4 2</td>
+          <td>Melodic Minor</td>
+          <td class="mono">D–F#–A–E–G#–C–(D)</td>
+        </tr>
+        <tr>
+          <td>A Harmonic Minor</td>
+          <td class="mono">Fm + G</td>
+          <td class="mono">3 4 −5 4 3 3</td>
+          <td>Harmonic Minor</td>
+          <td class="mono">F–Ab–C–G–B–D–(F)</td>
+        </tr>
+        <tr>
+          <td>C Harmonic Major</td>
+          <td class="mono">G + Abaug</td>
+          <td class="mono">4 3 −6 4 4 3</td>
+          <td>Harmonic Major</td>
+          <td class="mono">G–B–D–Ab–C–E–(G)</td>
+        </tr>
+        <tr>
+          <td>C Whole Tone</td>
+          <td class="mono">Caug + Daug</td>
+          <td class="mono">4 4 −6 4 4 2</td>
+          <td>Whole Tone</td>
+          <td class="mono">C–E–G#–D–F#–A#–(C)</td>
+        </tr>
+        <tr>
+          <td>C Diminished</td>
+          <td class="mono">C + F#</td>
+          <td class="mono">4 3 −1 4 3 −1</td>
+          <td>Diminished</td>
+          <td class="mono">C–E–G–F#–A#–C#–(C)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="note-italic">
+    The GeCo directional sequence is calculated within a single octave.
+    When the root of the second triad lies below the last note of the first
+    triad, the corresponding interval is written as a negative value.
+    This keeps both triads inside the same octave rather than treating the
+    path as a purely ascending pitch-class cycle.
+  </p>
+
+  <!-- ── Application Example ── -->
+  <h2>Application Example: Altered Dominant Chords</h2>
+
+  <p>
+    The triadic generator system can also be applied to altered dominant
+    chords. A common jazz practice consists of approaching a dominant
+    seventh chord through the melodic minor scale built a minor second
+    above its root.
+  </p>
+  <p>For example, over</p>
+  <div class="formula-block">G7</div>
+  <p>an altered sound can be obtained using</p>
+  <div class="formula-block">A♭ Melodic Minor</div>
+  <p>whose notes are</p>
+  <div class="formula-block">A♭ – B♭ – C♭ – D♭ – E♭ – F – G</div>
+  <p>
+    This collection contains the characteristic altered tensions:
+  </p>
+  <div class="center-block">♭9, ♯9, ♭5, ♯5</div>
+  <p>
+    relative to the dominant chord. Consequently, triadic generators
+    derived from the parent melodic minor collection can be used to
+    create melodic material over the altered dominant.
+  </p>
+  <p>One possible generator is</p>
+  <div class="formula-block">G♭ + A♭aug</div>
+  <p>which produces the sequence</p>
+  <div class="formula-block">
+    <span class="label">GeCo Path</span>
+    G♭ – B♭ – D♭ – A♭ – C – E – (G♭)
+  </div>
+  <p>
+    where the note in parentheses indicates closure of the cycle.
+  </p>
+  <p>
+    This example illustrates how GeCo generators can be used not only
+    as abstract pitch collections but also as practical improvisational
+    tools for modern harmonic environments.
+  </p>
+
+  <!-- ── How to ── -->
+  <h2>How to</h2>
+
+  <p>
+    Select the desired triad pair and enter the notes in GeCo-Tool.
+    The generated path is cyclic and terminates automatically when the
+    starting pitch is reached again. By changing the starting note or
+    using transposition, the same generator can be applied in any key.
+  </p>
+
+  <!-- ── Future Extensions ── -->
+  <h2>Future Extensions</h2>
+
+  <p>Possible future developments include:</p>
+  <ul>
+    <li>Quartal Generators</li>
+    <li>Pentatonic Generators</li>
+    <li>Three-Triad Systems</li>
+    <li>Symmetric Generators</li>
+    <li>Adaptive Generators</li>
+  </ul>
+
+  <footer>GeCo &nbsp;·&nbsp; Triadic Generator System &nbsp;·&nbsp; 𝄞</footer>
+
+  <a class="back-btn" href="#" onclick="window.close(); return false;">← Back to the App</a>
+
+</div>
+</body>
+</html>

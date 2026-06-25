@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Musical Intervals Table - Allen Forte</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 24px;
+      background: #f5f5f5;
+      color: #222;
+    }
+
+    h1, h2 {
+      margin-top: 32px;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 16px;
+      background: white;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px 12px;
+      text-align: center;
+    }
+
+    th {
+      background: #222;
+      color: white;
+    }
+
+    tr:nth-child(even) {
+      background: #f0f0f0;
+    }
+
+    .formula {
+      margin-top: 20px;
+      padding: 12px;
+      background: white;
+      border-left: 4px solid #444;
+      font-family: monospace;
+    }
+  </style>
+
+  <style>
+    .back-btn {
+    display: inline-block;
+    margin-bottom: 24px;
+    background: #2980b9;
+    color: white;
+    padding: 8px 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+}
+.back-btn:hover { background: #1a6a9a; }
+footer {
+    text-align: center;
+    font-size: 12px;
+    color: #aaa;
+    padding: 20px 0 40px;
+}
+  </style>
+</head>
+<body>
+
+  <h1>Musical Intervals Table — Allen Forte Approach</h1>
+
+  <a class="back-btn" href="#" onclick="window.close(); return false;">← Back to the App</a>
+  <table>
+    <thead>
+      <tr>
+        <th>Ascending Semitones ↑</th>
+        <th>Descending Semitones ↓</th>
+        <th>Traditional Interval</th>
+        <th>Interval Class (IC)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>0</td>
+        <td>0</td>
+        <td>Unison / Perfect Octave</td>
+        <td>IC0</td>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td>11</td>
+        <td>Minor Second / Major Seventh</td>
+        <td>IC1</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>10</td>
+        <td>Major Second / Minor Seventh</td>
+        <td>IC2</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>9</td>
+        <td>Minor Third / Major Sixth</td>
+        <td>IC3</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>8</td>
+        <td>Major Third / Minor Sixth</td>
+        <td>IC4</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td>7</td>
+        <td>Perfect Fourth / Perfect Fifth</td>
+        <td>IC5</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td>6</td>
+        <td>Tritone (Augmented Fourth / Diminished Fifth)</td>
+        <td>IC6</td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td>5</td>
+        <td>Perfect Fifth / Perfect Fourth</td>
+        <td>IC5</td>
+      </tr>
+      <tr>
+        <td>8</td>
+        <td>4</td>
+        <td>Minor Sixth / Major Third</td>
+        <td>IC4</td>
+      </tr>
+      <tr>
+        <td>9</td>
+        <td>3</td>
+        <td>Major Sixth / Minor Third</td>
+        <td>IC3</td>
+      </tr>
+      <tr>
+        <td>10</td>
+        <td>2</td>
+        <td>Minor Seventh / Major Second</td>
+        <td>IC2</td>
+      </tr>
+      <tr>
+        <td>11</td>
+        <td>1</td>
+        <td>Major Seventh / Minor Second</td>
+        <td>IC1</td>
+      </tr>
+      <tr>
+        <td>12</td>
+        <td>0</td>
+        <td>Perfect Octave</td>
+        <td>IC0</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Interval Class Summary Table</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Interval Class</th>
+        <th>Equivalent Semitones</th>
+        <th>Traditional Intervals</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>IC0</td>
+        <td>0</td>
+        <td>Unison / Octave</td>
+      </tr>
+      <tr>
+        <td>IC1</td>
+        <td>1 / 11</td>
+        <td>Minor Second / Major Seventh</td>
+      </tr>
+      <tr>
+        <td>IC2</td>
+        <td>2 / 10</td>
+        <td>Major Second / Minor Seventh</td>
+      </tr>
+      <tr>
+        <td>IC3</td>
+        <td>3 / 9</td>
+        <td>Minor Third / Major Sixth</td>
+      </tr>
+      <tr>
+        <td>IC4</td>
+        <td>4 / 8</td>
+        <td>Major Third / Minor Sixth</td>
+      </tr>
+      <tr>
+        <td>IC5</td>
+        <td>5 / 7</td>
+        <td>Perfect Fourth / Perfect Fifth</td>
+      </tr>
+      <tr>
+        <td>IC6</td>
+        <td>6</td>
+        <td>Tritone</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="formula">
+    IC(n) = min(n, 12 - n)
+  </div>
+
+  <a class="back-btn" href="#" onclick="window.close(); return false;">← Back to the App</a>
+</body>
+</html>

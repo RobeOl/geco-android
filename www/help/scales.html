@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generation of Scales with GeCo-Tool</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1410;
+    --ink-soft: #3d3229;
+    --parchment: #faf6f0;
+    --parchment-dark: #f0e9de;
+    --accent: #7a3b1e;
+    --accent-light: #b05c35;
+    --rule: #c9b89a;
+    --rule-light: #e2d5c0;
+    --mono-bg: #f5f0e8;
+    --shadow: rgba(90, 60, 30, 0.12);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--parchment);
+    color: var(--ink);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.75;
+    font-weight: 300;
+  }
+
+  /* ── LAYOUT ── */
+  .page {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 4rem 2.5rem 8rem;
+  }
+
+  /* ── HEADER ── */
+  header {
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 2.5rem;
+    margin-bottom: 3.5rem;
+    text-align: center;
+    position: relative;
+  }
+
+  header::before {
+    content: '♩ ♩ ♩';
+    display: block;
+    font-size: 0.85rem;
+    letter-spacing: 0.6em;
+    color: var(--accent-light);
+    margin-bottom: 1.2rem;
+    font-family: 'DM Mono', monospace;
+  }
+
+  h1 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.6rem, 4vw, 2.5rem);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    line-height: 1.25;
+    margin-bottom: 0.5rem;
+  }
+
+  .subtitle {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-top: 0.8rem;
+  }
+
+  /* ── SECTIONS ── */
+  section { margin-bottom: 3.5rem; }
+
+  h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--rule);
+    text-transform: uppercase;
+  }
+
+  h3 {
+    font-family: 'Cinzel', serif;
+    font-size: 0.95rem;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    color: var(--ink-soft);
+    margin: 2rem 0 1rem;
+    text-transform: uppercase;
+  }
+
+  p { margin-bottom: 1rem; color: var(--ink-soft); }
+
+  p em { font-style: italic; color: var(--ink); }
+
+  /* ── MATH / FORMULA BOX ── */
+  .formula {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.95rem;
+    font-weight: 400;
+    background: var(--mono-bg);
+    border-left: 3px solid var(--accent);
+    padding: 0.9rem 1.4rem;
+    margin: 1.4rem 0;
+    color: var(--ink);
+    letter-spacing: 0.06em;
+    overflow-x: auto;
+  }
+
+  .formula .arrow { color: var(--accent); }
+
+  /* ── LEGEND LIST ── */
+  .legend {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 1rem 1.2rem;
+  }
+  .legend li {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    padding: 0.15rem 0;
+  }
+  .legend li::before {
+    content: '—';
+    color: var(--accent-light);
+    margin-right: 0.6rem;
+  }
+
+  /* ── PARENT SCALE BADGE ── */
+  .parent-scale {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.88rem;
+    background: var(--parchment-dark);
+    border: 1px solid var(--rule);
+    padding: 0.35rem 1rem;
+    margin-bottom: 1rem;
+    color: var(--ink);
+    letter-spacing: 0.08em;
+  }
+  .parent-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+
+  /* ── TABLES ── */
+  .table-wrap {
+    overflow-x: auto;
+    margin: 1rem 0 2rem;
+    border: 1px solid var(--rule-light);
+    box-shadow: 0 2px 12px var(--shadow);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+    background: #fff;
+  }
+
+  thead tr {
+    background: var(--ink);
+    color: var(--parchment);
+  }
+
+  thead th {
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.75rem 1.1rem;
+    text-align: left;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--rule-light);
+    transition: background 0.15s;
+  }
+
+  tbody tr:last-child { border-bottom: none; }
+
+  tbody tr:hover { background: #fdf8f2; }
+
+  td {
+    padding: 0.65rem 1.1rem;
+    vertical-align: top;
+    color: var(--ink-soft);
+  }
+
+  td:first-child {
+    font-weight: 400;
+    color: var(--ink);
+    font-style: italic;
+    white-space: nowrap;
+  }
+
+  td:nth-child(2) {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.83rem;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+
+  td:nth-child(3) {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.83rem;
+    letter-spacing: 0.05em;
+    color: var(--ink-soft);
+  }
+
+  /* passing tone styling */
+  .pt { color: var(--accent-light); font-style: italic; }
+
+  /* ── NOTE CALLOUT ── */
+  .note-callout {
+    background: var(--mono-bg);
+    border: 1px solid var(--rule);
+    padding: 1rem 1.4rem;
+    margin: 1.5rem 0;
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+    font-family: 'DM Mono', monospace;
+    line-height: 1.6;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    margin-top: 5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--rule);
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    color: var(--rule);
+    text-transform: uppercase;
+  }
+
+  /* ── TOC ── */
+  nav.toc {
+    background: var(--parchment-dark);
+    border: 1px solid var(--rule-light);
+    padding: 1.5rem 2rem;
+    margin-bottom: 3.5rem;
+    font-size: 0.88rem;
+  }
+
+  nav.toc .toc-title {
+    font-family: 'Cinzel', serif;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+
+  nav.toc ol {
+    padding-left: 1.2rem;
+    line-height: 2;
+    color: var(--ink-soft);
+  }
+
+  nav.toc a {
+    color: var(--ink-soft);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--rule);
+  }
+
+  nav.toc a:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .page { padding: 2rem 1rem 5rem; }
+    thead th, td { padding: 0.5rem 0.6rem; font-size: 0.78rem; }
+    td:first-child { white-space: normal; }
+  }
+
+  /* ── FADE-IN ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  header, nav.toc, section {
+    animation: fadeUp 0.55s ease both;
+  }
+  nav.toc  { animation-delay: 0.1s; }
+  section:nth-of-type(1) { animation-delay: 0.15s; }
+  section:nth-of-type(2) { animation-delay: 0.2s; }
+  section:nth-of-type(3) { animation-delay: 0.25s; }
+</style>
+
+<style>
+  .back-btn {
+      display: inline-block;
+      margin-bottom: 24px;
+      background: #2980b9;
+      color: white;
+      padding: 8px 18px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+  }
+  .back-btn:hover { background: #1a6a9a; }
+  footer {
+      text-align: center;
+      font-size: 12px;
+      color: #aaa;
+      padding: 20px 0 40px;
+  }
+  </style>
+
+</head>
+<body>
+
+<div class="page">
+  <!-- <a class="back-btn" href="GeCo-Tool.html">← Back to the App</a> -->
+  <a class="back-btn" href="#" onclick="window.close(); return false;">← Back to the App</a>
+
+
+<div class="page">
+
+<!-- ── HEADER ── -->
+<header>
+  <h1>Generation of Scales<br>with GeCo-Tool</h1>
+  <p class="subtitle">Reference Tables &mdash; Pitch-Class Space &#x2124;<sub>12</sub></p>
+</header>
+
+<!-- ── TOC ── -->
+<nav class="toc" aria-label="Table of contents">
+  <div class="toc-title">Contents</div>
+  <ol>
+    <li><a href="#introduction">Introduction</a></li>
+    <li><a href="#tonal-modal">Principal Tonal and Modal Scales</a>
+      <ol>
+        <li><a href="#c-major">Modes from C Major</a></li>
+        <li><a href="#harmonic-minor">Modes of A Harmonic Minor</a></li>
+        <li><a href="#melodic-minor">Modes of A Melodic Minor</a></li>
+        <li><a href="#harmonic-major">Modes of C Harmonic Major</a></li>
+      </ol>
+    </li>
+    <li><a href="#neapolitan">Neapolitan Modes</a></li>
+    <li><a href="#bebop">Bebop Scales</a></li>
+    <li><a href="#middle-eastern">Arabic, Turkish &amp; Middle Eastern Scale Models</a></li>
+    <li><a href="#how-to">How to Use</a></li>
+  </ol>
+</nav>
+
+<!-- ── INTRO ── -->
+<section id="introduction">
+  <h2>Introduction</h2>
+  <p>GeCo-Tool allows for generation of any scale or intervallic pattern, and is therefore very useful for exploring and practicing scales. By setting the first note to the desired one, the scale can be transposed in every key, or otherwise by using the transposition tool.</p>
+  <p>GeCo-Tool is based on cyclic interval generation within the pitch-class space <strong>&#x2124;<sub>12</sub></strong>. Instead of constructing scales from traditional tonal functions, the system operates through ordered sequences of semitone intervals.</p>
+  <p>A musical scale can therefore be represented as a <em>cyclic interval vector</em>, where each number indicates the distance in semitones between consecutive notes.</p>
+  <p>For example, the C Major scale:</p>
+  <div class="formula">
+    C <span class="arrow">→</span> D <span class="arrow">→</span> E <span class="arrow">→</span> F <span class="arrow">→</span> G <span class="arrow">→</span> A <span class="arrow">→</span> B <span class="arrow">→</span> C
+  </div>
+  <p>can be encoded as:</p>
+  <div class="formula">2 &nbsp; 2 &nbsp; 1 &nbsp; 2 &nbsp; 2 &nbsp; 2 &nbsp; 1</div>
+  <ul class="legend">
+    <li>1 = semitone (half step)</li>
+    <li>2 = whole tone</li>
+    <li>3 = minor third (three semitones)</li>
+  </ul>
+  <p>Because GeCo operates within the standard <em>twelve-tone equal temperament system</em>, it can represent and generate virtually all scales, modes, arpeggios, and harmonic structures commonly used in Western music. This includes major and minor scales, modal scales, pentatonic systems, blues scales, whole-tone collections, diminished scales, bebop scales, and dodecaphonic structures.</p>
+  <p>Many musical traditions outside the Western equal-tempered system can also be explored through approximate twelve-tone representations. However, GeCo does not currently model microtonal intervals such as quarter-tones, neutral intervals, or the complex tuning systems found in Arabic, Persian, Turkish, Indian, Southeast Asian, and other non-Western musical traditions. For this reason, GeCo should not be considered a complete representation of these musical cultures. Instead, it provides a twelve-tone interval framework that can approximate some of their modal structures while preserving the mathematical simplicity of pitch-class space modulo 12.</p>
+  <p>The choice of a twelve-note system is intentional. It allows scales, chords, interval structures, transformations, and cyclic processes to be explored within a common mathematical environment, making it possible to compare tonal, modal, blues, quartal, and dodecaphonic systems using the same interval-based language.</p>
+  <p>Below we present tables that allow for implementation of scales in GeCo-Tool, enabling fast transposition in any key for instrumental practice and ear training.</p>
+</section>
+
+<!-- ── TONAL / MODAL ── -->
+<section id="tonal-modal">
+  <h2>Principal Tonal and Modal Scales</h2>
+
+  <h3 id="c-major">Modes Derived from C Major</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Mode</th><th>Semitone Sequence</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>Ionian (C)</td><td>2 2 1 2 2 2 1</td><td>C D E F G A B C</td></tr>
+        <tr><td>Dorian (D)</td><td>2 1 2 2 2 1 2</td><td>D E F G A B C D</td></tr>
+        <tr><td>Phrygian (E)</td><td>1 2 2 2 1 2 2</td><td>E F G A B C D E</td></tr>
+        <tr><td>Lydian (F)</td><td>2 2 2 1 2 2 1</td><td>F G A B C D E F</td></tr>
+        <tr><td>Mixolydian (G)</td><td>2 2 1 2 2 1 2</td><td>G A B C D E F G</td></tr>
+        <tr><td>Aeolian (A)</td><td>2 1 2 2 1 2 2</td><td>A B C D E F G A</td></tr>
+        <tr><td>Locrian (B)</td><td>1 2 2 1 2 2 2</td><td>B C D E F G A B</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 id="harmonic-minor">Modes of A Harmonic Minor</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Mode</th><th>Semitone Sequence</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>Harmonic Minor (A)</td><td>2 1 2 2 1 3 1</td><td>A B C D E F G# A</td></tr>
+        <tr><td>Locrian #6 (B)</td><td>1 2 2 1 3 1 2</td><td>B C D E F G# A B</td></tr>
+        <tr><td>Ionian #5 (C)</td><td>2 2 1 3 1 2 1</td><td>C D E F G# A B C</td></tr>
+        <tr><td>Dorian #4 (D)</td><td>2 1 3 1 2 1 2</td><td>D E F G# A B C D</td></tr>
+        <tr><td>Phrygian Dominant (E)</td><td>1 3 1 2 1 2 2</td><td>E F G# A B C D E</td></tr>
+        <tr><td>Lydian #2 (F)</td><td>3 1 2 1 2 2 1</td><td>F G# A B C D E F</td></tr>
+        <tr><td>Ultra Locrian (G#)</td><td>1 2 1 2 2 1 3</td><td>G# A B C D E F G#</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 id="melodic-minor">Modes of A Melodic Minor</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Mode</th><th>Semitone Sequence</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>Melodic Minor (A)</td><td>2 1 2 2 2 2 1</td><td>A B C D E F# G# A</td></tr>
+        <tr><td>Dorian b2 (B)</td><td>1 2 2 2 2 1 2</td><td>B C D E F# G# A B</td></tr>
+        <tr><td>Lydian Augmented (C)</td><td>2 2 2 2 1 2 1</td><td>C D E F# G# A B C</td></tr>
+        <tr><td>Lydian Dominant (D)</td><td>2 2 2 1 2 1 2</td><td>D E F# G# A B C D</td></tr>
+        <tr><td>Mixolydian b6 (E)</td><td>2 2 1 2 1 2 2</td><td>E F# G# A B C D E</td></tr>
+        <tr><td>Locrian #2 (F#)</td><td>2 1 2 1 2 2 2</td><td>F# G# A B C D E F#</td></tr>
+        <tr><td>Altered / Super Locrian (G#)</td><td>1 2 1 2 2 2 2</td><td>G# A B C D E F# G#</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 id="harmonic-major">Modes of C Harmonic Major</h3>
+  <p>The Harmonic Major scale may be viewed as a major scale with a lowered sixth degree.</p>
+  <span class="parent-label">Parent scale</span>
+  <div class="parent-scale">C &nbsp; D &nbsp; E &nbsp; F &nbsp; G &nbsp; Ab &nbsp; B &nbsp; C</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Mode</th><th>Semitone Sequence</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>Harmonic Major (C)</td><td>2 2 1 2 1 3 1</td><td>C D E F G Ab B C</td></tr>
+        <tr><td>Dorian b5 (D)</td><td>2 1 2 1 3 1 2</td><td>D E F G Ab B C D</td></tr>
+        <tr><td>Phrygian b4 (E)</td><td>1 2 1 3 1 2 2</td><td>E F G Ab B C D E</td></tr>
+        <tr><td>Lydian b3 (F)</td><td>2 1 3 1 2 2 1</td><td>F G Ab B C D E F</td></tr>
+        <tr><td>Mixolydian b2 (G)</td><td>1 3 1 2 2 1 2</td><td>G Ab B C D E F G</td></tr>
+        <tr><td>Lydian Augmented #2 (Ab)</td><td>3 1 2 2 1 2 1</td><td>Ab B C D E F G Ab</td></tr>
+        <tr><td>Locrian bb7 (B)</td><td>1 2 2 1 2 1 3</td><td>B C D E F G Ab B</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ── NEAPOLITAN ── -->
+<section id="neapolitan">
+  <h2>Neapolitan Modes</h2>
+  <p>The Neapolitan scales are distinguished from the harmonic and ascending melodic minor scales by the lowered supertonic or second scale degree. Both systems are characterized by the presence of the lowered second degree, which gives them their distinctive color.</p>
+
+  <h3>Modes of the Neapolitan Major Scale</h3>
+  <span class="parent-label">Parent scale</span>
+  <div class="parent-scale">C &nbsp; Db &nbsp; Eb &nbsp; F &nbsp; G &nbsp; A &nbsp; B</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Mode</th><th>Semitone Sequence</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>Neapolitan Major (C)</td><td>1 2 2 2 2 2 1</td><td>C Db Eb F G A B</td></tr>
+        <tr><td>Lydian Augmented #6 (Db)</td><td>2 2 2 2 2 1 1</td><td>Db Eb F G A B C</td></tr>
+        <tr><td>Lydian Augmented (Eb)</td><td>2 2 2 2 1 1 2</td><td>Eb F G A B C Db</td></tr>
+        <tr><td>Lydian Dominant b6 (F)</td><td>2 2 2 1 1 2 2</td><td>F G A B C Db Eb</td></tr>
+        <tr><td>Major Locrian (G)</td><td>2 2 1 1 2 2 2</td><td>G A B C Db Eb F</td></tr>
+        <tr><td>Half-Diminished b4 (A)</td><td>2 1 1 2 2 2 2</td><td>A B C Db Eb F G</td></tr>
+        <tr><td>Altered Dominant bb3 (B)</td><td>1 1 2 2 2 2 2</td><td>B C Db Eb F G A</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Modes of the Neapolitan Minor Scale</h3>
+  <span class="parent-label">Parent scale</span>
+  <div class="parent-scale">C &nbsp; Db &nbsp; Eb &nbsp; F &nbsp; G &nbsp; Ab &nbsp; B</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Mode</th><th>Semitone Sequence</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>Neapolitan Minor (C)</td><td>1 2 2 2 1 3 1</td><td>C Db Eb F G Ab B</td></tr>
+        <tr><td>Lydian #6 (Db)</td><td>2 2 2 1 3 1 1</td><td>Db Eb F G Ab B C</td></tr>
+        <tr><td>Mixolydian Augmented (Eb)</td><td>2 2 1 3 1 1 2</td><td>Eb F G Ab B C Db</td></tr>
+        <tr><td>Romanian Minor (F)</td><td>2 1 3 1 1 2 2</td><td>F G Ab B C Db Eb</td></tr>
+        <tr><td>Locrian Dominant (G)</td><td>1 3 1 1 2 2 2</td><td>G Ab B C Db Eb F</td></tr>
+        <tr><td>Ionian #2 (Ab)</td><td>3 1 1 2 2 2 1</td><td>Ab B C Db Eb F G</td></tr>
+        <tr><td>Ultra Locrian bb3 (B)</td><td>1 1 2 2 2 1 3</td><td>B C Db Eb F G Ab</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ── BEBOP ── -->
+<section id="bebop">
+  <h2>Bebop Scales</h2>
+  <p>Bebop scales are extended tonal scales containing an additional chromatic passing tone. They are widely used in jazz improvisation because the added note allows chord tones to fall on metrically strong beats during continuous eighth-note lines.</p>
+  <p>In the following table, all scales are shown with C as the tonic. The note shown in parentheses represents the chromatic passing tone that creates the characteristic bebop alignment between chord tones and strong beats. For instance, in a 4/4 tune with eight notes, in the major bebop scale, the Ab is on the upbeat and allows for having the A on the downbeat, the B on the upbeat, and the C in the next bar on the downbeat.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Bebop Scale</th><th>Semitone Sequence</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>Major Bebop</td><td>2 2 1 2 1 1 2 1</td><td>C D E F G <span class="pt">(Ab)</span> A B</td></tr>
+        <tr><td>Dominant Bebop</td><td>2 2 1 2 2 1 1 1</td><td>C D E F G A Bb <span class="pt">(B)</span></td></tr>
+        <tr><td>Minor Bebop (Dorian Bebop)</td><td>2 1 2 2 1 1 1 2</td><td>C D Eb F G Ab <span class="pt">(A)</span> Bb</td></tr>
+        <tr><td>Melodic Minor Bebop</td><td>2 1 2 1 1 2 2 1</td><td>C D Eb F <span class="pt">(Gb)</span> G A B</td></tr>
+        <tr><td>Harmonic Minor Bebop</td><td>2 1 2 2 1 1 2 1</td><td>C D Eb F G Ab <span class="pt">(A)</span> B</td></tr>
+        <tr><td>Bebop Locrian</td><td>1 2 2 1 1 1 2 2</td><td>C Db Eb F Gb <span class="pt">(G)</span> Ab Bb</td></tr>
+        <tr><td>Bebop Altered Scale</td><td>1 2 1 2 2 2 1 1</td><td>C Db Eb E F# G# <span class="pt">(Bb)</span> B</td></tr>
+        <tr><td>Half-Whole Bebop Diminished</td><td>1 2 1 2 1 2 1 2</td><td>C Db Eb E F# G A <span class="pt">(Bb)</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note-callout">Note: passing tones are shown in <span class="pt">italic amber</span> — they are chromatic non-chord tones inserted to align harmonic targets with strong metric positions.</div>
+</section>
+
+<!-- ── MIDDLE EASTERN ── -->
+<section id="middle-eastern">
+  <h2>Arabic, Turkish, and Middle Eastern Scale Models</h2>
+  <p>The following scales are simplified pitch-class approximations of modal systems used in Arabic, Turkish, Persian, and Middle Eastern musical traditions. Since many of these traditions employ microtonal intervals and non-equal temperaments, the sequences below should be interpreted as 12-tone approximations suitable for computational exploration within GeCo-Tool.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Scale / Maqam / Makam</th><th>Semitone Sequence</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>Hijaz</td><td>1 3 1 2 1 2 2</td><td>C Db E F G Ab Bb</td></tr>
+        <tr><td>Hijazkar</td><td>1 3 1 2 1 3 1</td><td>C Db E F G Ab B</td></tr>
+        <tr><td>Bayati Approximation</td><td>1 2 2 2 1 2 2</td><td>C Db Eb F G Ab Bb</td></tr>
+        <tr><td>Nahawand</td><td>2 1 2 2 1 2 2</td><td>C D Eb F G Ab Bb</td></tr>
+        <tr><td>Rast Approximation</td><td>2 2 1 2 2 2 1</td><td>C D E F G A B</td></tr>
+        <tr><td>Saba Approximation</td><td>1 3 1 1 3 1 2</td><td>C Db E F Gb A Bb</td></tr>
+        <tr><td>Kurd</td><td>1 2 2 2 1 2 2</td><td>C Db Eb F G Ab Bb</td></tr>
+        <tr><td>Nikriz</td><td>1 3 1 2 1 3 1</td><td>C Db E F G Ab B</td></tr>
+        <tr><td>Huzzam Approximation</td><td>1 3 1 1 2 3 1</td><td>C Db E F Gb Ab B</td></tr>
+        <tr><td>Suznak</td><td>2 2 1 2 1 3 1</td><td>C D E F G Ab B</td></tr>
+        <tr><td>Ussak Approximation</td><td>1 2 2 2 1 2 2</td><td>C Db Eb F G Ab Bb</td></tr>
+        <tr><td>Segah Approximation</td><td>1 3 1 2 2 1 2</td><td>C Db E F G A Bb</td></tr>
+        <tr><td>Persian Scale</td><td>1 3 1 1 2 3 1</td><td>C Db E F Gb Ab B</td></tr>
+        <tr><td>Byzantine / Double Harmonic</td><td>1 3 1 2 1 3 1</td><td>C Db E F G Ab B</td></tr>
+        <tr><td>Oriental Scale</td><td>1 3 1 1 3 1 2</td><td>C Db E F Gb A Bb</td></tr>
+        <tr><td>Arabic Pentatonic Approximation</td><td>2 1 4 2 3</td><td>C D Eb G A</td></tr>
+        <tr><td>Turkish Hüseyni Approximation</td><td>2 1 2 2 1 2 2</td><td>C D Eb F G Ab Bb</td></tr>
+        <tr><td>Turkish Nihavent</td><td>2 1 2 2 1 2 2</td><td>C D Eb F G Ab Bb</td></tr>
+        <tr><td>Turkish Karcığar Approximation</td><td>1 3 1 2 1 2 2</td><td>C Db E F G Ab Bb</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note-callout">Notes are shown using the nearest approximation within the 12-tone equal temperament system. Traditional performances often employ microtonal intervals that cannot be represented exactly within GeCo's current modulo-12 framework.</div>
+</section>
+
+<!-- ── HOW TO ── -->
+<section id="how-to">
+  <h2>How to Use</h2>
+  <p>The user can take any semitone sequence from the tables above, choose the multidimensional option in GeCo-Tool, set the correct K value (for instance 7 for heptatonic scales), and then generate the selected scale.</p>
+  <p>However, considering the variety of scales, a zipped file with ready-made parameter files (<code>.txt</code>) is provided separately. The user can import the file and the selected sequence will appear directly in the interface, ready to be generated.</p>
+</section>
+
+
+<footer>
+  GeCo-Tool &mdash; Pitch-Class Space &#x2124;<sub>12</sub> &mdash; Scale Reference
+</footer>
+
+</div>
+
+<div class="page">
+  <!-- <a class="back-btn" href="GeCo-Tool.html">← Back to the App</a> -->
+  <a class="back-btn" href="#" onclick="window.close(); return false;">← Back to the App</a>
+
+
+</body>
+</html>

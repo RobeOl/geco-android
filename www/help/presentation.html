@@ -1,0 +1,1240 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GeCo-Tool Presentation</title>
+
+<script>
+window.MathJax = {
+tex: {
+inlineMath: [['$', '$'], ['\\(', '\\)']]
+}
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+<style>
+body {
+margin:0;
+font-family:Arial,sans-serif;
+background:#0f172a;
+color:#f8fafc;
+display:flex;
+}
+
+.sidebar {
+position:fixed;
+left:0;
+top:0;
+bottom:0;
+width:320px;
+overflow:auto;
+background:#111827;
+padding:24px;
+border-right:1px solid #334155;
+}
+
+.sidebar h2 {
+margin-top:0;
+color:#60a5fa;
+}
+
+.sidebar ul {
+list-style:none;
+padding:0;
+}
+
+.sidebar li {
+margin:10px 0;
+}
+
+.sidebar a {
+color:#cbd5e1;
+text-decoration:none;
+line-height:1.4;
+}
+
+.sidebar a:hover {
+color:white;
+}
+
+.content {
+margin-left:320px;
+width:calc(100% - 320px);
+padding:30px;
+}
+
+.slide {
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:40px 0;
+border-bottom:1px solid #1e293b;
+position:relative;
+}
+
+.slide-card {
+background:#111827;
+width:100%;
+max-width:1100px;
+padding:60px;
+border-radius:24px;
+box-shadow:0 10px 40px rgba(0,0,0,0.5);
+}
+
+.slide-number {
+position:absolute;
+top:20px;
+right:30px;
+opacity:0.6;
+font-size:14px;
+}
+
+h1 {
+color:#60a5fa;
+font-size:2.4rem;
+margin-top:0;
+margin-bottom:24px;
+}
+
+h2 {
+color:#60a5fa;
+font-size:1.8rem;
+margin-top:0;
+margin-bottom:24px;
+}
+
+p,li,td,th {
+font-size:1.1rem;
+line-height:1.7;
+}
+
+ul,ol {
+padding-left:28px;
+}
+
+table {
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+}
+
+th,td {
+border:1px solid #334155;
+padding:12px;
+text-align:left;
+}
+
+th {
+background:#1e293b;
+}
+
+.formula {
+background:#0b1220;
+padding:18px;
+border-radius:12px;
+margin:20px 0;
+overflow-x:auto;
+}
+
+@media (max-width: 900px) {
+body {
+display:block;
+}
+
+.sidebar {
+position:relative;
+width:auto;
+height:auto;
+}
+
+.content {
+margin-left:0;
+width:auto;
+padding:12px;
+}
+
+.slide-card {
+padding:28px;
+}
+
+h1 {
+font-size:2rem;
+}
+}
+</style>
+
+<style>
+    ul.lista-triangoli {
+        list-style-type: none; /* Nasconde i pallini di default */
+        padding-left: 20px;    /* Ridà un po' di spazio a sinistra */
+    }
+
+    ul.lista-triangoli li {
+        position: relative;
+        margin-bottom: 8px;
+    }
+
+    ul.lista-triangoli li::before {
+        content: "▶";          /* Il simbolo del triangolo */
+        color:#60a5fa;        /* Puoi cambiare il colore qui (es. Rosso Arancio) */
+        font-size: 12px;       /* Regola la dimensione del triangolo */
+        position: absolute;
+        left: -20px;           /* Posiziona il triangolo a sinistra del testo */
+        top: 2px;              /* Allinea verticalmente il triangolo al testo */
+    }
+</style>
+
+<style>
+    ul.sublista {
+        list-style-type: none; /* Nasconde i pallini di default */
+        padding-left: 20px;    /* Ridà un po' di spazio a sinistra */
+    }
+
+    ul.sublista li {
+        position: relative;
+        margin-bottom: 8px;
+    }
+
+    ul.sublista li::before {
+        content: "▶";          /* Il simbolo del triangolo */
+        color:#ff0000;        /* Puoi cambiare il colore qui (es. Rosso Arancio) */
+        font-size: 10px;       /* Regola la dimensione del triangolo */
+        position: absolute;
+        left: -20px;           /* Posiziona il triangolo a sinistra del testo */
+        top: 2px;              /* Allinea verticalmente il triangolo al testo */
+    }
+</style>
+
+<style>
+    /* ── Back button ── */
+.back-btn {
+    display: inline-block;
+    margin-bottom: 24px;
+    background: #2980b9;
+    color: white;
+    padding: 8px 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+}
+.back-btn:hover { background: #1a6a9a; }
+</style>
+
+</head>
+
+<body>
+
+<nav class="sidebar">
+<!-- <a class="back-btn" href="GeCo-Tool.html">← Back to the App</a> -->
+<a class="back-btn" href="#" onclick="window.close(); return false;">← Back to the App</a>
+
+<h2>Slides Index</h2>
+<ul class=lista-triangoli>
+<li><a href="#slide-1">From Interval Matrix to Score: GeCo-Tool</a></li>
+<li><a href="#slide-2">1. Introduction</a></li>
+<li><a href="#slide-3">2. Historical background: The Second Viennese School</a></li>
+<li><a href="#slide-4">3. Historical Antecedents</a></li>
+<li><a href="#slide-5">4. Jazz and Intervallic Organization</a></li>
+<li><a href="#slide-6">5. The Problem of Analysing the New Music</a></li>
+<li><a href="#slide-7">6. Early Analytical Approaches</a></li>
+<li><a href="#slide-8">7. From Early Analysis to Forte</a></li>
+<li><a href="#slide-9">8. Interval Matrix and Atonality</a></li>
+<li><a href="#slide-10">9. Computational Musicology</a></li>
+<li><a href="#slide-11">10. Limitations of Existing Tools</a></li>
+<li><a href="#slide-12">11. The Twelve-Tone Matrix</a></li>
+<li><a href="#slide-13">12. The Interval Matrix</a></li>
+<li><a href="#slide-14">13. Interval Matrix</a></li>
+<li><a href="#slide-15">14. Interval Matrix and Computational Musicology</a></li>
+<li><a href="#slide-16">15. Encoding a Pitch Sequence</a></li>
+<li><a href="#slide-17">16. Interval–Leap Representation</a></li>
+<li><a href="#slide-18">17. Beyond One-Dimensional Representation</a></li>
+<li><a href="#slide-19">18. Interval Operators</a></li>
+<li><a href="#slide-20">19. Compact Transformational Notation</a></li>
+<li><a href="#slide-21">20. Higher-Order Transformational Systems</a></li>
+<li><a href="#slide-22">21. Generalization to Multidimensional Spaces</a></li>
+<li><a href="#slide-23">22. Transformational Orbit Structures</a></li>
+<li><a href="#slide-24">23. Interval Symmetry and Cycles</a></li>
+<li><a href="#slide-25">24. Symmetry in Harmonic Practice</a></li>
+<li><a href="#slide-26">25. Pat Martino and Symmetrical Guitar Structures</a></li>
+<li><a href="#slide-27">26. Rhythmic Transformations</a></li>
+<li><a href="#slide-28">27. Cyclic Rhythmic Shifts</a></li>
+<li><a href="#slide-29">28. Rhythmic Inversion and Retrograde</a></li>
+<li><a href="#slide-30">29. Harmonization Strategies</a></li>
+<li><a href="#slide-31">30. Transformational Harmonization</a></li>
+<li><a href="#slide-32">31. GeCo-Tool: Generative Interval Matrix</a></li>
+<li><a href="#slide-33">32. Transformational Operations</a></li>
+<li><a href="#slide-34">33. Computational and Musical Framework</a></li>
+<li><a href="#slide-35">34. GeCo-Tool Web Application</a></li>
+</ul>
+</nav>
+
+<main class="content">
+
+<section class="slide" id="slide-1">
+<div class="slide-number">1 / 35</div>
+<div class="slide-card">
+<h1>From Interval Matrix to Score: GeCo-Tool</h1>
+<h2>a Generative Compositional Framework</h2>
+<br>
+Marco Bittelli — University of Bologna<br><br>Roberto Olmi — National Research Council
+</div>
+</section>
+
+
+<section class="slide" id="slide-2">
+<div class="slide-number">2 / 35</div>
+<div class="slide-card">
+<h1>1. Introduction</h1>
+
+<ul class=lista-triangoli>
+<li>The interval matrix has traditionally served as a descriptive framework for intervallic relations within pitch collections.</li>
+<li>In post-tonal theory, intervallic content is examined independently from tonal function.</li>
+<li>Atonal music lacks a functional tonal center and conventional harmonic hierarchy.</li>
+<li>Pitch organization emerges through:
+<ul class=sublista>
+<li>Symmetry</li>
+<li>Motivic development</li>
+<li>Intervallic consistency</li>
+</ul></li>
+</ul>
+
+</div>
+</section>
+
+
+<section class="slide" id="slide-3">
+<div class="slide-number">3 / 35</div>
+<div class="slide-card">
+<h1>2. Historical background: The Second Viennese School</h1>
+
+<ul class = lista-triangoli>
+<li>Schoenberg systematized the equal treatment of pitch classes through the twelve-tone method.</li>
+<li>Schoenberg proposed the “emancipation of dissonance.”</li>
+<li>Traditional distinctions between consonance and dissonance dissolve.</li>
+<li>All intervals acquire equal structural importance.</li>
+<li>Webern developed highly condensed intervallic structures.</li>
+<li>Berg combined serial procedures with expressive gestures.</li>
+<li>The interval matrix becomes a natural analytical counterpart to these compositional techniques.</li>
+</ul>
+
+</div>
+</section>
+
+
+<section class="slide" id="slide-4">
+<div class="slide-number">4 / 35</div>
+<div class="slide-card">
+<h1>3. Historical Antecedents</h1>
+
+<ul class = lista-triangoli>
+<li>Debussy weakened tonal hierarchy through:
+<ul class = sublista>
+<li>Parallelism</li>
+<li>Modal harmony</li>
+<li>Non-traditional scales</li>
+</ul></li>
+<li>Bartók explored:
+<ul class = sublista>
+<li>Symmetry</li>
+<li>Axis systems</li>
+<li>Interval cycles</li>
+</ul></li>
+<li>Stravinsky and Scriabin emphasized intervallic collections over tonal centers.</li>
+</ul>
+
+</div>
+</section>
+
+
+<section class="slide" id="slide-5">
+<div class="slide-number">5 / 35</div>
+<div class="slide-card">
+<h1>4. Jazz and Intervallic Organization</h1>
+
+<ul class = lista-triangoli>
+<li>Jazz harmony progressively weakened tonal functionality.</li>
+<li>Duke Ellington and Thelonious Monk expanded harmonic vocabulary through:</li>
+<ul class=sublista>
+    <li>Altered dominants</li>
+    <li>Extended harmonies</li>
+    <li>Unconventional voice leading</li>
+</ul>
+<li>John Coltrane explored:</li>
+<ul class=sublista>
+    <li>Symmetrical octave divisions</li>
+    <li>Cyclic intervallic patterns</li>
+</ul>
+<li>Free jazz abandoned predetermined harmonic progressions.</li>
+<li>Musical organization emerged through:</li>
+<ul class=sublista>
+    <li>Improvisation</li>
+    <li>Gesture interaction</li>
+    <li>Timbral contrasts</li>
+    <li>Dynamic intervallic configurations</li>
+</ul>
+<li>Major figures:
+<ul class = sublista>
+<li>Ornette Coleman</li>
+<li>Cecil Taylor</li>
+<li>Albert Ayler</li>
+</ul></li>
+</ul>
+
+</div>
+</section>
+
+
+<section class="slide" id="slide-6">
+<div class="slide-number">6 / 35</div>
+<div class="slide-card">
+<h1>5. The Problem of Analysing the New Music</h1>
+
+<ul class = lista-triangoli>
+<li>Early twentieth-century composers progressively abandoned traditional tonality.</li>
+<li>Conventional analytical tools based on:</li>
+    <ul class=sublista>
+        <li>Functional harmony</li>
+        <li>Tonal cadences</li>
+        <li>Modulation became insufficient.</li>
+    </ul> 
+<li>Composers such as:</li>
+    <ul class=sublista>
+        <li>Debussy</li>
+        <li>Schoenberg</li>
+        <li>Bartók</li>
+        <li>Stravinsky</li>
+    </ul>
+organized music through intervallic and motivic relations.</li>
+<li>Music theorists searched for new analytical models capable of describing unordered pitch structures.</li>
+</ul>
+
+</div>
+</section>
+
+
+<section class="slide" id="slide-7">
+<div class="slide-number">7 / 35</div>
+<div class="slide-card">
+<h1>6. Early Analytical Approaches</h1>
+
+<ul class=lista-triangoli>
+<li>Arnold Schoenberg emphasized the importance of the Grundgestalt.</li>
+    <ul class=sublista>
+        <li>A basic motivic cell</li>
+        <li>Transformed throughout a composition</li>
+    </ul>
+<li>Analysts increasingly focused on:</li>
+    <ul class=sublista>
+        <li>Symmetry</li>
+        <li>Intervallic recurrence</li>
+        <li>Motivic transformatio</li>
+    </ul>
+<li>Anton Webern’s music revealed highly compressed intervallic structures.</li>
+<li>Béla Bartók explored:</li>
+<ul class=sublista>
+    <li>Axis systems</li>
+    <li>Inversional symmetry</li>
+    <li>Cyclic interval patterns</li>
+</ul>
+<li>These developments prepared the ground for a more formalized theoretical system.</li>
+</ul>
+
+</div>
+</section>
+
+
+<section class="slide" id="slide-8">
+<div class="slide-number">8 / 35</div>
+<div class="slide-card">
+<h1>7. From Early Analysis to Forte</h1>
+
+<div style="display: flex; align-items: flex-start; gap: 1.5rem;">
+
+<!-- Testo a sinistra -->
+<div style="flex: 1;">
+    <ul class="lista-triangoli">
+    <li>Conventional analytical tools based on:
+    <ul class=sublista>
+        <li>Functional harmony</li>
+        <li>Tonal cadences</li>
+        <li>Modulation</li>
+    </ul>
+    <p style="margin-top: 0.5rem; margin-bottom: 1rem;">became insufficient.</p>
+</li>
+    <li>Analysts increasingly focused on:</li>
+    <ul class=sublista>
+        <li>Intervallic recurrence</li>
+        <li>Symmetry</li>
+        <li>Motivic transformation</li>
+    </ul>
+
+    <li>Allen Forte formalized these ideas through:
+    <ul class=sublista>
+    <li>Pitch-class sets</li>
+    <li>Prime forms</li>
+    <li>Interval vectors</li>
+    </ul></li>
+    </ul>
+</div>
+
+    <!-- Immagine a destra -->
+    <div style="flex-shrink: 0;">
+        <img src="figures/forte.png" alt="The Structure of Atonal Music" style="max-width: 300px;" />
+        <p style="text-align: center; font-size: 0.8em; color: white; margin-top: 0.3rem;">
+            Allen Forte, <em>The Structure of Atonal Music</em> (1973)
+          </p>
+    </div>
+</div>
+</section>
+
+
+<section class="slide" id="slide-9">
+<div class="slide-number">9 / 35</div>
+<div class="slide-card">
+<h1>8. Interval Matrix and Atonality</h1>
+
+<ul class=lista-triangoli>
+<li>The interval matrix reveals:</li>
+<ul class=sublista>
+    <li>Distribution of interval classes</li>
+    <li>Frequency of intervals within pitch-class sets</li>
+</ul>
+<li>Intervals become structural identities rather than tonal functions.</li>
+<li>Structural coherence arises through:</li>
+<ul class=sublista>
+    <li>Recurrence</li>
+    <li>Transformation</li>
+    <li>Symmetry</li>
+</ul>
+<li>Central composers:
+<ul class=sublista>
+<li>Arnold Schoenberg</li>
+<li>Anton Webern</li>
+<li>Alban Berg</li>
+</ul></li>
+</ul>
+
+</div>
+</section>
+
+
+<section class="slide" id="slide-10">
+<div class="slide-number">10 / 35</div>
+<div class="slide-card">
+<h1>9. Computational Musicology</h1>
+
+<ul class=lista-triangoli>
+<li>Computational systems increasingly use interval-based representations.</li>
+<li>Applications include:</li>
+<ul class=sublista>
+    <li>Symbolic music processing</li>
+    <li>Pitch-class analysis</li>
+    <li>Generative composition</li>
+</ul>
+<li>Tools and environments:
+<ul class=sublista>
+<li>music21</li>
+<li>PC-Set Calculator</li>
+<li>TOTAMUSICA</li>
+<li>Rubato Composer</li>
+<li>Opusmodus</li>
+<li>MUSIC𝄞NTWRK</li>
+</ul></li>
+</ul>
+
+</div>
+</section>
+
+
+<section class="slide" id="slide-11">
+<div class="slide-number">11 / 35</div>
+<div class="slide-card">
+<h1>10. Limitations of Existing Tools</h1>
+
+<ul class=lista-triangoli>
+<li>Many computational tools require advanced mathematics and programming knowledge.</li>
+<li>Such requirements are often absent in conservatory education.</li>
+<li>This study shifts the interval matrix from static analytical taxonomy to <span style="color: rgb(0, 217, 255);">a generative transformational system.</span></li>
+<li>The framework generates pitch structures through ordered interval-leap rules.</li>
+<li>Implemented as a web-based application.</li>
+</ul>
+
+</div>
+</section>
+
+
+<section class="slide" id="slide-12">
+<div class="slide-number">12 / 35</div>
+<div class="slide-card">
+<h1>11. The Twelve-Tone Matrix</h1>
+<h2>Transformations:</h2>
+<div style="display: flex; align-items: flex-start; gap: 1.5rem;">
+    
+    
+        <!-- Blocco Testo (a sinistra) -->
+        <div style="flex: 1;">
+            <ul class="lista-triangoli">
+                <li>P: Prime</li>
+                <li>R: Retrograde</li>
+                <li>I: Inversion</li>
+                <li>RI: Retrograde Inversion</li>
+            </ul>
+            
+            <ul class="lista-triangoli">
+                <li><p>Left &rarr; Right: <span style="color: rgb(0, 217, 255);">P<sub>n</sub> = P<sub>0</sub>...P<sub>11</sub></span></p></li>
+                <li><p>Right &rarr; Left: <span style="color: rgb(0, 217, 255);">R<sub>n</sub> = R<sub>0</sub>...R<sub>11</sub></span></p></li>
+                <li><p>Top &rarr; Bottom: <span style="color: rgb(0, 217, 255);">I<sub>n</sub> = I<sub>0</sub>...I<sub>11</sub></span></p></li>
+                <li><p>Bottom &rarr; Top: <span style="color: rgb(0, 217, 255);">RI<sub>n</sub> = RI<sub>0</sub>...RI<sub>11</sub></span></p></li>
+            </ul>
+            <p style="text-align: left;font-size: 19px; color:yellow;margin-left: 300px;">Rows: P<sub>n</sub>/R<sub>n</sub></p>
+            <p style="text-align: left;font-size: 19px; color:yellow;margin-left: 300px;">Columns: I<sub>n</sub>/RI<sub>n</sub></p>
+        </div>
+    
+        <!-- Contenitore Immagini in Verticale (a destra) -->
+        <div style="display: flex; flex-direction: column; gap: 15px; flex-shrink: 0;">
+            <img src="figures/Arnold.jpg" alt="Arnold" style="max-width: 400px; width: 100%;" />
+            <img src="figures/12-tone-matrix.png" alt="Twelve-Tone Matrix" style="max-width: 400px; width: 100%;" />
+        </div>
+        
+
+    
+    </div>
+
+</div>
+
+</div>
+</section>
+
+
+<section class="slide" id="slide-13">
+<div class="slide-number">13 / 35</div>
+<div class="slide-card">
+<h1>12. The Interval Matrix</h1>
+
+<div style="margin-left: auto;">
+    <img src="figures/matrix.png" alt="The Interval Matrix" style="max-width: 600px;" />
+</div>
+
+<p>The interval matrix in this study refers to a 12-rank symmetric matrix containing all interval relationships between the 12 notes of the chromatic scale.</p>
+<p>Each cell represents the distance in semitones between two notes.</p>
+<p>The matrix can be interpreted as a <span style="color: rgb(0, 217, 255);">matrix of transition intervals</span> useful for identifying paths within melodic sequences.</p>
+
+</div>
+</section>
+
+
+<section class="slide" id="slide-14">
+<div class="slide-number">14 / 35</div>
+<div class="slide-card">
+<h1>13. Interval Matrix</h1>
+
+<ul class=lista-triangoli>
+<li>The interval matrix represents intervallic relations within pitch collections.</li>
+<li>Applicable in tonal and atonal contexts.</li>
+<li>In <span style="color: rgb(0, 217, 255);">post-tonal theory</span>, intervallic content is independent of tonal function (Forte, 1973).</li>
+<li>Focus on structural properties:
+<ul class=sublista>
+<li>Pitch-class set classification</li>
+<li>Symmetry</li>
+<li>Interval-class distribution</li>
+</ul></li>
+</ul>
+
+</div>
+</section>
+
+
+<section class="slide" id="slide-15">
+<div class="slide-number">15 / 35</div>
+<div class="slide-card">
+<h1>14. Interval Matrix and Computational Musicology</h1>
+
+<ul class=lista-triangoli>
+    <li><span style="color: rgb(0, 217, 255);">Transformationaltheory:</span> intervalsasoperationsbetween musical objects (Lewin, 1987).</li>
+    <li>Structure emerges from <span style="color: rgb(0, 217, 255);">networks of transformations.</span></li>
+    <li><span style="color: rgb(0, 217, 255);">Compositional use:</span> intervallic processes as generative tools (Morris, 1987).</li>
+    <li>In <span style="color: rgb(0, 217, 255);">computational musicology</span>:</li>
+    <ul class=sublista>
+        <li>interval-based representations</li>
+        <li>transposition-invariant models (Lattner, 2018)</li>
+    </ul>
+    <li><span style="color: rgb(0, 217, 255);">music21</span>supports:</li>
+    <ul class=sublista>
+        <li>transformation</li>
+        <li>generation</li>
+        <li>visualization of pitch structures (Cuthbert, 2010)</li>
+    </ul>
+</ul>
+
+</div>
+</section>
+
+
+<section class="slide" id="slide-16">
+<div class="slide-number">16 / 35</div>
+<div class="slide-card">
+<h1>15. Encoding a Pitch Sequence</h1>
+
+<ul class=lista-triangoli>
+<li>Example: C E♭ A C</li>
+<li>Assign 0 to the first note: 0 3 9 0</li>
+<li>Representation as:</li>
+<ul class=sublista>
+    <li>absolute interval distances</li>
+    <li>relative distances (between consecutive notes)</li>
+</ul>
+<li>Relative intervals: 0 3 6 3</li>
+<li>Interpretable as a <span style="color: rgb(0, 217, 255);">one-dimensional interval vector</span>.</li>
+</ul>
+
+<div style="margin-left: auto;">
+    <img src="figures/vector.png" alt="The Interval Vector" style="max-width: 600px;" />
+    <p style="text-align: left; font-size: 1.2em; color: rgb(245, 233, 68); margin-top: 0.3rem;">
+        One-dimensional intervallic pattern
+      </p>
+</div>
+
+</div>
+</section>
+
+
+<section class="slide" id="slide-17">
+<div class="slide-number">17 / 35</div>
+<div class="slide-card">
+<h1>16. Interval–Leap Representation</h1>
+
+<ul class=lista-triangoli>
+<li>Distinction:</li>
+<ul class=lista-triangoli>
+    <li><span style="color: rgb(2, 217, 255);">I:</span> interval (horizontal motion)</li>
+    <li><span style="color: rgb(0, 217, 255);">J:</span> leap (vertical motion)</li>
+</ul>
+
+<li>Notation: <br> &emsp;&emsp;&emsp;&emsp;&emsp; C (I3) E♭ (J6) A (I3) C</li>
+<li>Interpretation:
+<ul class=lista-triangoli>
+<li>Minor third up</li>
+<li>Tritone</li>
+<li>Minor third</li>
+</ul></li>
+<li>Intervals correspond to horizontal paths; leaps to vertical paths (in the matrix).</li>
+</ul>
+
+<div style="margin-left: auto;">
+    <img src="figures/transition_matrix.png" alt="Transition matrix" style="max-width: 600px;" />
+</div>
+
+</div>
+</section>
+
+
+<section class="slide" id="slide-18">
+<div class="slide-number">18 / 35</div>
+<div class="slide-card">
+<h1>17. Beyond One-Dimensional Representation</h1>
+
+<ul class=lista-triangoli>
+<li>Example hexatonic ordering: <br>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; C G♭ A♭ D E B♭ C</li>
+<li>Interval–leap notation:<br>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; I<sub>6</sub> J<sub>2</sub> I<sub>6</sub> J<sub>2</sub> I<sub>6</sub> J<sub>2</sub></li>
+<li>The resulting structure defines a path in the interval matrix.</li>
+</ul>
+
+<div style="margin-left: auto;">
+    <img src="figures/trans_hex.png" alt="Trans Hex" style="max-width: 600px;" />
+    <p style="text-align: left; font-size: 1.2em; color: rgb(245, 233, 68); margin-top: 0.3rem;">
+        C G♭ A♭ D E B♭ C path in the interval matrix
+      </p>
+</div>
+
+</div>
+</section>
+
+
+<section class="slide" id="slide-19">
+<div class="slide-number">19 / 35</div>
+<div class="slide-card">
+<h1>18. Interval Operators</h1>
+
+<ul class=lista-triangoli>
+<li>Operators:
+<ul class=lista-triangoli>
+<li>Iₙ: transposition by n semitones</li>
+<li>Jₘ: transposition by m semitones</li>
+</ul></li>
+<li>Example:
+<ul class=lista-triangoli>
+<li>I<sub>6</sub>(C) = G♭</li>
+<li>J<sub>2</sub>(G♭) = A♭</li>
+</ul></li>
+<li>Recursive process: <br>&emsp;&emsp;&emsp;&emsp;&emsp;C &rarr; G♭ &rarr; A♭ &rarr; D &rarr; E &rarr; B♭ &rarr; C</li>
+<li>Closed cycle obtained by iteration</li>
+</ul>
+
+</div>
+</section>
+
+
+<section class="slide" id="slide-20">
+<div class="slide-number">20 / 35</div>
+<div class="slide-card">
+<h1>19. Compact Transformational Notation</h1>
+
+<ul class=lista-triangoli>
+    <li>Iterative process written as:</li>
+    <div class='formula'>\[\Large(I_nJ_m)^N(X) \rightarrow X\]</div>
+</ul>
+
+<ul class=lista-triangoli>
+    <li>Meaning:</li>
+    <ul class=sublista>
+        <li>Apply I<sub>n</sub> then J<sub>m</sub></li>
+        <li>Repeat N times, with N such to generate the starting note</li>
+    </ul>
+
+<li>Extensions:</li>
+<ul class=sublista>
+<li>Binary transformation: (I<sub>n</sub>J<sub>m</sub>)<sup>N</sup></li>
+<li>Quaternary transformation: (I<sub>n</sub>J<sub>m</sub>I<sub>p</sub>J<sub>q</sub>)<sup>N</sup></li>
+</ul>
+<li>From static sets &rarr; dynamic paths</li>
+<li>Paths can be negative (descending intervals ore leaps)</li>
+</ul>
+
+</div>
+</section>
+
+
+<section class="slide" id="slide-21">
+<div class="slide-number">21 / 35</div>
+<div class="slide-card">
+<h1>20. Higher-Order Transformational Systems</h1>
+
+<ul class=lista-triangoli>
+<li>Binary systems: \((I_nJ_m)^N\)</li>
+<li>Ternary systems: \((I_nI_mI_k)^N\)</li>
+<li>Quaternary systems: \((I_nJ_mI_pJ_q)^N\)</li>
+<li>Senary systems: \((I_{n1}1I_{n2}I_{n3}I_{n4}I_{n5}I_{n6})^N\)</li>
+</ul>
+
+</div>
+</section>
+
+
+<section class="slide" id="slide-22">
+<div class="slide-number">22 / 35</div>
+<div class="slide-card">
+<h1>21. Generalization to Multidimensional Spaces</h1>
+
+<p>We can look at binary and ternary transformations as operations in two-dimensional (2D) 
+    and three-dimensional (3D) interval spaces. Their application to a pitch-class X results 
+    in a sequence terminating on X itself (circular, or “closure” condition):</p>
+
+<ul class=lista-triangoli>
+    <li>2D <br>&emsp;&emsp;&emsp;&emsp;<span class='formula'>\(\Large (I_nJ_m)^N(X) \rightarrow X\)</span></li>
+    <li>3D <br>&emsp;&emsp;&emsp;&emsp;<span class='formula'>\(\Large (I_nJ_mK_p)^N(X) \rightarrow X\)</span></li>
+</ul>
+    
+<p>The extension to <span style="color: rgb(0, 217, 255);">N-dimensional interval spaces</span>:</p>
+<span class='formula'>
+\[
+\left(\prod_{{i=1}}^K I_{{n_i}}\right)^N(X) \rightarrow X
+\]
+</span>
+<p>This framework enables generation of arbitrary scales and twelve-tone structures.</p>
+
+</div>
+</section>
+
+
+<section class="slide" id="slide-23">
+<div class="slide-number">23 / 35</div>
+<div class="slide-card">
+<h1>22. Transformational Orbit Structures</h1>
+
+<ul class=lista-triangoli>
+<li>Binary systems generate highly symmetrical orbit structures.</li>
+<li>Ternary systems introduce asymmetric intervallic permutations.</li>
+<li>Senary systems generate dense transformational networks spanning the chromatic aggregate.</li>
+<li>Paths may include: </li>
+    <ul class=sublista>
+        <li>ascending intervals</li>
+        <li>descending intervals</li>
+        <li>negative transformations</li>
+        <li>non-linear cyclic returns</li>
+    </ul>
+<br>
+<li>Transformational notation shifts analysis from <span style="color: rgb(0, 217, 255);">static pitch collections</span> to 
+    <span style="color: rgb(0, 217, 255);">dynamic intervallic trajectories</span></li>
+</ul>
+
+</div>
+</section>
+
+
+<section class="slide" id="slide-24">
+<div class="slide-number">24 / 35</div>
+<div class="slide-card">
+<h1>23. Interval Symmetry and Cycles</h1>
+
+<table>
+<thead>
+<tr><th>Binary Rule</th><th>Resulting Collection</th><th>Orbit Size</th></tr>
+</thead>
+<tbody>
+<tr><td>(I<sub>1</sub>, J<sub>1</sub>)</td><td>Full chromatic cycle</td><td>12</td></tr>
+<tr><td>(I<sub>2</sub>, J<sub>2</sub>)</td><td>Whole-tone collection</td><td>6</td></tr>
+<tr><td>(I<sub>3</sub>, J<sub>3</sub>)</td><td>Symmetric subset</td><td>4</td></tr>
+<tr><td>(I<sub>4</sub>, J<sub>4</sub>)</td><td>Augmented triad cycle</td><td>3</td></tr>
+<tr><td>(I<sub>6</sub>, J<sub>6</sub>)</td><td>Tritone</td><td>2</td></tr>
+</tbody>
+</table>
+
+<p> <span style="color: rgb(0, 217, 255);">Examples of orbit cardinalities generated by binary rules</span></p>
+</div>
+</section>
+
+
+<section class="slide" id="slide-25">
+<div class="slide-number">25 / 35</div>
+<div class="slide-card">
+<h1>24. Symmetry in Harmonic Practice</h1>
+
+<ul class=lista-triangoli>
+<li><span style="color: rgb(0, 217, 255);">Coltrane changes</span> follow cycles of major thirds.</li>
+<li>Example:
+<div class='formula'>\[B \rightarrow G \rightarrow E^\flat \rightarrow B\]</div>
+</li>
+<li>Corresponds to the pitch-class set<br> 
+    <p style="text-align: center;font-size: 24px;">{0,4,8}</p></li>
+<li>Interpretation:</li>
+<ul class=sublista>
+    <li>Harmonic motion as <span style="color: rgb(0, 217, 255);">cyclic trajectory</span></li>
+    <li>Interval matrix as <span style="color: rgb(0, 217, 255);">space of transformations</span></li>
+</ul>
+
+</ul>
+
+</div>
+</section>
+
+
+<section class="slide" id="slide-26">
+<div class="slide-number">26 / 35</div>
+<div class="slide-card">
+<h1>25. Pat Martino and Symmetrical Guitar Structures</h1>
+
+<ul class=lista-triangoli>
+<li>In <span style="color: rgb(0, 217, 255);">The Nature of Guitar</span>, Pat Martino conceives the fretboard 
+    as a geometric system based on intervallic symmetry and movable forms.</li>
+<li>Harmonic structures emerge through cyclic transformations ofintervallic cells distributed across the neck.</li>
+<li>His approach emphasizes:
+<ul class=sublista>
+<li>Symmetrical fingering patterns</li>
+<li>Cyclic intervallic motion</li>
+<li>Transformational equivalence</li>
+</ul></li>
+<li>These concepts relate directly to binary orbit structures:</li>
+<ul class=sublista>
+    <li>(I<sub>2</sub> , J<sub>2</sub> ) &rArr; whole-tone collection</li>
+    <li>(I<sub>4</sub> , J<sub>4</sub> ) &rArr; augmented cycle</li>
+    <li>(I<sub>6</sub> , J<sub>6</sub> ) &rArr; tritone polarity</li>
+</ul>
+<li>The fretboard becomes a topological space where intervallic orbits organize melodic and harmonic navigation.</li>
+</ul>
+
+</div>
+</section>
+
+
+<section class="slide" id="slide-27">
+<div class="slide-number">27 / 35</div>
+<div class="slide-card">
+<h1>26. Rhythmic Transformations</h1>
+
+<ul class=lista-triangoli>
+    <li>Rhythmic transformations modify only durations: <br>
+        <p style="text-align: center;font-size: 20px;">Pitch fixed ; Rhythm transformed</p></li>
+    </li>
+    <li>They represent the temporal analogue of pitch-class transformations.</li>
+    <li>Four operations are implemented in GeCo-Tool</li>
+</ul>
+
+<table>
+<thead>
+<tr><th>Symbol</th><th>Operation</th><th>Function</th></tr>
+</thead>
+<tbody>
+<tr><td>S+</td><td>Shift forward</td><td>Cyclic advancement</td></tr>
+<tr><td>S−</td><td>Shift backward</td><td>Cyclic retardation</td></tr>
+<tr><td>I</td><td>Rhythmic inversion</td><td>Long ↔ short</td></tr>
+<tr><td>R</td><td>Retrograde</td><td>Temporal reversal</td></tr>
+</tbody>
+</table>
+<ul class=lista-triangoli>
+<li>Rhythm becomes an autonomous transformational domain.</li>
+</ul>
+</div>
+</section>
+
+
+<section class="slide" id="slide-28">
+<div class="slide-number">28 / 35</div>
+<div class="slide-card">
+<h1>27. Cyclic Rhythmic Shifts</h1>
+
+<ul class=lista-triangoli>
+<li>Shift operations cyclically reorganize durations.</li>
+<li>Forward shift:
+<span class='formula'>\[\Large S^+(d_1,d_2,\dots,d_n)\]</span></li>
+<p><span style="color: rgb(0, 217, 255);">The last durations move to the beginning of the sequence.</span></p>
+
+<li>Backward shift:
+<span class='formula'>\[\Large S^-(d_1,d_2,\dots,d_n)\]</span></li>
+<p><span style="color: rgb(0, 217, 255);">The first durations move to the end of the sequence.</span></p>
+
+<li>These operations preserve rhythmic material while changing: </li>
+<ul class=sublista>
+    <li>Metric emphasis</li>
+    <li>Temporal perception</li>
+    <li>Accent distribution</li>
+</ul>
+
+</ul>
+
+</div>
+</section>
+
+
+<section class="slide" id="slide-29">
+<div class="slide-number">29 / 35</div>
+<div class="slide-card">
+<h1>28. Rhythmic Inversion and Retrograde</h1>
+
+<ul class=lista-triangoli>
+<li>Rhythmic inversion maps duration hierarchies symmetrically:
+    <p style="text-align: center;font-size: 22px;">long &LeftArrowRightArrow; short</p>
+</li>
+<li>Example:
+    <p style="text-align: center;font-size: 22px;">(whole, quarter, eighth) &RightArrow; (eighth, quarter, whole)</p>
+<li>Rhythmic retrograde reverses temporal order:
+<div class='formula'>\[\Large (d_1,d_2,\dots,d_n) \rightarrow (d_n,\dots,d_2,d_1)\]</div></li>
+<li>These transformations generate:</li>
+<ul class=sublista>
+    <li>Temporal symmetry</li>
+    <li>Recursive rhythmic structures</li>
+    <li>Non-linear periodicity</li>
+</ul>
+</ul>
+
+</div>
+</section>
+
+
+<section class="slide" id="slide-30">
+<div class="slide-number">30 / 35</div>
+<div class="slide-card">
+<h1>29. Harmonization Strategies</h1>
+<ul class=lista-triangoli>
+    <li>Harmonization is not conceived in a traditional tonal sense:<br>
+        <p style="text-align: center;font-size: 20px; color: yellow;">no functional tonality; no tertian hierarchy</p></li>
+    <li>The approach focuses on quaternary structures generated by transformational sequences.</li>
+    <li>Three harmonization models are implemented in GeCo-Tool:</li>
+</ul>
+<table>
+<thead>
+<tr><th>Method</th><th>Principle</th><th>Character</th></tr>
+</thead>
+<tbody>
+<tr><td>On-the-beat</td><td>Odd-note bichords</td><td>More consonant</td></tr>
+<tr><td>Off-the-beat</td><td>Even-note bichords</td><td>Jazzy / anticipatory</td></tr>
+<tr><td>Tetradic</td><td>Four-note segmentation</td><td>Vertical structures</td></tr>
+</tbody>
+</table>
+<ul class=lista-triangoli>
+    <li>The first two methods derive from the <span style="color: rgb(0, 217, 255);">span process:</span></li>
+    <ul class=sublista>
+        <li>harmonic voice skips one melodic note</li>
+        <li>parallel dyadic structures emerge</li>
+        <li>melodic points become emphasized</li>
+    </ul>
+    <li>These approaches resemble Weberns discontinuous vertical writing.</li>
+</ul>
+</div>
+</section>
+
+
+<section class="slide" id="slide-31">
+<div class="slide-number">31 / 35</div>
+<div class="slide-card">
+<h1>30. Transformational Harmonization</h1>
+
+<ul class=lista-triangoli>
+<li>In Webern-like harmonization, bichords illuminate the melodic line intermittently.
+<li>Harmony does not accompany functionally:
+    <p style="text-align: center;font-size: 22px; color:yellow;">verticality &RightArrow; projection of the line</p>
+</li>    acts as projection of the melodic line rather than tonal accompaniment.</li>
+<li>The harmonic layer continuously redefines intervallic context.</li>
+<li>Tetradic harmonization follows a segmentation principle:</li>
+<ul class=sublista>
+    <li>melodic cells generate vertical structures</li>
+    <li>four-note groups become tetrachords</li>
+</ul>
+<li>Harmonization therefore emerges from <span style="color: yellow;">transformational relations</span> rather than tonal syntax.</li>
+</ul>
+
+</div>
+</section>
+
+
+<section class="slide" id="slide-32">
+<div class="slide-number">32 / 35</div>
+<div class="slide-card">
+<h1>31. GeCo-Tool: Generative Interval Matrix</h1>
+
+<ul class=lista-triangoli>
+<li>GeCo-Tool is a web application for generating musical sequences derived from interval matrices, 
+    analogous to the twelve-tone matrix in serial composition.</li>
+<li>The app generates cyclic pitch structures from:
+<ul class=lista-triangoli>
+    <ul class=sublista>
+        <li>Starting pitch-class</li>
+        <li>Interval sequence</li>
+        <li>Rhythmic mode</li>
+    </ul>
+</ul></li>
+<li>Sequences evolve until recovery of the initial pitch-class.</li>
+<span class='formula'>\[\Large p_n \equiv p_0 \pmod{{12}}\]</span>
+<li>Five structural models are implemented:</li>
+</ul>
+
+<table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Structure</th>
+        <th>Character</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><span class="sym">Binary</span></td><td>interval + leap</td><td>Symmetric cycles</td></tr>
+      <tr><td><span class="sym">Ternary</span></td><td>3 intervals</td><td>Hybrid contours</td></tr>
+      <tr><td><span class="sym">Quaternary</span></td><td>2 interval pairs</td><td>Extended periodicity</td></tr>
+      <tr><td><span class="sym">Senary</span></td><td>3 interval pairs</td><td>Dense orbit networks</td></tr>
+      <tr><td><span class="sym">Multidimensional</span></td><td>any number of intervals</td><td>Any possible orbit</td></tr>
+    </tbody>
+  </table>
+<ul class=lista-triangoli>
+    <li>The app dynamically generates:
+        <ul class=sublista>
+            <li>MIDI sequences</li>
+            <li>MusicXML notation</li>
+        </ul>
+    </li>
+    
+</ul>
+</div>
+</section>
+
+
+<section class="slide" id="slide-33">
+<div class="slide-number">33 / 35</div>
+<div class="slide-card">
+<h1>32. Transformational Operations</h1>
+<ul class=lista-triangoli>
+    <li>GeCo-Tool applies pitch-class transformations derived from serial and post-tonal theory.</li>
+    <li>Pitch transformations</li>
+</ul>
+<table>
+<thead>
+<tr><th>Operation</th><th>Symbol</th><th>Function</th></tr>
+</thead>
+<tbody>
+<tr><td>Transpose</td><td>T</td><td>Shift by semitones</td></tr>
+<tr><td>Inversion</td><td>I</td><td>Interval reflection</td></tr>
+<tr><td>Retrograde</td><td>R</td><td>Reverse order</td></tr>
+<tr><td>Retrograde-Inversion</td><td>RI</td><td>Combined transformation</td></tr>
+</tbody>
+</table>
+
+<ul class=lista-triangoli>
+    <li>Rhythmic transformations operate independently from pitch:
+        <ul class=sublista>
+            <li>Rhythmic retrograde</li>
+            <li>Rhythmic inversion</li>
+            <li>Cyclic duration shifts</li>
+        </ul>
+    </li>
+    <li>ransformations may be chained recursively:
+        <span class='formula'>\[R(T(I(X)))\]</span>
+    </li>
+    <li>The system therefore models:
+        <ul class=sublista>
+            <li>Dynamic intervallic trajectories</li>
+            <li>Recursive orbit structures</li>
+            <li>Time-domain symmetries</li>
+        </ul>
+    </li>
+</ul>
+</div>
+</section>
+
+
+<section class="slide" id="slide-34">
+<div class="slide-number">34 / 35</div>
+<div class="slide-card">
+<h1>33. Computational and Musical Framework</h1>
+<ul class=lista-triangoli>
+    <li>GeCo-Tool integrates computational generation with transformational music theory.</li>
+    <li>Main musical features:
+        <ul class=sublista>
+            <li>Harmonic accompaniment</li>
+            <li>Octave limitation</li>
+            <li>Treble/Bass clef rendering</li>
+            <li>MIDI import/export</li>
+        </ul>
+    </li>
+    <li>Typical worflow:
+        <ul class=sublista>
+            <li>Define interval generators</li>
+            <li>Generate cyclic sequence</li>
+            <li>Apply transformations</li>
+            <li>Explore rhythmic and harmonic variants</li>
+            <li>Export MIDI or score</li>   
+        </ul>
+    </li>
+
+<p style="text-align: left;font-size: 18px; color:rgb(0, 204, 255);">The platform connects:</p> 
+<p style="text-align: center;font-size: 20px; color:yellow;">algorithmic composition &RightArrow;
+    transformational theory &RightArrow; interactive musical practice</p>
+    
+</div>
+</section>
+
+
+<section class="slide" id="slide-35">
+<div class="slide-number">35 / 35</div>
+<div class="slide-card">
+<h1>34. GeCo-Tool Web Application</h1>
+
+<ul class=lista-triangoli>
+<li>Publicly accessible online.</li>
+<li>Supports interactive exploration of intervallic orbit structures and cyclic transformational systems.</li>
+<li>Users can generate sequences in real time, visualize scores dynamically, listen to MIDI playback, and export materials.</li>
+</ul>
+<p><strong>URLs:</strong><br>
+https://marcobittelli.it <span style="color: yellow;">under the section Music</span><br>
+https://murosigma.it/rob/GeCo-Tool.html
+</p>
+
+<a class="back-btn" href="GeCo-Tool.html">← Back to the App</a>
+</div>
+</section>
+
+</main>
+
+</body>
+</html>

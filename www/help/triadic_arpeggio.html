@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Triadic Arpeggios</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&family=Inter:wght@300;400;500&display=swap');
+
+  :root {
+    --ink:      #1a1714;
+    --paper:    #f7f4ef;
+    --rule:     #c8bfb0;
+    --accent:   #5a3e28;
+    --faint:    #e8e2d8;
+    --mono-bg:  #f0ebe2;
+    --neg:      #7a2e2e;
+    --pos:      #2e5a3a;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 17px;
+    line-height: 1.7;
+    padding: 3rem 1.5rem 6rem;
+  }
+
+  .page {
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  /* ── Title ── */
+  header {
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 1.2rem;
+    margin-bottom: 3rem;
+  }
+
+  h1 {
+    font-family: 'EB Garamond', serif;
+    font-weight: 600;
+    font-size: 2.6rem;
+    letter-spacing: 0.01em;
+    line-height: 1.15;
+    color: var(--ink);
+  }
+
+  .subtitle {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 300;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-top: 0.4rem;
+  }
+
+  /* ── Sections ── */
+  section {
+    margin-bottom: 3.5rem;
+  }
+
+  h2 {
+    font-family: 'EB Garamond', serif;
+    font-weight: 600;
+    font-size: 1.35rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 0.4rem;
+    margin-bottom: 1.4rem;
+  }
+
+  /* ── Intro prose ── */
+  p {
+    margin-bottom: 1rem;
+    max-width: 72ch;
+  }
+
+  /* ── Math display blocks ── */
+  .math-block {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: 'EB Garamond', serif;
+    font-size: 1.1rem;
+    font-style: italic;
+    background: var(--faint);
+    border-left: 3px solid var(--accent);
+    padding: 0.55rem 1.1rem;
+    margin: 1rem 0 1rem 1.5rem;
+    width: fit-content;
+    color: var(--ink);
+  }
+
+  .math-block .arrow { font-style: normal; }
+
+  .math-chain {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: 'EB Garamond', serif;
+    font-size: 1.05rem;
+    font-style: italic;
+    background: var(--faint);
+    border-left: 3px solid var(--rule);
+    padding: 0.6rem 1.1rem;
+    margin: 1rem 0 1rem 1.5rem;
+    width: fit-content;
+    color: var(--ink);
+  }
+
+  .math-chain span { font-style: normal; color: var(--accent); }
+
+  /* ── Tables ── */
+  .table-wrap {
+    overflow-x: auto;
+    margin-top: 0.5rem;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+  }
+
+  thead tr {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  thead th {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 0.72rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    padding: 0.7rem 1rem;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--faint);
+    transition: background 0.12s;
+  }
+
+  tbody tr:hover { background: var(--faint); }
+
+  tbody tr:nth-child(even) { background: rgba(200,191,176,0.15); }
+  tbody tr:nth-child(even):hover { background: var(--faint); }
+
+  td {
+    padding: 0.6rem 1rem;
+    vertical-align: top;
+  }
+
+  /* Name column */
+  td:first-child {
+    font-family: 'EB Garamond', serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    white-space: nowrap;
+  }
+
+  /* Scale Seq column */
+  td:nth-child(2) {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: #555;
+    white-space: nowrap;
+  }
+
+  /* K column */
+  td:nth-child(3) {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    font-weight: 500;
+    text-align: center;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+
+  /* Sequence column */
+  td:last-child {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.02em;
+    line-height: 1.6;
+  }
+
+  /* colour-code negative numbers in sequences */
+  .seq-neg { color: var(--neg); }
+  .seq-pos { color: var(--pos); }
+
+  /* ── Z12 notation ── */
+  .z12 {
+    font-style: normal;
+    font-weight: 600;
+  }
+
+  /* ── footnote ── */
+  .note {
+    font-size: 0.82rem;
+    color: #666;
+    font-style: italic;
+    margin-top: 0.8rem;
+  }
+</style>
+
+<style>
+.back-btn {
+    display: inline-block;
+    margin-bottom: 24px;
+    background: #2980b9;
+    color: white;
+    padding: 8px 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+}
+.back-btn:hover { background: #1a6a9a; }
+footer {
+    text-align: center;
+    font-size: 12px;
+    color: #aaa;
+    padding: 20px 0 40px;
+}
+</style>
+
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <h1>🎵 Triadic Arpeggios</h1>
+    <p class="subtitle">GeCo-Tool Triadic Arpeggios</p>
+  </header>
+
+  <a class="back-btn" href="#" onclick="window.close(); return false;">← Back to the App</a>
+
+  <!-- Introduction -->
+  <section>
+    <h2>Introduction</h2>
+
+    <p>
+      GeCo-Tool is based on interval generation within the pitch-class space
+      <strong class="z12">ℤ<sub>12</sub></strong>.
+      In previous documents, scales were represented as ordered semitone sequences and
+      triads were represented as harmonic structures derived from those scales.
+      In this document, each scale or collection is transformed into a single continuous melodic chain.
+    </p>
+
+    <p>Two related procedures are used:</p>
+
+    <p>
+      <strong>(a)</strong> For collections that naturally generate tertian harmony,
+      a triadic arpeggio is built on every degree by selecting:
+    </p>
+
+    <div class="math-block">1,&nbsp;&nbsp;3,&nbsp;&nbsp;5</div>
+
+    <p>
+      The resulting arpeggios are concatenated into a single continuous melodic sequence.
+      Within each three-note structure the motion is always ascending.
+      Between one structure and the next, the line returns downward to the first note of the following structure.
+    </p>
+
+    <p>Thus:</p>
+    <div class="math-block"><em>G</em> <span class="arrow">→</span> <em>D</em> = −5</div>
+    <p>rather than:</p>
+    <div class="math-block"><em>G</em> <span class="arrow">→</span> <em>D</em> = 7</div>
+
+    <p>
+      <strong>(b)</strong> For collections that do not naturally generate tertian harmony,
+      the same geometric process is applied:
+    </p>
+
+    <div class="math-chain">
+      take one note
+      <span>→</span> skip one note
+      <span>→</span> take one note
+      <span>→</span> skip one note
+      <span>→</span> take one note
+    </div>
+
+    <p>
+      The resulting structures should not necessarily be interpreted as traditional triads.
+      Instead, they are generalized cyclic objects generated by the same skip-one-note process.
+      As for the scales, a zipped file containing the presets is provided.
+    </p>
+  </section>
+
+  <!-- Arpeggio Chains -->
+  <section>
+    <h2>Arpeggio Chains from Tertian Collections</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Scale / Collection</th>
+            <th>Scale Seq.</th>
+            <th>K</th>
+            <th>Arpeggio Chain Sequence</th>
+          </tr>
+        </thead>
+        <tbody id="tertian-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Skip-One-Note Chains -->
+  <section>
+    <h2>Skip-One-Note Chains</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Collection</th>
+            <th>Scale Seq.</th>
+            <th>K</th>
+            <th>Skip-One-Note Chain Sequence</th>
+          </tr>
+        </thead>
+        <tbody id="skip-body"></tbody>
+      </table>
+    </div>
+    <p class="note">Negative values indicate descending motion; positive values indicate ascending intervals (semitones).</p>
+  </section>
+
+</div>
+
+<script>
+  const tertianData = [
+    ["Major",                        "2 2 1 2 2 2 1",     "21", "4 3 -5 3 4 -5 3 4 -6 4 3 -5 4 3 -5 3 4 -5 3 3 -5"],
+    ["Harmonic Minor",               "2 1 2 2 1 3 1",     "21", "3 4 -5 3 3 -5 4 4 -6 3 4 -5 4 3 -6 4 3 -4 3 3 -5"],
+    ["Melodic Minor (Ascending)",    "2 1 2 2 2 2 1",     "21", "3 4 -5 3 4 -6 4 4 -6 4 3 -5 4 3 -5 3 3 -4 3 3 -5"],
+    ["Harmonic Major",               "2 2 1 2 1 3 1",     "21", "4 3 -5 3 3 -4 3 4 -6 3 4 -5 4 3 6 4 4 -5 3 3 -5"],
+    ["Hungarian Minor",              "2 1 3 1 1 3 1",     "21", "3 4 -5 4 2 -5 4 4 -5 2 4 -5 4 3 6 4 3 -4 3 4 -6"],
+    ["Neapolitan Major",             "1 2 2 2 2 2 1",     "21", "3 4 -6 4 4 -6 4 4 -6 4 3 -5 4 2 -4 3 3 -4 2 4 -5"],
+    ["Neapolitan Minor",             "1 2 2 2 1 3 1",     "21", "3 4 -6 4 3 -5 4 4 -6 3 4 -5 4 2 -5 4 3 -4 2 4 -5"],
+    ["Major Bebop",                  "2 2 1 2 1 1 2 1",   "24", "4 3 -5 3 3 -4 3 2 -4 3 3 -4 2 3 -4 3 3 -5 3 4 -5 3 3 -5"],
+    ["Dominant Bebop",               "2 2 1 2 2 1 1 1",   "24", "4 3 -5 3 4 -5 3 3 -5 4 2 -4 3 2 -3 2 3 -4 2 4 -5 3 3 -5"],
+    ["Minor Bebop (Dorian Bebop)",   "2 1 2 2 1 1 1 2",   "24", "3 4 -5 3 3 -5 4 2 -4 3 2 -3 2 3 -4 2 4 -5 3 3 -5 4 3 -5"],
+    ["Melodic Minor Bebop",          "2 1 2 1 1 2 2 1",   "24", "3 3 -4 3 2 -4 3 3 -4 2 4 -5 3 3 -5 4 3 -5 3 3 -4 3 3 -5"],
+    ["Harmonic Minor Bebop",         "2 1 2 2 1 1 2 1",   "24", "3 4 -5 3 3 -5 4 2 -4 3 3 -4 2 3 -4 3 3 -5 3 3 -4 3 3 -5"],
+    ["Bebop Locrian",                "1 2 2 1 1 1 2 2",   "24", "3 3 -5 4 2 -4 3 2 -3 2 3 -4 2 4 -5 3 3 -5 4 3 -5 3 4 -5"],
+    ["Bebop Altered",                "1 2 1 2 2 2 1 1",   "24", "3 3 -5 3 4 -5 3 4 -6 4 3 -5 4 2 -4 3 2 -3 2 3 -4 2 3 -4"],
+    ["Half-Whole Bebop Diminished",  "1 2 1 2 1 2 1 2",   "24", "3 3 -5 3 3 -4 3 3 -5 3 3 -4 3 3 -5 3 3 -4 3 3 -5 3 3 -4"],
+    ["Diminished (Whole-Half)",      "2 1 2 1 2 1 2 1",   "24", "3 3 -4 3 3 -5 3 3 -4 3 3 -5 3 3 -4 3 3 -5 3 3 -4 3 3 -5"],
+    ["Diminished (Half-Whole)",      "1 2 1 2 1 2 1 2",   "24", "3 3 -5 3 3 -4 3 3 -5 3 3 -4 3 3 -5 3 3 -4 3 3 -5 3 3 -4"],
+  ];
+
+  const skipData = [
+    ["Major Pentatonic",              "2 2 3 2 3",               "15", "4 5 -7 5 5 -8 5 5 -7 5 4 -7 5 5 -7"],
+    ["Minor Pentatonic",              "3 2 2 3 2",               "15", "5 5 -8 4 5 -7 5 5 -7 5 4 -7 5 5 -8"],
+    ["Major Blues",                   "2 1 1 3 2 3",             "18", "3 4 -5 2 5 -6 4 5 -8 5 5 -7 5 3 -6 5 2 -4"],
+    ["Minor Blues",                   "3 2 1 1 3 2",             "18", "5 2 -4 3 4 -5 2 5 -6 4 5 -8 5 5 -7 5 3 -6"],
+    ["Jazz Blues / Combined Blues",   "2 1 1 1 1 1 2 1 2",       "27", "3 2 -3 2 2 -3 2 2 -3 2 3 -4 2 3 -4 3 3 -5 3 4 -5 3 3 -5 4 2 -4"],
+    ["Whole Tone",                    "2 2 2 2 2 2",             "18", "4 4 -6 4 4 -6 4 4 -6 4 4 -6 4 4 -6 4 4 -6"],
+    ["Chromatic",                     "1 1 1 1 1 1 1 1 1 1 1 1", "36", "2 2 -3 2 2 -3 2 2 -3 2 2 -3 2 2 -3 2 2 -3 2 2 -3 2 2 -3 2 2 -3 2 2 -3 2 2 -3 2 2 -3"],
+  ];
+
+  function colorSeq(seq) {
+    return seq.split(' ').map(tok => {
+      if (tok.startsWith('-')) return `<span class="seq-neg">${tok}</span>`;
+      return `<span class="seq-pos">${tok}</span>`;
+    }).join(' ');
+  }
+
+  function fillTable(bodyId, data) {
+    const tbody = document.getElementById(bodyId);
+    data.forEach(([name, seq, k, chain]) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${name}</td><td>${seq}</td><td>${k}</td><td>${colorSeq(chain)}</td>`;
+      tbody.appendChild(tr);
+    });
+  }
+
+  fillTable('tertian-body', tertianData);
+  fillTable('skip-body', skipData);
+</script>
+
+<a class="back-btn" href="#" onclick="window.close(); return false;">← Back to the App</a>
+
+</body>
+</html>
