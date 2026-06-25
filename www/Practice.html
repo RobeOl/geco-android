@@ -1,0 +1,1886 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Practice module</title>
+
+<script src="https://unpkg.com/tone"></script>
+<script src="https://unpkg.com/@tonejs/midi"></script>
+<script src="https://unpkg.com/soundfont-player/dist/soundfont-player.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/opensheetmusicdisplay/build/opensheetmusicdisplay.min.js"></script>
+
+<style>
+
+    body{
+        font-family:Arial;
+        background:#f4f6f8;
+        /*position:fixed;*/
+        top:0;
+        left:0;
+        width:100%;
+        background:#3498db;
+        text-align:center;
+        padding:10px;
+        z-index:9999;
+        font-weight:bold;
+    }
+
+.container{
+    width:1200px;
+    margin:30px auto;
+    background:white;
+    padding:25px;
+    border-radius:10px;
+}
+
+button{
+    width:100%;
+    padding:10px;
+    margin-top:10px;
+    border:none;
+    border-radius:8px;
+    background:#3498db;
+    color:white;
+    cursor:pointer;
+}
+
+button:hover{
+    opacity:0.9;
+}
+
+/* Play + Stop affiancati */
+.button-row{
+    display:flex;
+    gap:10px;
+}
+
+.button-row button{
+    flex:1;
+}
+
+/* Reset rosso */
+.reset-btn{
+    width:120px;
+    background-color:#e74c3c;
+    margin-top:10px;
+}
+
+.reset-btn:hover{
+    background-color:#c0392b;
+}
+
+#score{
+    margin-top:30px;
+    border:1px solid #ccc;
+    padding:10px;
+    overflow:hidden;
+}
+
+</style>
+
+<style>
+    .back-btn {
+    position: fixed;
+    top: 5px;
+    left: 20px;
+    background: #b429b9;
+    color: white;
+    padding: 8px 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    z-index: 10000;
+}
+    .back-btn:hover { background: #1a6a9a; }
+</style>
+
+<style>
+/* ── Pitch-Class Circle ── */
+#pcCircleWrap {
+    position: absolute;
+    top: 0px;
+    left: 10px;
+    width: 260px;
+    height: 260px;
+}
+#pcCircle {
+    overflow: visible;
+}
+
+
+</style>
+
+<style>
+.transformation-box {
+    border: 2px solid #ccc;
+    background-color: #ccc;
+    border-radius: 8px;
+    padding: 10px 12px 12px;
+    display: inline-block;
+    margin-top: 6px;
+    vertical-align: top;
+}
+
+.keysig-box {
+    border: 2px solid #b0c4de;
+    background-color: #dce8f5;
+    border-radius: 8px;
+    padding: 10px 12px 12px;
+    display: inline-block;
+    margin-top: 6px;
+    margin-left: 10px;
+    vertical-align: top;
+}
+
+.keysig-box .label {
+    font-weight: bold;
+    margin-bottom: 6px;
+    font-size: 14px;
+    color: #1a4a7a;
+}
+
+.keysig-box select {
+    width: auto;
+    padding: 5px 8px;
+    margin-top: 4px;
+    border: 1px solid #7fa8cc;
+    border-radius: 5px;
+    background: #f0f6ff;
+    font-size: 13px;
+    color: #1a4a7a;
+    cursor: pointer;
+}
+
+.transformation-box .label {
+    font-weight: bold;
+    margin-bottom: 6px;
+    font-size: 14px;
+}
+
+.operator-row {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.operator-row button {
+    width: 60px;
+    padding: 6px 8px;
+    background-color: #4444ff;
+    border: 1px solid #5555ff;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.operator-row button:hover {
+    background-color: #eed890;
+}
+</style>
+
+<style>
+    button:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        background-color: #ddd;
+        color: #666;
+    }
+</style>
+
+<style>
+/* ── Help Button ── */
+#helpBtn {
+    position: fixed;
+    top: 45px;
+    left: 20px;
+    width: auto;
+    padding: 7px 18px;
+    margin: 0;
+    background: #f39c12;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 11000;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+}
+#helpBtn:hover { background: #d68910; opacity: 1; }
+
+/* ── Help Modal Overlay ── */
+#helpModal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.55);
+    z-index: 50000;
+    overflow-y: auto;
+}
+#helpModal .modal-box {
+    background: #fff;
+    margin: 40px auto;
+    max-width: 760px;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+    padding: 0 0 10px 0;
+    font-family: Arial, sans-serif;
+    color: #222;
+}
+#helpModal .modal-close-bar {
+    background: #f39c12;
+    border-radius: 12px 12px 0 0;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: flex-end;
+}
+#helpModal .modal-close-bar-bottom {
+    background: #f4f6f8;
+    border-radius: 0 0 12px 12px;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: flex-end;
+    border-top: 1px solid #ddd;
+}
+#helpModal .close-btn {
+    width: auto;
+    padding: 6px 22px;
+    margin: 0;
+    background: #fff;
+    color: #c0392b;
+    border: 2px solid #c0392b;
+    border-radius: 7px;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+}
+#helpModal .close-btn:hover { background: #c0392b; color: #fff; opacity: 1; }
+#helpModal .modal-content {
+    padding: 22px 30px 10px 30px;
+    line-height: 1.65;
+    font-size: 14px;
+}
+#helpModal h2 {
+    color: #2980b9;
+    margin-top: 0;
+    font-size: 20px;
+}
+#helpModal h3 {
+    color: #d35400;
+    margin-top: 18px;
+    margin-bottom: 6px;
+    font-size: 15px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 3px;
+}
+#helpModal ul {
+    margin: 6px 0 10px 20px;
+    padding: 0;
+}
+#helpModal li { margin-bottom: 5px; }
+#helpModal code {
+    background: #eaf2ff;
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-size: 13px;
+    color: #1a5276;
+}
+</style>
+
+<style>
+/* Caselle intervalli generati — stile np-fake-input readonly */
+.gen-interval-box {
+    display: inline-block;
+    min-width: 38px;
+    height: 22px;
+    line-height: 22px;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    background: #f0f6ff;
+    text-align: center;
+    font-size: 13px;
+    font-family: monospace;
+    color: #2471a3;
+    font-weight: bold;
+    cursor: default;
+    user-select: none;
+    box-sizing: border-box;
+    padding: 0 4px;
+}
+</style>
+
+</head>
+
+<body>
+
+
+
+<!-- ── Help Button ── -->
+<button id="helpBtn" onclick="document.getElementById('helpModal').style.display='block'">❓ Help</button>
+
+<!-- ── Help Modal ── -->
+<div id="helpModal" onclick="if(event.target===this)this.style.display='none'">
+  <div class="modal-box">
+
+    <div class="modal-close-bar">
+      <button class="close-btn" onclick="document.getElementById('helpModal').style.display='none'">✕ Close</button>
+    </div>
+
+    <div class="modal-content">
+      <h2>Practice — User Guide</h2>
+      <p>
+        <strong>Practice</strong> is a practice session included in GeCo-Tools tool that produces melodic sequences
+        importing a series of intervals from a preset (in GeCo syntax). Each sequence is delivered as audio (playback)
+        and as standard music notation, and can be exported as a MIDI file.
+      </p>
+
+      <h3>🎵 Generation Parameters</h3>
+      <ul>
+        <li><strong>Start Note</strong> — The pitch-class on which the sequence begins (C through B).
+            Octave is assigned automatically: C–F♯ start in octave 4, G–B in octave 3.</li>
+        <li><strong>Note Length</strong> — Sets the duration of every note in the imported sequence:
+            Whole (4 beats), Half (2), Quarter (1), Eighth (½), Sixteenth (¼).</li>
+      </ul>
+
+      <h3>🎹 Instrument &amp; Playback</h3>
+      <ul>
+        <li><strong>Instrument</strong> — Choose between <em>Piano</em> and <em>Sax B♭</em> soundfonts for in-browser playback.</li>
+        <li><strong>BPM slider</strong> (top right) — Controls playback speed (60–240 BPM). Does <em>not</em> alter the MIDI file.</li>
+        <li><strong>Play / Pause / Stop</strong> — Standard transport controls. <em>Pause</em> freezes playback; press again (<em>Continue</em>) to resume.</li>
+        <li><strong>Loop</strong> — When checked, playback restarts automatically at the end of the sequence.</li>
+        <li><strong>Metronome</strong> — Adds a click track during playback. Three click sounds: DAW (noise burst), Beep (sine tone), Wood block.</li>
+      </ul>
+
+      <h3>🎼 Key Signature</h3>
+      <p>
+        Set the clef key signature for the score display. This setting directly affects the MusicXML before rendering: it does not change the audio, MIDI, 
+        or note pitches—only the sharps and flats displayed in the clef. You can change it freely even after importing a preset, without having to re-import.
+      </p>
+
+      <h3>🔄 Pitch-Class Transformations</h3>      <p>Applied to the current sequence after import. Each operation contacts the server and re-renders the notation.</p>
+      <ul>
+        <li><strong>T — Transpose</strong> — Shifts all pitches by the chosen number of semitones (−12 to +12).</li>
+        <li><strong>I — Inversion</strong> — Reflects each interval around the first pitch (rising becomes falling).</li>
+        <li><strong>R — Retrograde</strong> — Reverses the order of pitches.</li>
+        <li><strong>RI — Retrograde-Inversion</strong> — Applies I then R; one of the four classical serial operations.</li>
+      </ul>
+
+      <h3>💾 MIDI</h3>
+      <ul>
+        <li><strong>Download MIDI</strong> — Saves the current sequence as a standard <code>.mid</code> file,
+            ready to import into any DAW or notation software.</li>
+        <li><strong>Import Preset</strong> — Loads a <code>.txt</code> file containing sequence settings. For compatibility reasons a <code>GeCo-Tool</code>
+            exported <code>.txt</code> file can also be imported (for example, scales 🎹).</li>
+      </ul>
+
+      <h3>🔵 Pitch-Class Circle</h3>
+      <p>
+        The animated circle (top left) visualises the chromatic scale as a clock-face. During playback,
+        active notes light up in gold and arcs trace the melodic intervals traversed. The first arc
+        (sequence start) and the last arc are highlighted in white.
+      </p>
+
+      <h3>📐 Imported Intervals</h3>
+      <p>
+        After import, a row of coloured boxes shows the signed semitone interval between each
+        consecutive pair of notes (<code>+n</code> = ascending, <code>−n</code> = descending).
+      </p>
+
+      <h3>🔁 Reset</h3>
+      <p>Restores all parameters to their defaults and clears the score. The page reloads completely.</p>
+
+      <h3>ℹ️ Contextual Help</h3>
+      <p>
+        Hover over (or tab-focus) any control to see a short description in the <em>help strip</em>
+        at the bottom of the panel.
+      </p>
+    </div>
+
+    <div class="modal-close-bar-bottom">
+      <button class="close-btn" onclick="document.getElementById('helpModal').style.display='none'">✕ Close</button>
+    </div>
+
+  </div>
+</div>
+
+<div id="loadingOverlay" style="
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.5);
+    color:white;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    font-size:22px;
+    z-index:20000;
+">
+    ⏳ Generating... please wait
+</div>
+
+<!-- 🎚 BPM CONTROL -->
+<div id="bpmControl" style="
+    position:fixed;
+    top:20px;
+    right:60px;
+    background:white;
+    padding:10px 15px;
+    border-radius:10px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.2);
+    z-index:10000;
+">
+    <label><b>BPM:</b> <span id="bpmValue">100</span></label><br>
+    <input type="range" id="bpmSlider" min="60" max="240" value="100" data-help="Playback tempo in beats per minute (60–240). Does not affect the generated MIDI file, only the in-browser playback speed.">
+</div>
+
+<div class="container" style="position:relative;">
+
+    <!-- <a class="back-btn" href="#" onclick="window.close(); return false;">← Back to GeCo-Tools</a> -->
+    <a class="back-btn" href="GeCo-Tools.html">← Back to GeCo-Tools</a>
+
+    <!-- Pitch-Class Circle -->
+    <div id="pcCircleWrap">
+        <svg id="pcCircle" width="260" height="260" viewBox="-110 -110 220 220"></svg>
+    </div>
+
+<!-- <h2>Generative Composition</h2> -->
+<h1 class="titolo">
+    <span>Practice</span>
+    <img src="penta.png" width="140" align="center" alt="Logo">
+  </h1>
+
+<label>Start Note</label>
+<select id="startNote" data-help="The pitch-class on which the sequence begins. The actual octave is assigned automatically (C–F# start in octave 4, G–B in octave 3).">
+<option value="0">C</option>
+<option value="1">C#</option>
+<option value="2">D</option>
+<option value="3">Eb</option>
+<option value="4">E</option>
+<option value="5">F</option>
+<option value="6">F#</option>
+<option value="7">G</option>
+<option value="8">Ab</option>
+<option value="9">A</option>
+<option value="10">Bb</option>
+<option value="11">B</option>
+</select>
+
+<br><br>
+
+<label>Note Length</label>
+<select id="noteLength" data-help="Duration assigned to every note. From whole note (4 beats) down to sixteenth (¼ beat).">
+<option value="4">Whole (4 beats)</option>
+<option value="2">Half (2 beats)</option>
+<option value="1" selected>Quarter (1 beat)</option>
+<option value="0.5">Eighth (1/2 beat)</option>
+<option value="0.25">Sixteenth (1/4 beat)</option>
+</select>
+
+<br>
+
+<style>
+    .testo_interval {
+      height: 30px;
+      position: absolute;
+      top: 200px;
+      right: 50px;
+      color: yellow;
+      background-color: rgb(36, 13, 240);
+      padding: 5px 25px;
+    }
+    </style>
+
+
+
+<!-- Riga: Metronome -->
+<label style="margin-top:8px; display:inline-block;">
+    <input type="checkbox" id="metronome" data-help="When enabled, a metronome click will sound during playback at the current BPM.">
+    Metronome
+</label>
+<span style="margin-left:8px; font-size:13px; vertical-align:middle;" title="Metronome volume">🔊</span>
+<input type="range" id="metronomeVolume" min="0" max="100" value="80" step="1"
+    style="margin-left:4px; width:70px; vertical-align:middle;"
+    data-help="Metronome volume (0 = silent, 100 = full volume).">
+<span id="metronomeVolumeLabel" style="margin-left:4px; font-size:12px; color:#555;">80%</span>
+<script>
+    document.getElementById('metronomeVolume').addEventListener('input', function(){
+        document.getElementById('metronomeVolumeLabel').textContent = this.value + '%'
+    })
+</script>
+<select id="metronomeSound" style="margin-left:8px; font-size:13px; padding:2px 6px; border-radius:5px; border:1px solid #aaa;"
+    data-help="Metronome click sound. DAW: short white noise burst. Beep: sine tone. Wood: wooden stick click.">
+    <option value="noise">DAW (noise)</option>
+    <option value="beep">Beep (sine)</option>
+    <option value="wood">Wood block</option>
+</select>
+
+<br>
+
+<!-- ── Instrument box ── -->
+<div style="display:inline-block; border:2px solid #b0c4de; background:#eaf2ff; border-radius:8px; padding:7px 16px; margin-top:8px;">
+    <span style="font-weight:bold; font-size:13px; margin-right:12px;">Instrument</span>
+    <label style="margin-right:12px; font-size:13px; cursor:pointer;">
+        <input type="radio" name="instrumentMode" id="instrPiano" value="piano" checked style="width:auto; margin-right:4px;">
+        Piano
+    </label>
+    <label style="font-size:13px; cursor:pointer;">
+        <input type="radio" name="instrumentMode" id="instrSaxBb" value="saxBb" style="width:auto; margin-right:4px;">
+        Sax Bb
+    </label>
+</div>
+
+<br>
+
+
+
+
+<!-- pitch transformation -->
+<div class="transformation-box">
+    <div class="label">Pitch-Class Transformations</div>
+
+    <div class="operator-row">
+        <button onclick="transform('T')" title="Transpose" data-help="T — Transpose: shifts all pitches by the number of semitones you select in the dropdown (−12 to +12).">T</button>
+        <button onclick="transform('I')" title="Invert" data-help="I — Inversion: reflects each melodic interval around the first pitch. Rising intervals become falling, and vice versa.">I</button>
+        <button onclick="transform('R')" title="Retrograde" data-help="R — Retrograde: reverses the order of all pitches, so the sequence is played backwards.">R</button>
+        <button onclick="transform('RI')" title="Retrograde-Invert" data-help="RI — Retrograde-Inversion: applies inversion first, then retrograde. One of the four classical serial transformations.">RI</button>
+    </div>
+    <div id="transposeControl" style="margin-top:10px; display:none;">
+        <label>Semitones:</label>
+        <select id="transposeValue" data-help="Number of semitones for transposition. Positive values transpose up, negative values down.">
+            <!-- generato via JS -->
+        </select>
+    </div>
+</div>
+
+<!-- Key Signature box -->
+<div class="keysig-box" data-help="Key Signature: Key Signature: select the clef for the score display. 
+This does not affect the audio or MIDI; it only affects the notation.">
+    <div class="label">🎼 Key Signature</div>
+    <select id="keySigSelect" onchange="applyKeySigToScore()">
+        <option value="0"   data-mode="major">C major / A minor</option>
+        <option value="1"   data-mode="major">G major / E minor (♯)</option>
+        <option value="2"   data-mode="major">D major / B minor (2♯)</option>
+        <option value="3"   data-mode="major">A major / F♯ minor (3♯)</option>
+        <option value="4"   data-mode="major">E major / C♯ minor (4♯)</option>
+        <option value="5"   data-mode="major">B major / G♯ minor (5♯)</option>
+        <option value="6"   data-mode="major">F♯ major / D♯ minor (6♯)</option>
+        <option value="-1"  data-mode="major">F major / D minor (♭)</option>
+        <option value="-2"  data-mode="major">B♭ major / G minor (2♭)</option>
+        <option value="-3"  data-mode="major">E♭ major / C minor (3♭)</option>
+        <option value="-4"  data-mode="major">A♭ major / F minor (4♭)</option>
+        <option value="-5"  data-mode="major">D♭ major / B♭ minor (5♭)</option>
+        <option value="-6"  data-mode="major">G♭ major / E♭ minor (6♭)</option>
+    </select>
+</div>
+
+<!-- Generated intervals panel -->
+<div id="generatedIntervalsPanel" style="display:none; margin-top:10px; text-align:left;">
+    <div style="font-size:12px; font-weight:bold; color:#555; margin-bottom:5px;">Generated intervals</div>
+    <div id="generatedIntervalsRow" style="display:flex; flex-wrap:wrap; gap:6px;"></div>
+</div>
+
+<div style="display:flex; gap:16px; align-items:stretch; flex-wrap:wrap; margin-top:10px;">
+
+  <!-- Box Playback -->
+  <div style="flex:3; border:2px solid #3498db; border-radius:10px; padding:8px 12px; background:#eaf4fb;">
+    <div style="font-size:11px; font-weight:bold; color:#2980b9; text-align:center; margin-bottom:6px; letter-spacing:0.05em;">PLAYBACK</div>
+    <div class="button-row" style="margin-top:0;">
+      <button onclick="playMusic()" data-help="Plays back the generated sequence using a piano soundfont at the BPM set by the slider (top right).">Play</button>
+      <button id="pauseBtn" onclick="pauseResumeMusic()" data-help="Pauses playback. Press again (Continue) to resume from the same position." style="background:#e67e22;">Pause</button>
+      <button onclick="stopMusic()" data-help="Stops playback immediately.">Stop</button>
+    </div>
+    <div style="margin-top:8px; text-align:center;">
+      <label style="font-size:13px; color:#2980b9; cursor:pointer;">
+        <input type="checkbox" id="loopCheck" data-help="When checked, playback restarts automatically at the end of the sequence.">
+        Loop
+      </label>
+    </div>
+  </div>
+
+  <!-- Box MIDI -->
+  <div style="flex:2; border:2px solid #27ae60; border-radius:10px; padding:8px 12px; background:#eafaf1;">
+    <div style="font-size:11px; font-weight:bold; color:#1e8449; text-align:center; margin-bottom:6px; letter-spacing:0.05em;">MIDI</div>
+    <div class="button-row" style="margin-top:0;">
+      <button onclick="downloadMidi()" data-help="Downloads the current sequence as a standard MIDI file, ready to import into any DAW or notation software." style="background:#27ae60;">Download MIDI</button>
+      <button onclick="document.getElementById('midiFileInput').click()"
+          data-help="Import a Preset txt file. The sequence of intervals will be loaded and shown."
+          title="Sequence type, tempo must match the imported file!"
+          style="background:#27ae60;">Import Preset</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Input nascosto per il file -->
+<input type="file" id="midiFileInput" accept=".txt" multiple style="display:none"
+       onchange="importMidi(this)">
+
+<button class="reset-btn" onclick="resetApp()" data-help="Resets all parameters to their default values and clears the score. The page will reload.">Reset</button>
+
+<br>
+<label style="font-style: italic; display: block; text-align: right;">
+    R. Olmi & M. Bittelli
+    
+  </label>
+  <label style="font-style: italic; display: block; text-align: right; font-size:10px; color:#3498db">
+    Practice
+  </label>
+
+  
+<!-- ── Contextual help panel ── -->
+<div id="helpPanel"><em>Hover over or focus any control to see its description.</em></div>
+
+<div id="score"></div>
+
+</div>
+
+<script>
+
+// Cambia solo questa riga per passare da locale a produzione
+// const ENV = "local"   // cambia in "remote" per produzione
+const ENV = "remote"
+const BASE_URL = ENV === "local" ? "http://localhost:5002" : "https://serie.onrender.com"
+let serverAwake = ENV === "local"  // true in locale, false in remoto
+
+let midiData
+let part
+let synth
+let osmd = new opensheetmusicdisplay.OpenSheetMusicDisplay(document.getElementById("score"))
+let midiBlobGlobal
+let inversionActive = false
+
+const loadingOverlay = document.getElementById("loadingOverlay");
+
+osmd.setOptions({
+    drawPartNames: false,
+    drawPartAbbreviations: false
+})
+
+// ── Key Signature injection ────────────────────────────────────────────────
+// Mantiene una copia dell'ultimo MusicXML ricevuto dal backend,
+// così che cambiare l'armatura non richieda un nuovo fetch.
+let lastMusicXmlText = null
+
+// Conversione tra il codice "Key Signature" del preset TXT (0..12, circolo
+// delle quinte ascendente: 0=C, 1=G, 2=D, ... 6=F#, 7=Db, ... 12=Gb)
+// e il valore "fifths" usato da #keySigSelect (-6..6).
+const KEYSIG_CODE_TO_FIFTHS = [0, 1, 2, 3, 4, 5, 6, -1, -2, -3, -4, -5]
+
+function keySigCodeToFifths(code) {
+    if (code < -5 || code > 6 || !Number.isInteger(code)) return 0
+    return code
+}
+
+function fifthsToKeySigCode(fifths) {
+    if (fifths < -5 || fifths > 6) return 0
+    return fifths
+}
+
+
+// ── Pitch respelling engine ────────────────────────────────────────────────
+
+// Ordine dei diesis / bemolli nelle armature
+const SHARP_ORDER = ['F','C','G','D','A','E','B']
+const FLAT_ORDER  = ['B','E','A','D','G','C','F']
+
+// Semitoni da C per ogni step diatonico
+const STEP_SEMITONES = { C:0, D:2, E:4, F:5, G:7, A:9, B:11 }
+
+/**
+ * Restituisce mappa { stepName -> alter } per l'armatura data.
+ * es. fifths=2 → { F:1, C:1 }   fifths=-2 → { B:-1, E:-1 }
+ */
+function keySigAlterations(fifths) {
+    const map = {}
+    if (fifths > 0) {
+        for (let i = 0; i < Math.min(fifths, 7); i++) map[SHARP_ORDER[i]] = 1
+    } else {
+        for (let i = 0; i < Math.min(-fifths, 7); i++) map[FLAT_ORDER[i]] = -1
+    }
+    return map
+}
+
+/**
+ * Dato un pitch class (0=C…11=B) e fifths, restituisce { step, alter }
+ * con il nome diatonico corretto per quell'armatura.
+ *
+ * Regola: armatura con diesis (fifths>0) → preferisci nomi con diesis;
+ *         armatura con bemolli (fifths<0) → preferisci nomi con bemolli;
+ *         C maggiore (fifths=0)           → preferisci il nome naturale,
+ *                                           con bemolle per le note nere
+ *                                           (convenzione standard).
+ */
+function respellPitch(pc, fifths) {
+    const ksAlter = keySigAlterations(fifths)
+
+    // Tutti i candidati diatonici per questo pc
+    const candidates = []
+    for (const [step, semis] of Object.entries(STEP_SEMITONES)) {
+        for (const alter of [-1, 0, 1]) {
+            if (((semis + alter) % 12 + 12) % 12 === pc) {
+                candidates.push({ step, alter })
+            }
+        }
+    }
+
+    // Priorità 1: nota naturale (alter=0) → sempre preferita se esiste
+    const natural = candidates.find(c => c.alter === 0)
+    if (natural) return natural
+
+    // Priorità 2: per note cromatiche (nere), scegli in base al segno di fifths
+    if (fifths >= 0) {
+        // Armatura di diesis (o C): preferisci il diesis
+        const sharp = candidates.find(c => c.alter === 1)
+        if (sharp) return sharp
+    } else {
+        // Armatura di bemolli: preferisci il bemolle
+        const flat = candidates.find(c => c.alter === -1)
+        if (flat) return flat
+    }
+
+    // Fallback
+    return candidates[0]
+}
+
+/**
+ * Inietta l'armatura di chiave nel MusicXML e corregge il nome diatonico
+ * (step + alter + accidental) di ogni nota in base all'armatura scelta.
+ *
+ * @param {string} xmlText
+ * @param {number} fifths
+ * @returns {string} MusicXML modificato
+ */
+const LETTERS = ['C','D','E','F','G','A','B']
+
+/**
+ * Se la sequenza di pitch classes ha 7 valori distinti (o 8 con la prima
+ * ripetuta in fondo), ricalcola gli step in modo che ogni lettera A-G
+ * compaia esattamente una volta, preservando l'ordine e scegliendo
+ * l'alterazione coerente con ciascun pitch class.
+ *
+ * @param {number[]} pcs - pitch classes nell'ordine di apparizione
+ * @param {number} fifths
+ * @returns {Array<{step:string, alter:number}>|null} null se la regola non si applica
+ */
+function respellSequenceUniqueLetters(pcs, fifths) {
+    if (pcs.length === 0) return null
+
+    let distinct = pcs
+    const isOctaveRepeat = pcs.length === 8 && pcs[7] === pcs[0]
+    if (isOctaveRepeat) distinct = pcs.slice(0, 7)
+
+    if (distinct.length !== 7) return null
+    if (new Set(distinct).size !== 7) return null
+
+    const firstSpelling = respellPitch(distinct[0], fifths)
+    const startIdx = LETTERS.indexOf(firstSpelling.step)
+    if (startIdx === -1) return null
+
+    const result = []
+    for (let i = 0; i < 7; i++) {
+        const step = LETTERS[(startIdx + i) % 7]
+        const pc = distinct[i]
+        let alter = ((pc - STEP_SEMITONES[step]) % 12 + 12) % 12
+        if (alter > 2) alter -= 12
+        if (alter < -2) alter += 12
+        result.push({ step, alter })
+    }
+
+    if (isOctaveRepeat) result.push(result[0])
+    return result
+}
+
+function injectKeySig(xmlText, fifths) {
+    const parser = new DOMParser()
+    const doc = parser.parseFromString(xmlText, "application/xml")
+    const ksAlter = keySigAlterations(fifths)
+
+    // ── 0. Calcola eventuale respelling "lettere uniche" per l'intera sequenza ──
+    const noteEls = Array.from(doc.querySelectorAll("note")).filter(n => n.querySelector("pitch"))
+    const pcsSeq = noteEls.map(noteEl => {
+        const pitchEl = noteEl.querySelector("pitch")
+        const step = pitchEl.querySelector("step").textContent.trim().toUpperCase()
+        const alterEl = pitchEl.querySelector("alter")
+        const alter = alterEl ? parseFloat(alterEl.textContent) : 0
+        return ((STEP_SEMITONES[step] + alter) % 12 + 12) % 12
+    })
+    const uniqueLetterSpellings = respellSequenceUniqueLetters(pcsSeq, fifths)
+
+    // ── 1. Aggiorna / crea il tag <key> ──────────────────────────────────
+    const keyNodes = doc.querySelectorAll("key")
+    if (keyNodes.length > 0) {
+        keyNodes.forEach(keyNode => {
+            let fifthsEl = keyNode.querySelector("fifths")
+            if (!fifthsEl) {
+                fifthsEl = doc.createElement("fifths")
+                keyNode.insertBefore(fifthsEl, keyNode.firstChild)
+            }
+            fifthsEl.textContent = fifths
+        })
+    } else {
+        const attrNodes = doc.querySelectorAll("attributes")
+        if (attrNodes.length > 0) {
+            const keyEl = doc.createElement("key")
+            const fifthsEl = doc.createElement("fifths")
+            fifthsEl.textContent = fifths
+            keyEl.appendChild(fifthsEl)
+            const timeEl = attrNodes[0].querySelector("time")
+            attrNodes[0].insertBefore(keyEl, timeEl || attrNodes[0].firstChild)
+        }
+    }
+
+    // ── 2. Riscrivi pitch di ogni nota ────────────────────────────────────
+    noteEls.forEach((noteEl, idx) => {
+        const pitchEl = noteEl.querySelector("pitch")
+        if (!pitchEl) return   // pausa
+
+        const stepEl   = pitchEl.querySelector("step")
+        const alterEl  = pitchEl.querySelector("alter")
+        const octaveEl = pitchEl.querySelector("octave")
+        if (!stepEl || !octaveEl) return
+
+        const origStep  = stepEl.textContent.trim().toUpperCase()
+        const origAlter = alterEl ? parseFloat(alterEl.textContent) : 0
+        const origOctave = parseInt(octaveEl.textContent)
+
+        // Pitch class MIDI (0=C … 11=B)
+        const pc = ((STEP_SEMITONES[origStep] + origAlter) % 12 + 12) % 12
+
+        // Ottava corretta: se lo step originale era B# l'ottava sale, se Cb scende
+        // Ma poiché respellPitch non cambia ottava radicalmente, la gestiamo dopo.
+        const { step: newStep, alter: newAlter } = uniqueLetterSpellings
+            ? uniqueLetterSpellings[idx]
+            : respellPitch(pc, fifths)
+
+        // ── Correzione ottava per enarmonici che attraversano il confine C ──
+        // es. B# (pc=0) rispellato come C → l'ottava va abbassata di 1
+        // es. Cb (pc=11) rispellato come B → l'ottava va alzata di 1
+        let newOctave = origOctave
+        const origMidi = origOctave * 12 + pc  // approssimazione
+        const newMidi  = newOctave * 12 + ((STEP_SEMITONES[newStep] + newAlter + 12) % 12)
+        if (newMidi - origMidi > 6)  newOctave--
+        if (newMidi - origMidi < -6) newOctave++
+
+        // Scrivi il nuovo pitch nel DOM
+        stepEl.textContent   = newStep
+        octaveEl.textContent = newOctave
+
+        if (newAlter !== 0) {
+            if (alterEl) {
+                alterEl.textContent = newAlter
+            } else {
+                const a = doc.createElement("alter")
+                a.textContent = newAlter
+                pitchEl.appendChild(a)
+            }
+        } else {
+            // Rimuovi <alter> se non serve
+            if (alterEl) alterEl.parentNode.removeChild(alterEl)
+        }
+
+        // ── Gestione <accidental> ─────────────────────────────────────────
+        const accEl = noteEl.querySelector("accidental")
+        const ksForNewStep = ksAlter[newStep] || 0
+
+        if (newAlter === ksForNewStep) {
+            // Nota coperta dall'armatura: niente accidentale
+            if (accEl) accEl.parentNode.removeChild(accEl)
+
+        } else if (newAlter === 0 && ksForNewStep !== 0) {
+            // Nota naturale in un'armatura che la altera: becuadro
+            if (accEl) {
+                accEl.textContent = "natural"
+            } else {
+                const a = doc.createElement("accidental")
+                a.textContent = "natural"
+                const typeEl = noteEl.querySelector("type")
+                if (typeEl) typeEl.parentNode.insertBefore(a, typeEl.nextSibling)
+                else noteEl.appendChild(a)
+            }
+
+        } else {
+            // Alterazione esplicita non in armatura: scrivi accidentale
+            const accName = newAlter === 1 ? "sharp"
+                          : newAlter === -1 ? "flat"
+                          : newAlter === 2  ? "double-sharp"
+                          : newAlter === -2 ? "double-flat"
+                          : "natural"
+            if (accEl) {
+                accEl.textContent = accName
+            } else {
+                const a = doc.createElement("accidental")
+                a.textContent = accName
+                const typeEl = noteEl.querySelector("type")
+                if (typeEl) typeEl.parentNode.insertBefore(a, typeEl.nextSibling)
+                else noteEl.appendChild(a)
+            }
+        }
+    })
+
+    return new XMLSerializer().serializeToString(doc)
+}
+
+/**
+ * Carica il MusicXML (con armatura iniettata) in OSMD e renderizza.
+ * Usa sempre lastMusicXmlText se disponibile, altrimenti usa l'url fornito.
+ * @param {string|null} xmlUrl  - Object URL del blob XML (solo al primo caricamento)
+ * @param {string|null} xmlText - testo XML grezzo (alternativa a xmlUrl)
+ */
+async function renderScoreWithKeySig(xmlUrl = null, xmlText = null) {
+    let rawXml = xmlText
+
+    if (!rawXml && xmlUrl) {
+        const res = await fetch(xmlUrl)
+        rawXml = await res.text()
+    }
+
+    if (!rawXml) return
+
+    lastMusicXmlText = rawXml
+
+    const fifths = parseInt(document.getElementById("keySigSelect").value) || 0
+    const modifiedXml = injectKeySig(rawXml, fifths)
+
+    const blob = new Blob([modifiedXml], { type: "application/xml" })
+    const url  = URL.createObjectURL(blob)
+    await osmd.load(url)
+    osmd.render()
+    URL.revokeObjectURL(url)
+
+    // Corregge il margine superiore prodotto da OSMD
+    const svg = document.querySelector("#score svg")
+    if (svg) {
+        const bbox = svg.getBBox()
+        svg.style.marginTop = `-${Math.max(0, bbox.y - 20)}px`
+    }
+}
+
+/**
+ * Chiamata quando l'utente cambia l'armatura di chiave.
+ * Ri-renderizza lo score senza contattare il backend.
+ */
+async function applyKeySigToScore() {
+    if (!lastMusicXmlText) return   // nessuno score caricato
+    await renderScoreWithKeySig(null, lastMusicXmlText)
+    showGeneratedIntervals()
+}
+// ── Fine Key Signature injection ───────────────────────────────────────────
+
+
+// popolamento select trasposizione
+const transposeSelect = document.getElementById("transposeValue")
+
+for(let i = -12; i <= 12; i++){
+    const opt = document.createElement("option")
+    opt.value = i
+    opt.textContent = i
+    transposeSelect.appendChild(opt)
+    transposeSelect.value = "0"
+}
+
+transposeSelect.addEventListener("change", () => {
+    const value = parseInt(transposeSelect.value)
+    sendTransform({
+        operation: "T",
+        value: value
+    })
+    document.getElementById("transposeControl").style.display = "none"
+})
+
+
+/* 🎚 BPM CONTROL */
+const bpmSlider = document.getElementById("bpmSlider")
+const bpmValue = document.getElementById("bpmValue")
+
+bpmSlider.addEventListener("input", function(){
+    bpmValue.textContent = this.value
+})
+
+
+function showLoading(){
+    document.getElementById("loadingOverlay").style.display = "flex";
+}
+
+function hideLoading(){
+    document.getElementById("loadingOverlay").style.display = "none";
+}
+
+
+function resetApp(){
+    document.getElementById("score").innerHTML = ""
+    midiData = null
+    midiBlobGlobal = null
+
+    document.getElementById("startNote").value = "0"
+    document.getElementById("noteLength").value = "1"
+
+    document.getElementById("metronome").checked = false
+
+    document.getElementById("bpmSlider").value = 100
+    document.getElementById("bpmValue").textContent = "100"
+
+    document.getElementById("keySigSelect").value = "0"
+
+    location.reload()
+}
+
+
+async function checkServer() {
+    if (ENV === "local") return   // in locale non serve il check
+
+    try {
+        const res = await fetch(`${BASE_URL}/health`)
+        if (res.ok) {
+            serverAwake = true
+            document.getElementById("serverStatus").style.display = "none"
+        } else {
+            retryCheck()
+        }
+    } catch (e) {
+        retryCheck()
+    }
+}
+
+function retryCheck() {
+    setTimeout(checkServer, 3000)
+}
+
+checkServer()
+
+
+
+function toggleInversion(){
+    inversionActive = !inversionActive
+    generateMusic()
+}
+
+function highlightButton(type){
+    document.querySelectorAll(".button-row button")
+        .forEach(b => b.style.background = "#3498db")
+
+    event.target.style.background = "#9b59b6"
+}
+
+
+async function sendTransform(payload){
+
+    showLoading();
+    loadingOverlay.innerText = "🔄 Applying transformation..."; // 👈 QUI
+
+    try {
+
+        const midiRes = await fetch(`${BASE_URL}/transform`, {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify(payload)
+        })
+
+        const midiBlob = await midiRes.blob()
+        midiBlobGlobal = midiBlob
+
+        const midiBuffer = await midiBlob.arrayBuffer()
+        midiData = new Midi(midiBuffer)
+
+        const scoreRes = await fetch(`${BASE_URL}/score`, {
+            method: "POST"
+        })
+
+        const scoreBlob = await scoreRes.blob()
+        const scoreUrl = URL.createObjectURL(scoreBlob)
+
+        loadingOverlay.innerText = "🖊 Rendering notation..."; // 👈 QUI
+
+        await renderScoreWithKeySig(scoreUrl)
+        showGeneratedIntervals()
+
+    } finally {
+        hideLoading();
+    }
+}
+
+
+async function transform(type){
+    if(!midiData){
+        alert("Import a preset first!")
+        return
+    }
+
+    let payload = { operation: type }
+
+    // nascondi sempre il pannello semitoni; lo mostriamo solo per T
+    document.getElementById("transposeControl").style.display = "none"
+
+    if(type === "T"){
+        // reset a 0: così il change scatta sempre, anche se il valore non è cambiato
+        document.getElementById("transposeValue").value = "0"
+        document.getElementById("transposeControl").style.display = "block"
+        return
+    }
+
+    sendTransform(payload)
+}
+
+
+// ── Metronome ──────────────────────────────────────────────────────────────
+let metronomePart = null
+
+/**
+ * Genera un singolo click via Web Audio API pura (nessun Tone.js synth).
+ * @param {AudioContext} ctx
+ * @param {number} when  - AudioContext time (sec) in cui suonare
+ * @param {boolean} strong - true = beat 1 (accentato)
+ * @param {string} mode  - 'noise' | 'beep' | 'wood'
+ */
+function scheduleClick(ctx, when, strong, mode) {
+    const volSlider = document.getElementById('metronomeVolume')
+    const volFactor = volSlider ? (parseFloat(volSlider.value) / 100) : 1.0
+
+    const gainNode = ctx.createGain()
+    gainNode.connect(ctx.destination)
+
+    if (mode === 'noise') {
+        // Burst di rumore bianco breve — stile DAW
+        const bufSize = ctx.sampleRate * 0.025   // 25 ms
+        const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate)
+        const data = buf.getChannelData(0)
+        for (let i = 0; i < bufSize; i++) data[i] = (Math.random() * 2 - 1)
+        const src = ctx.createBufferSource()
+        src.buffer = buf
+
+        // Filtro passa-alto per togliere i bassi e renderlo più "snappy"
+        const hp = ctx.createBiquadFilter()
+        hp.type = 'highpass'
+        hp.frequency.value = strong ? 1200 : 2000
+        src.connect(hp)
+        hp.connect(gainNode)
+
+        gainNode.gain.setValueAtTime((strong ? 0.9 : 0.45) * volFactor, when)
+        gainNode.gain.exponentialRampToValueAtTime(0.001, when + 0.025)
+        src.start(when)
+        src.stop(when + 0.03)
+
+    } else if (mode === 'beep') {
+        // Oscillatore sinusoidale a breve durata
+        const osc = ctx.createOscillator()
+        osc.type = 'sine'
+        osc.frequency.value = strong ? 1760 : 1047  // A6 / C6
+        osc.connect(gainNode)
+        gainNode.gain.setValueAtTime((strong ? 0.7 : 0.35) * volFactor, when)
+        gainNode.gain.exponentialRampToValueAtTime(0.001, when + 0.05)
+        osc.start(when)
+        osc.stop(when + 0.055)
+
+    } else if (mode === 'wood') {
+        // Simulazione wood block: sine breve + piccolo filtro bandpass
+        const bufSize = ctx.sampleRate * 0.015
+        const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate)
+        const data = buf.getChannelData(0)
+        const freq = strong ? 900 : 1400
+        for (let i = 0; i < bufSize; i++) {
+            const t = i / ctx.sampleRate
+            data[i] = Math.sin(2 * Math.PI * freq * t) * Math.exp(-t * 300)
+        }
+        const src = ctx.createBufferSource()
+        src.buffer = buf
+        src.connect(gainNode)
+        gainNode.gain.setValueAtTime((strong ? 1.0 : 0.55) * volFactor, when)
+        src.start(when)
+        src.stop(when + 0.02)
+    }
+}
+
+function startMetronome(currentBPM, numBeats) {
+    stopMetronome()
+
+    const beatDuration = 60 / currentBPM
+    const mode = document.getElementById('metronomeSound').value
+
+    const metEvents = []
+    for (let i = 0; i < numBeats; i++) {
+        metEvents.push({ time: i * beatDuration, beat: i })
+    }
+
+    metronomePart = new Tone.Part((time, val) => {
+        const ctx = Tone.getContext().rawContext
+        const strong = (val.beat % 4 === 0)
+        scheduleClick(ctx, time, strong, mode)
+    }, metEvents)
+
+    metronomePart.start(0)
+}
+
+function stopMetronome() {
+    if (metronomePart) {
+        metronomePart.stop()
+        metronomePart.dispose()
+        metronomePart = null
+    }
+}
+// ── Fine Metronome ──────────────────────────────────────────────────────────
+// ── Pause / Continue state ──────────────────────────────────────────────────
+let isPaused = false
+
+function pauseResumeMusic() {
+    const pauseBtn = document.getElementById('pauseBtn')
+    if (!isPaused) {
+        Tone.Transport.pause()
+        stopMetronome()
+        isPaused = true
+        pauseBtn.textContent = 'Continue'
+        pauseBtn.style.background = '#27ae60'
+    } else {
+        if (document.getElementById("metronome").checked) {
+            const currentBPM = parseInt(bpmSlider.value)
+            const beatsRaw = midiData.duration / 0.5
+            const numBeats = Math.ceil(beatsRaw / 4) * 4
+            startMetronome(currentBPM, numBeats)
+        }
+        Tone.Transport.start()
+        isPaused = false
+        pauseBtn.textContent = 'Pause'
+        pauseBtn.style.background = '#e67e22'
+    }
+}
+
+function resetPauseBtn() {
+    isPaused = false
+    const pauseBtn = document.getElementById('pauseBtn')
+    pauseBtn.textContent = 'Pause'
+    pauseBtn.style.background = '#e67e22'
+}
+// ── Fine Pause / Continue ───────────────────────────────────────────────────
+
+async function playMusic(){
+
+    if(!midiData) return
+
+    await Tone.start()
+    Tone.Transport.stop()
+    Tone.Transport.cancel()
+
+    const context = Tone.getContext().rawContext
+    const isSaxBb = document.getElementById("instrSaxBb").checked
+
+    // Carica i soundfont necessari
+    synth = await Soundfont.instrument(context, "acoustic_grand_piano")
+    let synthSax = null
+    if (isSaxBb) {
+        synthSax = await Soundfont.instrument(context, "tenor_sax")
+    }
+
+    // Trasposizione Bb: -2 semitoni (lo strumento Bb suona un tono sopra il notato)
+    function transposeName(noteName, semitones) {
+        const midi = Tone.Frequency(noteName).toMidi() + semitones
+        return Tone.Frequency(midi, "midi").toNote()
+    }
+
+    const baseBPM = 120
+    const currentBPM = parseInt(bpmSlider.value)
+    const scale = baseBPM / currentBPM
+    Tone.Transport.bpm.value = currentBPM
+
+    // midiData.duration NON include la pausa finale di fill_to_measure.
+    // Ricalcoliamo: fine ultima nota → arrotondiamo al prossimo multiplo di 4 beat.
+    // I tempi MIDI sono a 120 BPM (1 beat = 0.5s), quindi 4 beat = 2s.
+    const beatDuration = 0.5  // secondi per beat a 120 BPM
+    const beatsPerMeasure = 4
+
+    let lastNoteEnd = 0
+    midiData.tracks.forEach(track => {
+        track.notes.forEach(note => {
+            lastNoteEnd = Math.max(lastNoteEnd, note.time + note.duration)
+        })
+    })
+    // lastNoteEnd è in secondi a 120 BPM → convertiamo in beat
+    const lastBeat = lastNoteEnd / beatDuration
+    // arrotondiamo al prossimo multiplo di beatsPerMeasure
+    const totalBeats = Math.ceil(lastBeat / beatsPerMeasure) * beatsPerMeasure
+    // ritorniamo in secondi a 120 BPM, poi scaliamo col BPM attuale
+    const totalDuration = (totalBeats * beatDuration) * scale
+
+    let events = []
+    midiData.tracks.forEach(track => {
+        track.notes.forEach(note => {
+            // In Sax Bb mode: traspone di -2 semitoni per la compensazione Bb
+            const noteName = isSaxBb ? transposeName(note.name, -2) : note.name
+            events.push({
+                time: note.time * scale,
+                note: noteName,
+                duration: note.duration * scale,
+                velocity: note.velocity
+            })
+        })
+    })
+
+    const loopEnabled = document.getElementById("loopCheck").checked
+
+    part = new Tone.Part((time, value)=>{
+        // In Sax Bb mode usa tenor_sax, altrimenti piano
+        const player = (synthSax) ? synthSax : synth
+        player.play(value.note, time, {
+            duration: value.duration,
+            gain: value.velocity
+        })
+    }, events)
+
+    part.start(0)
+
+    if (loopEnabled) {
+        // Tone.Transport.loopEnd accetta secondi come stringa "Xs"
+        Tone.Transport.loop = true
+        Tone.Transport.loopStart = "0"
+        Tone.Transport.loopEnd = totalDuration + "s"
+    } else {
+        Tone.Transport.loop = false
+    }
+
+    if (document.getElementById("metronome").checked) {
+        const beatsRaw = midiData.duration / 0.5
+        const numBeats = Math.ceil(beatsRaw / 4) * 4
+        startMetronome(currentBPM, numBeats)
+    }
+
+    Tone.Transport.start()
+    resetPauseBtn()
+    pcPlay()
+}
+
+function stopMusic(){
+    Tone.Transport.stop()
+    Tone.Transport.cancel()
+    if(part) { part.stop(); part = null }
+    stopMetronome()
+    resetPauseBtn()
+    pcStop()
+}
+
+function downloadMidi(){
+    if(!midiBlobGlobal){
+        alert("Generate MIDI first!")
+        return
+    }
+
+    // ── MIDI ──
+    const urlMid = URL.createObjectURL(midiBlobGlobal)
+    const aMid = document.createElement("a")
+    aMid.href = urlMid
+    aMid.download = "k_random_music.mid"
+    document.body.appendChild(aMid)
+    aMid.click()
+    document.body.removeChild(aMid)
+    URL.revokeObjectURL(urlMid)
+
+    // ── TXT ──
+    const PC_LABELS = ['C','C#','D','Eb','E','F','F#','G','Ab','A','Bb','B']
+    const startNoteVal = parseInt(document.getElementById("startNote").value)
+    const startNote    = PC_LABELS[startNoteVal]
+
+    // intervalli generati (già calcolati nel panel, li ricalcoliamo per sicurezza)
+    let intervalsStr = "—"
+    if(midiData){
+        const track = midiData.tracks.find(t => t.notes.length > 0)
+        if(track && track.notes.length >= 2){
+            const ivs = []
+            for(let i = 0; i < track.notes.length - 1; i++){
+                const v = track.notes[i+1].midi - track.notes[i].midi
+                ivs.push(v > 0 ? "+" + v : String(v))
+            }
+            intervalsStr = ivs.join("  ")
+        }
+    }
+
+    const keySigVal   = parseInt(document.getElementById("keySigSelect").value) || 0
+    const keySigCode  = fifthsToKeySigCode(keySigVal)
+
+    const content =
+`K-random — Generation Parameters
+==================================
+Start Note:    ${startNote}
+Intervals:     ${intervalsStr}
+Key Signature: ${keySigCode}
+`
+    const blob = new Blob([content], { type: "text/plain" })
+    const urlTxt = URL.createObjectURL(blob)
+    const aTxt = document.createElement("a")
+    aTxt.href = urlTxt
+    aTxt.download = "k_random_music.txt"
+    document.body.appendChild(aTxt)
+    aTxt.click()
+    document.body.removeChild(aTxt)
+    URL.revokeObjectURL(urlTxt)
+
+    // ── GeCo TXT ──
+    const gecoContent =
+`Practice — Generation Parameters
+==================================
+Start Note:    ${startNote}
+Sequence:      Multidimensional ${intervalsStr}
+Harmony:       none
+Key Signature: ${keySigCode}
+`
+    const gecoBlob = new Blob([gecoContent], { type: "text/plain" })
+    const urlGeco = URL.createObjectURL(gecoBlob)
+    const aGeco = document.createElement("a")
+    aGeco.href = urlGeco
+    aGeco.download = "Practice_GeCo.txt"
+    document.body.appendChild(aGeco)
+    aGeco.click()
+    document.body.removeChild(aGeco)
+    URL.revokeObjectURL(urlGeco)
+}
+
+async function importMidi(input) {
+    const allFiles = Array.from(input.files)
+    const midiFile = allFiles.find(f => f.name.endsWith('.mid') || f.name.endsWith('.midi'))
+    const txtFile  = allFiles.find(f => f.name.endsWith('.txt'))
+
+    input.value = ""
+
+    // Caso: solo TXT (formato GeCo)
+    if (!midiFile && txtFile) {
+        const txt = await txtFile.text()
+        await importGecoTxt(txt)
+        return
+    }
+
+    if (!midiFile) return
+
+    showLoading()
+    loadingOverlay.innerText = "📂 Importing MIDI..."
+
+    try {
+        // 1. Invia il MIDI al backend
+        const formData = new FormData()
+        formData.append("midi", midiFile)
+
+        const importRes = await fetch(`${BASE_URL}/import`, {
+            method: "POST",
+            body: formData
+        })
+
+        if (!importRes.ok) {
+            throw new Error("Import failed: " + importRes.statusText)
+        }
+
+        // 2. Aggiorna midiData e midiBlobGlobal
+        const midiBuffer = await midiFile.arrayBuffer()
+        midiData = new Midi(midiBuffer)
+        midiBlobGlobal = new Blob([midiBuffer], { type: "audio/midi" })
+
+        // 3. Se presente il TXT, ripristina i parametri UI
+        if (txtFile) {
+            const txt = await txtFile.text()
+            applyParamsFromTxt(txt)
+        }
+
+        // 4. Renderizza la notazione
+        const scoreBlob = await importRes.blob()
+        const scoreUrl  = URL.createObjectURL(scoreBlob)
+        loadingOverlay.innerText = "🖊 Rendering notation..."
+        await renderScoreWithKeySig(scoreUrl)
+
+        // 5. Mostra gli intervalli (dal MIDI importato)
+        showGeneratedIntervals()
+
+    } catch (err) {
+        console.error(err)
+        alert("Errore durante l'import: " + err.message)
+    } finally {
+        hideLoading()
+    }
+}
+
+// ── Import GeCo TXT (solo TXT, senza MIDI) ────────────────────────────────
+async function importGecoTxt(txt) {
+    // Struttura attesa:
+    //   riga 1: testo libero (ignora)
+    //   riga 2: testo libero (ignora)
+    //   riga 3: Start Note:    <nota>
+    //   riga 4: Sequence:      Multidimensional <intervallo1> <intervallo2> ...
+    //   riga 5: Tempo:         <valore>
+    //   riga 6: testo libero (ignora)
+
+    const lines = txt.split('\n').map(l => l.trim())
+
+    // Riga 4 (indice 3): deve contenere "Sequence:" e "Multidimensional"
+    const seqLine = lines[3] || ""
+    if (!seqLine.match(/^Sequence\s*:/i)) {
+        alert("Formato TXT non valido: la riga 4 deve iniziare con 'Sequence:'")
+        return
+    }
+    if (!seqLine.match(/Multidimensional/i)) {
+        alert("Importazione interrotta: la riga 4 deve contenere 'Sequence: Multidimensional'")
+        return
+    }
+
+    // Estrai gli intervalli dalla riga 4 (tutto dopo "Multidimensional")
+    const afterMulti = seqLine.replace(/^Sequence\s*:\s*/i, "").replace(/Multidimensional\s*/i, "").trim()
+    // Gli intervalli sono numeri con segno opzionale, separati da spazi
+    const intervalTokens = afterMulti.match(/[+-]?\d+/g)
+    if (!intervalTokens || intervalTokens.length === 0) {
+        alert("Formato TXT non valido: nessun intervallo trovato nella riga 4.")
+        return
+    }
+    const intervals = intervalTokens.map(Number)
+    const K = intervals.length + 1
+
+    // Riga opzionale "Key Signature: <-5..6>" (in qualsiasi posizione del file)
+    const keySigMatch = txt.match(/^Key Signature\s*:\s*(-?\d+)\s*$/im)
+    if (keySigMatch) {
+        const code = parseInt(keySigMatch[1])
+        if (!isNaN(code) && code >= -5 && code <= 6) {
+            document.getElementById('keySigSelect').value = String(keySigCodeToFifths(code))
+        }
+    }
+
+    // Usa la Start Note scelta dall'utente nell'interfaccia
+    const PC_LABELS = ['C','C#','D','Eb','E','F','F#','G','Ab','A','Bb','B']
+    const startPC = parseInt(document.getElementById('startNote').value)
+
+    // Assegna ottava: C–F# → ottava 4, G–B → ottava 3 (come da logica app)
+    const startOctave = startPC <= 7 ? 4 : 3
+    let startMidi = 12 * (startOctave + 1) + startPC  // MIDI standard: C4 = 60
+
+    // Costruisci la sequenza di note MIDI
+    const midiNotes = [startMidi]
+    for (const iv of intervals) {
+        midiNotes.push(midiNotes[midiNotes.length - 1] + iv)
+    }
+
+    // Durata nota dal controllo Note Length
+    const noteDurationBeats = parseFloat(document.getElementById('noteLength').value) || 1
+    const noteDurationSec = noteDurationBeats * 0.5  // a 120 BPM (1 beat = 0.5s)
+
+    // Costruisci MIDI binario usando @tonejs/midi
+    const midi = new Midi()
+    midi.header.setTempo(120)
+    const track = midi.addTrack()
+    midiNotes.forEach((midiPitch, i) => {
+        track.addNote({
+            midi: midiPitch,
+            time: i * noteDurationSec,
+            duration: noteDurationSec * 0.9,
+            velocity: 0.8
+        })
+    })
+    const midiBytes = midi.toArray()
+    const midiBuffer = midiBytes.buffer
+    const midiBlob = new Blob([midiBuffer], { type: "audio/midi" })
+
+    showLoading()
+    loadingOverlay.innerText = "📂 Importing GeCo TXT..."
+
+    try {
+        // Invia il MIDI costruito al backend per ottenere la notazione
+        midiData = new Midi(midiBuffer)
+        midiBlobGlobal = midiBlob
+
+        const formData = new FormData()
+        formData.append("midi", midiBlob, "geco_import.mid")
+
+        const importRes = await fetch(`${BASE_URL}/import`, {
+            method: "POST",
+            body: formData
+        })
+
+        if (!importRes.ok) {
+            throw new Error("Import failed: " + importRes.statusText)
+        }
+
+        const scoreBlob = await importRes.blob()
+        const scoreUrl  = URL.createObjectURL(scoreBlob)
+        loadingOverlay.innerText = "🖊 Rendering notation..."
+        await renderScoreWithKeySig(scoreUrl)
+
+        showGeneratedIntervals()
+
+    } catch (err) {
+        console.error(err)
+        alert("Errore durante l'import GeCo: " + err.message)
+    } finally {
+        hideLoading()
+    }
+}
+// ── Fine Import GeCo TXT ──────────────────────────────────────────────────
+
+function applyParamsFromTxt(txt) {
+    const line = key => {
+        const match = txt.match(new RegExp(`^${key}:\\s*(.+)$`, 'm'))
+        return match ? match[1].trim() : null
+    }
+
+    const PC_LABELS = ['C','C#','D','Eb','E','F','F#','G','Ab','A','Bb','B']
+
+    // Start Note
+    const startNote = line('Start Note')
+    if (startNote) {
+        const idx = PC_LABELS.indexOf(startNote)
+        if (idx !== -1) document.getElementById('startNote').value = idx
+    }
+
+    // Key Signature (-5..6, valore = fifths)
+    const keySig = line('Key Signature')
+    if (keySig !== null) {
+        const code = parseInt(keySig)
+        if (!isNaN(code)) {
+            document.getElementById('keySigSelect').value = String(keySigCodeToFifths(code))
+        }
+    }
+
+}
+
+
+// ── PITCH-CLASS CIRCLE ─────────────────────────────────────────────────────
+;(function(){
+    const PC_NAMES = ['C','C♯','D','E♭','E','F','F♯','G','A♭','A','B♭','B']
+    const R  = 76
+    const RN = 10
+    const NS = 'http://www.w3.org/2000/svg'
+    const svg = document.getElementById('pcCircle')
+
+    function pcAngle(pc){ return (pc/12)*2*Math.PI - Math.PI/2 }
+    function polar(r,a){ return { x: r*Math.cos(a), y: r*Math.sin(a) } }
+
+    function mkEl(tag, attrs, parent){
+        const e = document.createElementNS(NS, tag)
+        for(const [k,v] of Object.entries(attrs)) e.setAttribute(k,v)
+        if(parent) parent.appendChild(e)
+        return e
+    }
+
+    ;(function build(){
+        svg.innerHTML = ''
+        const defs = mkEl('defs',{},svg)
+
+        const flt = mkEl('filter',{id:'pcGlow',x:'-80%',y:'-80%',width:'260%',height:'260%'},defs)
+        mkEl('feGaussianBlur',{stdDeviation:'3',result:'blur'},flt)
+        const fm = mkEl('feMerge',{},flt)
+        mkEl('feMergeNode',{in:'blur'},fm)
+        mkEl('feMergeNode',{in:'SourceGraphic'},fm)
+
+        const mk = mkEl('marker',{id:'pcArr',markerWidth:'6',markerHeight:'6',refX:'5',refY:'3',orient:'auto'},defs)
+        mkEl('path',{d:'M0,0 L0,6 L6,3 z',fill:'#c8b87a'},mk)
+
+        const gr = mkEl('radialGradient',{id:'pcBg',cx:'50%',cy:'50%',r:'50%'},defs)
+        mkEl('stop',{offset:'0%','stop-color':'#1a1a28'},gr)
+        mkEl('stop',{offset:'100%','stop-color':'#0a0a0f'},gr)
+        mkEl('circle',{r:105,fill:'#3498db',stroke:'#2980b9','stroke-width':'1'},svg)
+        mkEl('circle',{r:46,fill:'none',stroke:'#2980b9','stroke-width':'1','stroke-dasharray':'2 4'},svg)
+
+        for(let pc=0;pc<12;pc++){
+            const p = polar(R-RN-1,pcAngle(pc))
+            mkEl('line',{x1:0,y1:0,x2:p.x,y2:p.y,stroke:'#2980b9','stroke-width':'0.7'},svg)
+        }
+
+        mkEl('g',{id:'pcArcLayer'},svg)
+
+        for(let pc=0;pc<12;pc++){
+            const pos = polar(R,pcAngle(pc))
+            const lp  = polar(R+RN+8,pcAngle(pc))
+            const g = mkEl('g',{id:`pcNd-${pc}`,transform:`translate(${pos.x},${pos.y})`},svg)
+            mkEl('circle',{id:`pcGl-${pc}`,r:RN+4,fill:'none',stroke:'rgba(240,228,176,0.35)','stroke-width':'2',opacity:'0'},g)
+            mkEl('circle',{id:`pcCi-${pc}`,r:RN,fill:'#2471a3',stroke:'#aed6f1','stroke-width':'1'},g)
+            mkEl('text',{id:`pcLb-${pc}`,'text-anchor':'middle','dominant-baseline':'central',
+                fill:'#d6eaf8','font-family':'Arial,sans-serif','font-size':'7'},g).textContent = PC_NAMES[pc]
+            mkEl('text',{x:lp.x-pos.x,y:lp.y-pos.y,'text-anchor':'middle','dominant-baseline':'central',
+                fill:'#aed6f1','font-family':'Arial,sans-serif','font-size':'6'},g).textContent = pc
+        }
+    })()
+
+    const nodeState = new Array(12).fill('off')
+    function renderNode(pc){
+        const ci = document.getElementById(`pcCi-${pc}`)
+        const gl = document.getElementById(`pcGl-${pc}`)
+        const lb = document.getElementById(`pcLb-${pc}`)
+        const s  = nodeState[pc]
+        if(s==='active'){
+            ci.setAttribute('fill','#f0e4b0'); ci.setAttribute('stroke','#f0e4b0')
+            ci.setAttribute('filter','url(#pcGlow)'); gl.setAttribute('opacity','0.8')
+            lb.setAttribute('fill','#0a0a0f')
+        } else if(s==='visited'){
+            ci.setAttribute('fill','#3a3255'); ci.setAttribute('stroke','#4a4270')
+            ci.removeAttribute('filter'); gl.setAttribute('opacity','0')
+            lb.setAttribute('fill','#8878b8')
+        } else {
+            ci.setAttribute('fill','#2471a3'); ci.setAttribute('stroke','#aed6f1')
+            ci.removeAttribute('filter'); gl.setAttribute('opacity','0')
+            lb.setAttribute('fill','#d6eaf8')
+        }
+    }
+    function resetNodes(){ for(let pc=0;pc<12;pc++){nodeState[pc]='off';renderNode(pc)} }
+
+    const arcMap = {}
+    function resetArcs(){
+        const l=document.getElementById('pcArcLayer'); if(l) l.innerHTML=''
+        for(const k in arcMap) delete arcMap[k]
+    }
+    function drawArc(from,to){
+        if(from===to) return
+        const key=`${from}-${to}`
+        const layer=document.getElementById('pcArcLayer')
+        if(arcMap[key]){
+            arcMap[key].count++
+            arcMap[key].el.setAttribute('stroke-width',String(Math.min(1.2+arcMap[key].count*0.7,5)))
+            return
+        }
+        const A=polar(R,pcAngle(from)), B=polar(R,pcAngle(to))
+        const mx=(A.x+B.x)/2, my=(A.y+B.y)/2
+        const dx=B.x-A.x, dy=B.y-A.y, len=Math.sqrt(dx*dx+dy*dy)||1
+        const side=from<to?1:-1, bulge=22*side
+        const cx=mx-(dy/len)*bulge, cy=my+(dx/len)*bulge
+        const stx=cx-A.x,sty=cy-A.y,stl=Math.sqrt(stx*stx+sty*sty)||1
+        const sx=A.x+(stx/stl)*(RN+1), sy=A.y+(sty/stl)*(RN+1)
+        const etx=B.x-cx,ety=B.y-cy,etl=Math.sqrt(etx*etx+ety*ety)||1
+        const ex=B.x-(etx/etl)*(RN+3), ey=B.y-(ety/etl)*(RN+3)
+        const pathEl=mkEl('path',{
+            d:`M${sx},${sy} Q${cx},${cy} ${ex},${ey}`,
+            fill:'none',stroke:'#c8b87a','stroke-width':'1.2',
+            'stroke-opacity':'0.6','stroke-linecap':'round','marker-end':'url(#pcArr)'
+        },layer)
+        arcMap[key]={count:1,el:pathEl}
+    }
+
+    const activePCs = new Set()
+    let lastPC=null, firstPC=null, firstArcEl=null, lastArcEl=null
+
+    function activatePC(pc){
+        if(lastPC!==null && lastPC!==pc){
+            const key=`${lastPC}-${pc}`, wasNew=!arcMap[key]
+            drawArc(lastPC,pc)
+            if(wasNew){
+                const el=arcMap[key].el
+                if(!firstArcEl){
+                    firstArcEl=el
+                    el.setAttribute('stroke','#ffffff')
+                    el.setAttribute('stroke-opacity','0.9')
+                    el.setAttribute('stroke-width','2')
+                }
+                lastArcEl=el
+            }
+        }
+        if(firstPC===null) firstPC=pc
+        lastPC=pc
+        activePCs.add(pc)
+        nodeState[pc]='active'
+        renderNode(pc)
+    }
+    function deactivatePC(pc){
+        if(pc===firstPC) return
+        activePCs.delete(pc)
+        nodeState[pc]='visited'
+        renderNode(pc)
+    }
+    function highlightEnd(){
+        if(lastPC!==null && lastPC!==firstPC){nodeState[lastPC]='active';renderNode(lastPC)}
+        if(lastArcEl && lastArcEl!==firstArcEl){
+            lastArcEl.setAttribute('stroke','#ffffff')
+            lastArcEl.setAttribute('stroke-opacity','0.9')
+            lastArcEl.setAttribute('stroke-width',String(Math.max(parseFloat(lastArcEl.getAttribute('stroke-width')||1.2),2)))
+        }
+    }
+
+    let pcTimers=[], pcPlaying=false
+
+    window.pcPlay = function(){
+        if(!midiData) return
+        pcStop()
+        resetNodes(); resetArcs()
+        lastPC=null; firstPC=null; firstArcEl=null; lastArcEl=null; activePCs.clear()
+
+        const track = midiData.tracks.find(t=>t.notes.length>0)
+        if(!track) return
+
+        const firstNote = track.notes[0].midi % 12
+        firstPC = firstNote
+        activatePC(firstNote)
+
+        const scale = 120 / parseInt(bpmSlider.value)
+        pcPlaying = true
+
+        track.notes.forEach(note => {
+            const pc    = note.midi % 12
+            const onMs  = note.time  * scale * 1000
+            const offMs = (note.time + Math.max(note.duration,0.05)) * scale * 1000
+            pcTimers.push(setTimeout(()=>{ if(pcPlaying) activatePC(pc)   }, onMs))
+            pcTimers.push(setTimeout(()=>{ if(pcPlaying) deactivatePC(pc) }, offMs))
+        })
+
+        const endMs = track.notes.reduce((mx,n)=>Math.max(mx,(n.time+n.duration)*scale*1000),0) + 400
+        pcTimers.push(setTimeout(()=>{ pcPlaying=false; highlightEnd() }, endMs))
+    }
+
+    window.pcStop = function(){
+        pcPlaying=false
+        pcTimers.forEach(t=>clearTimeout(t))
+        pcTimers=[]
+    }
+
+    window.pcReset = function(){
+        pcStop(); resetNodes(); resetArcs()
+        lastPC=null; firstPC=null; firstArcEl=null; lastArcEl=null; activePCs.clear()
+    }
+
+})()
+// ── END PITCH-CLASS CIRCLE ─────────────────────────────────────────────────
+
+// ── Generated intervals display ────────────────────────────────────
+function showGeneratedIntervals() {
+    if (!midiData) return
+
+    // Raccoglie tutte le note dal MIDI (primo track con note)
+    let allNotes = []
+    for (const track of midiData.tracks) {
+        if (track.notes.length > 0) {
+            allNotes = track.notes
+            break
+        }
+    }
+    if (allNotes.length < 2) return
+
+    // Calcola intervalli in semitoni tra note consecutive
+    const intervals = []
+    for (let i = 0; i < allNotes.length - 1; i++) {
+        intervals.push(allNotes[i + 1].midi - allNotes[i].midi)
+    }
+
+    // Popola il panel
+    const row = document.getElementById("generatedIntervalsRow")
+    row.innerHTML = ""
+    intervals.forEach(v => {
+        const box = document.createElement("span")
+        box.className = "gen-interval-box"
+        box.textContent = v > 0 ? "+" + v : String(v)
+        row.appendChild(box)
+    })
+
+    document.getElementById("generatedIntervalsPanel").style.display = "block"
+}
+// ───────────────────────────────────────────────────────────────────
+
+// ── Contextual help panel ──────────────────────────────────────────
+const helpPanel = document.getElementById("helpPanel")
+const helpDefault = "<em>Hover over or focus any control to see its description.</em>"
+
+function showHelp(el) {
+    const msg = el.dataset.help || el.closest("[data-help]")?.dataset.help
+    if (msg) helpPanel.innerHTML = msg
+}
+
+function clearHelp() {
+    helpPanel.innerHTML = helpDefault
+}
+
+document.querySelectorAll("[data-help]").forEach(el => {
+    el.addEventListener("mouseover",  e => { showHelp(e.currentTarget); e.stopPropagation() })
+    el.addEventListener("focusin",    e => { showHelp(e.currentTarget); e.stopPropagation() })
+    el.addEventListener("mouseout",   clearHelp)
+    el.addEventListener("focusout",   clearHelp)
+})
+// ───────────────────────────────────────────────────────────────────
+
+</script>
+
+</body>
+</html>

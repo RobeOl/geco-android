@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<title>GeCo-Join: MIDI File Joiner</title>
+
+<script src="https://unpkg.com/tone"></script>
+<script src="https://unpkg.com/@tonejs/midi"></script>
+<script src="https://unpkg.com/soundfont-player/dist/soundfont-player.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/opensheetmusicdisplay/build/opensheetmusicdisplay.min.js"></script>
+
+<style>
+    body {
+        font-family: Arial;
+        background: #3498db;
+        text-align: center;
+        padding: 10px;
+        font-weight: bold;
+    }
+
+    .container {
+        width: 1200px;
+        margin: 30px auto;
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        position: relative;
+    }
+
+    button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        border: none;
+        border-radius: 8px;
+        background: #3498db;
+        color: white;
+        cursor: pointer;
+    }
+
+    button:hover { opacity: 0.9; }
+
+    .button-row { display: flex; gap: 10px; }
+    .button-row button { flex: 1; }
+
+    .reset-btn {
+        width: 120px;
+        background-color: #e74c3c;
+        margin-top: 10px;
+    }
+
+    .reset-btn:hover { background-color: #c0392b; }
+
+    #score {
+        margin-top: 30px;
+        border: 1px solid #ccc;
+        padding: 10px;
+        overflow: hidden;
+    }
+
+    button:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        background-color: #ddd;
+        color: #666;
+    }
+</style>
+
+<style>
+    .back-btn {
+        position: fixed; /* Rende il posizionamento indipendente dal testo centrato */
+        top: 5px;          /* Allineato verticalmente al padding del container */
+        left: 20px;         /* Allineato orizzontalmente al padding del container */
+        background: #b429b9;
+        /* background: #2980b9; */
+        color: white;
+        padding: 8px 18px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 14px;
+        z-index: 10000;
+    }
+    .back-btn:hover { background: #1a6a9a; }
+</style>
+
+<style>
+/* ── Help Button ── */
+#helpBtn {
+    position: fixed;
+    top: 45px;
+    left: 20px;
+    width: auto;
+    padding: 7px 18px;
+    margin: 0;
+    background: #f39c12;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 11000;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+}
+#helpBtn:hover { background: #d68910; opacity: 1; }
+
+/* ── Help Modal Overlay ── */
+#helpModal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.55);
+    z-index: 50000;
+    overflow-y: auto;
+}
+#helpModal .modal-box {
+    background: #fff;
+    margin: 40px auto;
+    max-width: 760px;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+    padding: 0 0 10px 0;
+    font-family: Arial, sans-serif;
+    color: #222;
+}
+#helpModal .modal-close-bar {
+    background: #f39c12;
+    border-radius: 12px 12px 0 0;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: flex-end;
+}
+#helpModal .modal-close-bar-bottom {
+    background: #f4f6f8;
+    border-radius: 0 0 12px 12px;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: flex-end;
+    border-top: 1px solid #ddd;
+}
+#helpModal .close-btn {
+    width: auto;
+    padding: 6px 22px;
+    margin: 0;
+    background: #fff;
+    color: #c0392b;
+    border: 2px solid #c0392b;
+    border-radius: 7px;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+}
+#helpModal .close-btn:hover { background: #c0392b; color: #fff; opacity: 1; }
+#helpModal .modal-content {
+    padding: 22px 30px 10px 30px;
+    line-height: 1.65;
+    font-size: 14px;
+}
+#helpModal h2 {
+    color: #2980b9;
+    margin-top: 0;
+    font-size: 20px;
+}
+#helpModal h3 {
+    color: #d35400;
+    margin-top: 18px;
+    margin-bottom: 6px;
+    font-size: 15px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 3px;
+}
+#helpModal ul {
+    margin: 6px 0 10px 20px;
+    padding: 0;
+}
+#helpModal li { margin-bottom: 5px; }
+#helpModal code {
+    background: #eaf2ff;
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-size: 13px;
+    color: #1a5276;
+}
+.keysig-box {
+    border: 2px solid #b0c4de;
+    background-color: #dce8f5;
+    border-radius: 8px;
+    padding: 6px 10px 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 14px;
+    vertical-align: middle;
+}
+.keysig-box .label {
+    font-weight: bold;
+    font-size: 13px;
+    color: #1a4a7a;
+    margin-bottom: 0;
+}
+.keysig-box select {
+    padding: 3px 6px;
+    border: 1px solid #7fa8cc;
+    border-radius: 5px;
+    background: #f0f6ff;
+    font-size: 12px;
+    color: #1a4a7a;
+    cursor: pointer;
+}
+</style>
+
+</head>
+
+<body>
+
+<!-- ── Help Button ── -->
+<button id="helpBtn" onclick="document.getElementById('helpModal').style.display='block'">❓ Help</button>
+
+<!-- ── Help Modal ── -->
+<div id="helpModal" onclick="if(event.target===this)this.style.display='none'">
+  <div class="modal-box">
+
+    <div class="modal-close-bar">
+      <button class="close-btn" onclick="document.getElementById('helpModal').style.display='none'">✕ Close</button>
+    </div>
+
+    <div class="modal-content">
+      <h2>GeCo-Join — User Guide</h2>
+      <p>
+        <strong>GeCo-Join</strong> is a MIDI file joiner that lets you concatenate multiple
+        <code>.mid</code> files into a single sequence using a Forth-style stack. The result
+        is rendered as standard music notation and can be played back in the browser or
+        exported as a new MIDI file.
+      </p>
+
+      <h3>📥 Importing MIDI Files</h3>
+      <ul>
+        <li><strong>Import MIDI</strong> — Opens a file picker that accepts one or more
+            <code>.mid</code> / <code>.midi</code> files. Each selected file is pushed onto
+            the stack and the full stack is immediately joined and rendered.</li>
+        <li><strong>Append MIDI</strong> — Adds a single file to the <em>top</em> of the
+            existing stack (after the current sequence), then re-joins automatically.</li>
+      </ul>
+
+      <h3>📚 Stack (Forth-style)</h3>
+      <p>
+        Files are managed on a last-in / first-out stack. The <em>top</em> of the stack
+        is always the last item in the list. Every stack operation immediately re-joins
+        the remaining files and re-renders the notation.
+      </p>
+      <ul>
+        <li><strong>Pop</strong> — Removes the top (last) file from the stack.</li>
+        <li><strong>Rotate</strong> — Moves the top file to the bottom
+            (<code>[A, B, C] → [C, A, B]</code>), cycling the play order.</li>
+        <li><strong>Swap</strong> — Exchanges the last two files on the stack
+            (<code>[A, B, C] → [A, C, B]</code>).</li>
+        <li><strong>Reset</strong> — Clears the stack, removes the score, and reloads the
+            page to restore all defaults.</li>
+      </ul>
+
+      <h3>💾 MIDI Export</h3>
+      <ul>
+        <li><strong>Download MIDI</strong> — Saves the currently joined sequence as
+            <code>geco_join.mid</code>, ready for import into any DAW or notation software.</li>
+      </ul>
+
+      <h3>🎹 Playback</h3>
+      <ul>
+        <li><strong>Play</strong> — Starts in-browser playback of the joined sequence using
+            an acoustic grand piano soundfont at the current BPM.</li>
+        <li><strong>Pause / Continue</strong> — Freezes playback; press again to resume from
+            the same position.</li>
+        <li><strong>Stop</strong> — Stops playback immediately and resets the transport.</li>
+        <li><strong>Loop</strong> — When checked, playback restarts automatically at the end
+            of the sequence.</li>
+        <li><strong>BPM slider</strong> (top right) — Sets the playback tempo (60–240 BPM).
+            This does <em>not</em> alter the exported MIDI file.</li>
+      </ul>
+
+      <h3>🥁 Metronome</h3>
+      <ul>
+        <li><strong>Metronome checkbox</strong> — Activates a click track during playback.
+            Beat 1 of each bar is accented.</li>
+        <li><strong>Volume slider 🔊</strong> — Controls the metronome level independently
+            from the music (0–100 %).</li>
+        <li><strong>Click sound</strong> — Three options:
+          <ul>
+            <li><code>DAW (noise)</code> — Short white-noise burst, filtered for a crisp
+                studio feel.</li>
+            <li><code>Beep (sine)</code> — Pure sine-tone click.</li>
+            <li><code>Wood block</code> — Synthesised wood-block transient.</li>
+          </ul>
+        </li>
+      </ul>
+
+      <h3>🎼 Score Display</h3>
+      <p>
+        After each import or stack operation the joined sequence is sent to the backend,
+        converted to MusicXML, and rendered as standard notation using
+        <em>OpenSheetMusicDisplay</em>. Part names and abbreviations are hidden for a
+        cleaner view.
+      </p>
+
+      <h3>ℹ️ Contextual Help</h3>
+      <p>
+        Hover over (or tab-focus) any control to see a short description in the
+        <em>help strip</em> below the main panel.
+      </p>
+    </div>
+
+    <div class="modal-close-bar-bottom">
+      <button class="close-btn" onclick="document.getElementById('helpModal').style.display='none'">✕ Close</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Loading overlay -->
+<div id="loadingOverlay" style="
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    color: white; display: none;
+    align-items: center; justify-content: center;
+    font-size: 22px; z-index: 20000;">
+    ⏳ Generating... please wait
+</div>
+
+<!-- BPM CONTROL -->
+<div id="bpmControl" style="
+    position: fixed; top: 20px; right: 60px;
+    background: white; padding: 10px 15px;
+    border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    z-index: 10000;">
+    <label><b>BPM:</b> <span id="bpmValue">100</span></label><br>
+    <input type="range" id="bpmSlider" min="60" max="240" value="100"
+        data-help="Playback tempo in beats per minute (60–240).">
+</div>
+
+<div class="container">
+
+    <h1 class="titolo">
+        <span>GeCo-Join</span>
+        <img src="penta.png" width="140" align="center" alt="Logo">
+    </h1>
+    <div style="font-style: italic; font-size: 12px; color: #555;">R. Olmi &amp; M. Bittelli &mdash; <span style="font-size: 10px; color: #3498db;">Join MIDI files</span></div>
+    <br>
+    <!-- <a class="back-btn" href="#" onclick="window.close(); return false;">← Back to GeCo-Tools</a> -->
+    <a class="back-btn" href="GeCo-Tools.html">← Back to GeCo-Tools</a>
+
+    <!-- Metronome -->
+    <label style="margin-top: 8px; display: inline-block;">
+        <input type="checkbox" id="metronome"
+            data-help="When enabled, a metronome click will sound during playback at the current BPM.">
+        Metronome
+    </label>
+    <span style="margin-left:8px; font-size:13px; vertical-align:middle;" title="Metronome volume">🔊</span>
+<input type="range" id="metronomeVolume" min="0" max="100" value="80" step="1"
+    style="margin-left:4px; width:70px; vertical-align:middle;"
+    data-help="Metronome volume (0 = silent, 100 = full volume).">
+<span id="metronomeVolumeLabel" style="margin-left:4px; font-size:12px; color:#555;">80%</span>
+<script>
+    document.getElementById('metronomeVolume').addEventListener('input', function(){
+        document.getElementById('metronomeVolumeLabel').textContent = this.value + '%'
+    })
+</script>
+    <select id="metronomeSound"
+        style="margin-left: 8px; font-size: 13px; padding: 2px 6px; border-radius: 5px; border: 1px solid #aaa;"
+        data-help="Metronome click sound. DAW: short white noise burst. Beep: sine tone. Wood: wooden stick click.">
+        <option value="noise">DAW (noise)</option>
+        <option value="beep">Beep (sine)</option>
+        <option value="wood">Wood block</option>
+    </select>
+
+    <!-- Key Signature box -->
+    <div class="keysig-box" style="vertical-align:middle;" data-help="Key Signature: select the clef for the score display. 
+    This does not affect the audio or MIDI; it only affects the notation.">
+        <div class="label">🎼 Key Signature</div>
+        <select id="keySigSelect" onchange="applyKeySigToScore()">
+            <option value="0"  >C major / A minor</option>
+            <option value="1"  >G major / E minor (♯)</option>
+            <option value="2"  >D major / B minor (2♯)</option>
+            <option value="3"  >A major / F♯ minor (3♯)</option>
+            <option value="4"  >E major / C♯ minor (4♯)</option>
+            <option value="5"  >B major / G♯ minor (5♯)</option>
+            <option value="6"  >F♯ major / D♯ minor (6♯)</option>
+            <option value="-1" >F major / D minor (♭)</option>
+            <option value="-2" >B♭ major / G minor (2♭)</option>
+            <option value="-3" >E♭ major / C minor (3♭)</option>
+            <option value="-4" >A♭ major / F minor (4♭)</option>
+            <option value="-5" >D♭ major / B♭ minor (5♭)</option>
+            <option value="-6" >G♭ major / E♭ minor (6♭)</option>
+        </select>
+    </div>
+
+    <br>
+
+    <!-- Playback + MIDI + Stack boxes -->
+    <div style="display: flex; gap: 16px; align-items: stretch; flex-wrap: wrap; margin-top: 10px;">
+
+        <!-- PLAYBACK box -->
+        <div style="width: 200px; border: 2px solid #3498db; border-radius: 10px; padding: 8px 12px; background: #eaf4fb;">
+            <div style="font-size: 11px; font-weight: bold; color: #2980b9; text-align: center; margin-bottom: 6px;">PLAYBACK</div>
+            <div class="button-row" style="margin-top: 0; display: flex; flex-direction: column; gap: 6px;">
+                <button onclick="playMusic()" data-help="Plays back the loaded sequence using a piano soundfont at the current BPM.">Play</button>
+                <button id="pauseBtn" onclick="pauseResumeMusic()"
+                    data-help="Pauses playback. Press again (Continue) to resume."
+                    style="background: #e67e22;">Pause</button>
+                <button onclick="stopMusic()" data-help="Stops playback immediately.">Stop</button>
+            </div>
+            <div style="margin-top: 8px; text-align: center;">
+                <label style="font-size: 13px; color: #2980b9; cursor: pointer;">
+                    <input type="checkbox" id="loopCheck"
+                        data-help="When checked, playback restarts automatically at the end.">
+                    Loop
+                </label>
+            </div>
+        </div>
+
+        <!-- MIDI box -->
+        <div style="width: 200px; border: 2px solid #27ae60; border-radius: 10px; padding: 8px 12px; background: #eafaf1;">
+            <div style="font-size: 11px; font-weight: bold; color: #1e8449; text-align: center; margin-bottom: 6px;">MIDI</div>
+            <div class="button-row" style="margin-top: 0; display: flex; flex-direction: column; gap: 6px;">
+                <button onclick="downloadMidi()"
+                    data-help="Downloads the joined sequence as a MIDI file."
+                    style="background: #27ae60;">Download MIDI</button>
+                <button onclick="document.getElementById('midiFileInput').click()"
+                    data-help="Import one or more MIDI files: each file is pushed onto the stack."
+                    style="background: #27ae60;">Import MIDI</button>
+                <button onclick="appendMidi()"
+                    data-help="Append a MIDI file: pushes it onto the stack after the current sequence."
+                    style="background: #1a7a45;">Append MIDI</button>
+            </div>
+        </div>
+
+        <!-- STACK box: pulsanti a sinistra, lista a destra -->
+        <div style="flex: 1; min-width: 260px; border: 2px solid #8e44ad; border-radius: 10px; padding: 8px 12px; background: #f5eef8;">
+            <div style="font-size: 11px; font-weight: bold; color: #6c3483; text-align: center; margin-bottom: 6px;">STACK (Forth)</div>
+            <div style="display: flex; gap: 10px; align-items: stretch;">
+                <div style="display: flex; flex-direction: column; gap: 6px; width: 90px;">
+                    <button onclick="stackPop()"
+                        data-help="POP: removes the last (top) sequence from the stack."
+                        style="margin-top:0; background: #8e44ad;"
+                        id="btnPop" disabled>Pop</button>
+                    <button onclick="stackRotate()"
+                        data-help="ROTATE: moves the last sequence to the front (bottom of stack becomes top)."
+                        style="margin-top:0; background: #8e44ad;"
+                        id="btnRotate" disabled>Rotate</button>
+                    <button onclick="stackSwap()"
+                        data-help="SWAP: exchanges the last two sequences on the stack."
+                        style="margin-top:0; background: #8e44ad;"
+                        id="btnSwap" disabled>Swap</button>
+                    <button class="reset-btn" onclick="resetApp()"
+                        data-help="Resets all parameters to defaults and clears the score."
+                        style="margin-top: 6px; width: 100%;">Reset</button>
+                </div>
+                <div id="stackDisplay" style="
+                    flex: 1; min-height: 80px; max-height: 150px; overflow-y: auto;
+                    border: 1px solid #c39bd3; border-radius: 6px;
+                    background: #fff; padding: 5px 7px;
+                    font-size: 11px; color: #4a235a; line-height: 1.8;
+                    font-family: monospace;">
+                    <em style="color:#aaa;">stack vuoto</em>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- fine flex boxes -->
+
+    <input type="file" id="midiFileInput" accept=".mid,.midi" multiple style="display: none"
+        onchange="importMidi(this)">
+    <input type="file" id="midiAppendInput" accept=".mid,.midi" style="display: none"
+        onchange="handleAppend(this)">
+
+    <div id="helpPanel" style="margin-top: 10px;"><em>Hover over or focus any control to see its description.</em></div>
+
+    <div id="score"></div>
+
+</div><!-- fine container -->
+
+<div id="serverStatus" style="
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    background: #e67e22;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    z-index: 9999;
+    font-weight: bold;">
+    🚀 The server is starting... please wait a few seconds
+</div>
+
+<script>
+
+// const ENV = "local"   // cambia in "remote" per produzione
+const ENV = "remote"
+const BASE_URL = ENV === "local" ? "http://localhost:5003" : "https://serie3.onrender.com"
+let serverAwake = ENV === "local"
+
+async function checkServer() {
+    if (ENV === "local") return
+    document.getElementById("serverStatus").style.display = "block"
+    try {
+        const res = await fetch(`${BASE_URL}/health`)
+        if (res.ok) {
+            serverAwake = true
+            document.getElementById("serverStatus").style.display = "none"
+        } else {
+            retryCheck()
+        }
+    } catch (e) {
+        retryCheck()
+    }
+}
+
+function retryCheck() {
+    setTimeout(checkServer, 3000)
+}
+
+checkServer()
+
+let lastMusicXmlText = null
+let midiData = null
+let part = null
+let synth = null
+let osmd = new opensheetmusicdisplay.OpenSheetMusicDisplay(document.getElementById("score"))
+let midiBlobGlobal = null
+
+// ── MIDI Stack (Forth-style) ─────────────────────────────────────────────────
+// Each entry: { name: string, blob: Blob }
+let midiStack = []
+
+function stackPush(name, blob) {
+    midiStack.push({ name, blob })
+    updateStackUI()
+}
+
+function stackPop() {
+    if (midiStack.length === 0) return
+    midiStack.pop()
+    updateStackUI()
+    if (midiStack.length > 0) stackJoin()
+    else { document.getElementById("score").innerHTML = ""; midiData = null; midiBlobGlobal = null }
+}
+
+function stackRotate() {
+    // Forth ROTATE: last element moves to front
+    // [ A, B, C ] → [ C, A, B ]
+    if (midiStack.length < 2) return
+    const top = midiStack.pop()
+    midiStack.unshift(top)
+    updateStackUI()
+    stackJoin()
+}
+
+function stackSwap() {
+    // Forth SWAP: exchange last two elements
+    // [ A, B, C ] → [ A, C, B ]
+    if (midiStack.length < 2) return
+    const i = midiStack.length - 1
+    ;[midiStack[i], midiStack[i - 1]] = [midiStack[i - 1], midiStack[i]]
+    updateStackUI()
+    stackJoin()
+}
+
+async function stackJoin() {
+    if (!serverAwake) {
+        alert("⏳ The server is still starting up — please wait a few seconds and try again.")
+        return
+    }
+    if (midiStack.length === 0) { alert("Lo stack è vuoto!"); return }
+    if (midiStack.length === 1) {
+        // Un solo file: usa /import direttamente
+        showLoading("📂 Importing MIDI...")
+        try {
+            const formData = new FormData()
+            formData.append("midi", midiStack[0].blob, midiStack[0].name)
+            const res = await fetch(`${BASE_URL}/import`, { method: "POST", body: formData })
+            if (!res.ok) throw new Error(`Backend error: ${res.status} ${res.statusText}`)
+            const scoreBlob = await res.blob()
+            const midiBuffer = await midiStack[0].blob.arrayBuffer()
+            midiData = new Midi(midiBuffer)
+            midiBlobGlobal = new Blob([midiBuffer], { type: "audio/midi" })
+            const scoreUrl = URL.createObjectURL(scoreBlob)
+            loadingOverlay.innerText = "🖊 Rendering notation..."
+            await renderScoreWithKeySig(scoreUrl)
+            URL.revokeObjectURL(scoreUrl)
+        } catch (err) {
+            console.error(err); alert("Errore join: " + err.message)
+        } finally { hideLoading() }
+        return
+    }
+
+    // Più file: append sequenziale tramite /append
+    showLoading("🔗 Joining stack...")
+    try {
+        // Start from first element
+        let baseBuffer = await midiStack[0].blob.arrayBuffer()
+        let baseBlob = new Blob([baseBuffer], { type: "audio/midi" })
+
+        for (let i = 1; i < midiStack.length; i++) {
+            loadingOverlay.innerText = `🔗 Joining ${i}/${midiStack.length - 1}...`
+            const formData = new FormData()
+            formData.append("midi_base", baseBlob, "base.mid")
+            formData.append("midi_append", midiStack[i].blob, midiStack[i].name)
+            const res = await fetch(`${BASE_URL}/append`, { method: "POST", body: formData })
+            if (!res.ok) throw new Error(`Backend error: ${res.status} ${res.statusText}`)
+            const result = await res.json()
+            const joinedBuffer = Uint8Array.from(atob(result.midi), c => c.charCodeAt(0)).buffer
+            baseBlob = new Blob([joinedBuffer], { type: "audio/midi" })
+            // Keep last musicxml for rendering
+            if (i === midiStack.length - 1) {
+                midiData = new Midi(joinedBuffer)
+                midiBlobGlobal = baseBlob
+                const xmlBytes = Uint8Array.from(atob(result.musicxml), c => c.charCodeAt(0))
+                const xmlBlob = new Blob([xmlBytes], { type: "application/xml" })
+                const scoreUrl = URL.createObjectURL(xmlBlob)
+                loadingOverlay.innerText = "🖊 Rendering notation..."
+                await renderScoreWithKeySig(scoreUrl)
+                URL.revokeObjectURL(scoreUrl)
+            }
+        }
+    } catch (err) {
+        console.error(err); alert("Errore join: " + err.message)
+    } finally { hideLoading() }
+}
+
+// ── Key Signature injection ──────────────────────────────────────────────────
+const STEP_SEMITONES = { C:0, D:2, E:4, F:5, G:7, A:9, B:11 }
+const SHARP_ORDER = ['F','C','G','D','A','E','B']
+const FLAT_ORDER  = ['B','E','A','D','G','C','F']
+
+function keySigAlterations(fifths) {
+    const map = {}
+    if (fifths > 0) {
+        for (let i = 0; i < Math.min(fifths, 7); i++) map[SHARP_ORDER[i]] = 1
+    } else {
+        for (let i = 0; i < Math.min(-fifths, 7); i++) map[FLAT_ORDER[i]] = -1
+    }
+    return map
+}
+
+function respellPitch(pc, fifths) {
+    const candidates = []
+    for (const [step, semis] of Object.entries(STEP_SEMITONES)) {
+        for (const alter of [-1, 0, 1]) {
+            if (((semis + alter) % 12 + 12) % 12 === pc) candidates.push({ step, alter })
+        }
+    }
+    const natural = candidates.find(c => c.alter === 0)
+    if (natural) return natural
+    if (fifths >= 0) { const sharp = candidates.find(c => c.alter === 1); if (sharp) return sharp }
+    else             { const flat  = candidates.find(c => c.alter === -1); if (flat)  return flat  }
+    return candidates[0]
+}
+
+const LETTERS = ['C','D','E','F','G','A','B']
+
+function respellSequenceUniqueLetters(pcs, fifths) {
+    if (pcs.length === 0) return null
+    let distinct = pcs
+    const isOctaveRepeat = pcs.length === 8 && pcs[7] === pcs[0]
+    if (isOctaveRepeat) distinct = pcs.slice(0, 7)
+    if (distinct.length !== 7 || new Set(distinct).size !== 7) return null
+    const firstSpelling = respellPitch(distinct[0], fifths)
+    const startIdx = LETTERS.indexOf(firstSpelling.step)
+    if (startIdx === -1) return null
+    const result = []
+    for (let i = 0; i < 7; i++) {
+        const step = LETTERS[(startIdx + i) % 7]
+        const pc = distinct[i]
+        let alter = ((pc - STEP_SEMITONES[step]) % 12 + 12) % 12
+        if (alter > 2) alter -= 12
+        if (alter < -2) alter += 12
+        result.push({ step, alter })
+    }
+    if (isOctaveRepeat) result.push(result[0])
+    return result
+}
+
+function injectKeySig(xmlText, fifths) {
+    const parser = new DOMParser()
+    const doc = parser.parseFromString(xmlText, "application/xml")
+    const ksAlter = keySigAlterations(fifths)
+    const noteEls = Array.from(doc.querySelectorAll("note")).filter(n => n.querySelector("pitch"))
+    const pcsSeq = noteEls.map(noteEl => {
+        const pitchEl = noteEl.querySelector("pitch")
+        const step = pitchEl.querySelector("step").textContent.trim().toUpperCase()
+        const alterEl = pitchEl.querySelector("alter")
+        const alter = alterEl ? parseFloat(alterEl.textContent) : 0
+        return ((STEP_SEMITONES[step] + alter) % 12 + 12) % 12
+    })
+    const uniqueLetterSpellings = respellSequenceUniqueLetters(pcsSeq, fifths)
+    const keyNodes = doc.querySelectorAll("key")
+    if (keyNodes.length > 0) {
+        keyNodes.forEach(keyNode => {
+            let fifthsEl = keyNode.querySelector("fifths")
+            if (!fifthsEl) { fifthsEl = doc.createElement("fifths"); keyNode.insertBefore(fifthsEl, keyNode.firstChild) }
+            fifthsEl.textContent = fifths
+        })
+    } else {
+        const attrNodes = doc.querySelectorAll("attributes")
+        if (attrNodes.length > 0) {
+            const keyEl = doc.createElement("key")
+            const fifthsEl = doc.createElement("fifths")
+            fifthsEl.textContent = fifths
+            keyEl.appendChild(fifthsEl)
+            const timeEl = attrNodes[0].querySelector("time")
+            attrNodes[0].insertBefore(keyEl, timeEl || attrNodes[0].firstChild)
+        }
+    }
+    noteEls.forEach((noteEl, idx) => {
+        const pitchEl = noteEl.querySelector("pitch")
+        if (!pitchEl) return
+        const stepEl   = pitchEl.querySelector("step")
+        const alterEl  = pitchEl.querySelector("alter")
+        const octaveEl = pitchEl.querySelector("octave")
+        if (!stepEl || !octaveEl) return
+        const origStep   = stepEl.textContent.trim().toUpperCase()
+        const origAlter  = alterEl ? parseFloat(alterEl.textContent) : 0
+        const origOctave = parseInt(octaveEl.textContent)
+        const pc = ((STEP_SEMITONES[origStep] + origAlter) % 12 + 12) % 12
+        const { step: newStep, alter: newAlter } = uniqueLetterSpellings
+            ? uniqueLetterSpellings[idx] : respellPitch(pc, fifths)
+        let newOctave = origOctave
+        const origMidi = origOctave * 12 + pc
+        const newMidi  = newOctave * 12 + ((STEP_SEMITONES[newStep] + newAlter + 12) % 12)
+        if (newMidi - origMidi > 6)  newOctave--
+        if (newMidi - origMidi < -6) newOctave++
+        stepEl.textContent   = newStep
+        octaveEl.textContent = newOctave
+        if (newAlter !== 0) {
+            if (alterEl) { alterEl.textContent = newAlter }
+            else { const a = doc.createElement("alter"); a.textContent = newAlter; pitchEl.appendChild(a) }
+        } else {
+            if (alterEl) alterEl.parentNode.removeChild(alterEl)
+        }
+        const accEl = noteEl.querySelector("accidental")
+        const ksForNewStep = ksAlter[newStep] || 0
+        if (newAlter === ksForNewStep) {
+            if (accEl) accEl.parentNode.removeChild(accEl)
+        } else if (newAlter === 0 && ksForNewStep !== 0) {
+            if (accEl) { accEl.textContent = "natural" }
+            else { const a = doc.createElement("accidental"); a.textContent = "natural"; const t = noteEl.querySelector("type"); if (t) t.parentNode.insertBefore(a, t.nextSibling); else noteEl.appendChild(a) }
+        } else {
+            const accName = newAlter === 1 ? "sharp" : newAlter === -1 ? "flat" : newAlter === 2 ? "double-sharp" : newAlter === -2 ? "double-flat" : "natural"
+            if (accEl) { accEl.textContent = accName }
+            else { const a = doc.createElement("accidental"); a.textContent = accName; const t = noteEl.querySelector("type"); if (t) t.parentNode.insertBefore(a, t.nextSibling); else noteEl.appendChild(a) }
+        }
+    })
+    return new XMLSerializer().serializeToString(doc)
+}
+
+async function renderScoreWithKeySig(xmlUrl = null, xmlText = null) {
+    let rawXml = xmlText
+    if (!rawXml && xmlUrl) {
+        const res = await fetch(xmlUrl)
+        rawXml = await res.text()
+    }
+    if (!rawXml) return
+    lastMusicXmlText = rawXml
+    const fifths = parseInt(document.getElementById("keySigSelect").value) || 0
+    const modifiedXml = injectKeySig(rawXml, fifths)
+    const blob = new Blob([modifiedXml], { type: "application/xml" })
+    const url  = URL.createObjectURL(blob)
+    await osmd.load(url)
+    osmd.render()
+    URL.revokeObjectURL(url)
+    fixScoreSvg()
+}
+
+async function applyKeySigToScore() {
+    if (!lastMusicXmlText) return
+    await renderScoreWithKeySig(null, lastMusicXmlText)
+}
+// ── Fine Key Signature injection ─────────────────────────────────────────────
+
+function fixScoreSvg() {
+    const svg = document.querySelector("#score svg")
+    if (svg) {
+        const bbox = svg.getBBox()
+        svg.style.marginTop = `-${Math.max(0, bbox.y - 20)}px`
+    }
+}
+
+function updateStackUI() {
+    const display = document.getElementById("stackDisplay")
+    const n = midiStack.length
+    if (n === 0) {
+        display.innerHTML = '<em style="color:#aaa;">stack vuoto</em>'
+    } else {
+        display.innerHTML = midiStack.map((item, i) => {
+            const label = i === n - 1 ? ' ← top' : ''
+            return `<span style="color:#6c3483;">[${i}]</span> ${escHtml(item.name)}<span style="color:#aaa;">${label}</span>`
+        }).join('<br>')
+    }
+    document.getElementById("btnPop").disabled    = n < 1
+    document.getElementById("btnRotate").disabled = n < 2
+    document.getElementById("btnSwap").disabled   = n < 2
+}
+
+function escHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+}
+// ── Fine Stack ───────────────────────────────────────────────────────────────
+
+const loadingOverlay = document.getElementById("loadingOverlay")
+
+osmd.setOptions({ drawPartNames: false, drawPartAbbreviations: false })
+
+const bpmSlider = document.getElementById("bpmSlider")
+const bpmValue  = document.getElementById("bpmValue")
+bpmSlider.addEventListener("input", function () { bpmValue.textContent = this.value })
+
+function showLoading(msg) { loadingOverlay.innerText = msg || "⏳ Please wait..."; loadingOverlay.style.display = "flex" }
+function hideLoading()    { loadingOverlay.style.display = "none" }
+
+function resetApp() {
+    document.getElementById("score").innerHTML = ""
+    midiData = null
+    midiBlobGlobal = null
+    midiStack = []
+    updateStackUI()
+    document.getElementById("metronome").checked = false
+    document.getElementById("bpmSlider").value = 100
+    document.getElementById("bpmValue").textContent = "100"
+    location.reload()
+}
+
+// ── Metronome ──────────────────────────────────────────────────────────────
+let metronomePart = null
+
+/**
+ * Genera un singolo click via Web Audio API pura (nessun Tone.js synth).
+ * @param {AudioContext} ctx
+ * @param {number} when  - AudioContext time (sec) in cui suonare
+ * @param {boolean} strong - true = beat 1 (accentato)
+ * @param {string} mode  - 'noise' | 'beep' | 'wood'
+ */
+function scheduleClick(ctx, when, strong, mode) {
+    const volSlider = document.getElementById('metronomeVolume')
+    const volFactor = volSlider ? (parseFloat(volSlider.value) / 100) : 1.0
+
+    const gainNode = ctx.createGain()
+    gainNode.connect(ctx.destination)
+
+    if (mode === 'noise') {
+        // Burst di rumore bianco breve — stile DAW
+        const bufSize = ctx.sampleRate * 0.025   // 25 ms
+        const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate)
+        const data = buf.getChannelData(0)
+        for (let i = 0; i < bufSize; i++) data[i] = (Math.random() * 2 - 1)
+        const src = ctx.createBufferSource()
+        src.buffer = buf
+
+        // Filtro passa-alto per togliere i bassi e renderlo più "snappy"
+        const hp = ctx.createBiquadFilter()
+        hp.type = 'highpass'
+        hp.frequency.value = strong ? 1200 : 2000
+        src.connect(hp)
+        hp.connect(gainNode)
+
+        gainNode.gain.setValueAtTime((strong ? 0.9 : 0.45) * volFactor, when)
+        gainNode.gain.exponentialRampToValueAtTime(0.001, when + 0.025)
+        src.start(when)
+        src.stop(when + 0.03)
+
+    } else if (mode === 'beep') {
+        // Oscillatore sinusoidale a breve durata
+        const osc = ctx.createOscillator()
+        osc.type = 'sine'
+        osc.frequency.value = strong ? 1760 : 1047  // A6 / C6
+        osc.connect(gainNode)
+        gainNode.gain.setValueAtTime((strong ? 0.7 : 0.35) * volFactor, when)
+        gainNode.gain.exponentialRampToValueAtTime(0.001, when + 0.05)
+        osc.start(when)
+        osc.stop(when + 0.055)
+
+    } else if (mode === 'wood') {
+        // Simulazione wood block: sine breve + piccolo filtro bandpass
+        const bufSize = ctx.sampleRate * 0.015
+        const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate)
+        const data = buf.getChannelData(0)
+        const freq = strong ? 900 : 1400
+        for (let i = 0; i < bufSize; i++) {
+            const t = i / ctx.sampleRate
+            data[i] = Math.sin(2 * Math.PI * freq * t) * Math.exp(-t * 300)
+        }
+        const src = ctx.createBufferSource()
+        src.buffer = buf
+        src.connect(gainNode)
+        gainNode.gain.setValueAtTime((strong ? 1.0 : 0.55) * volFactor, when)
+        src.start(when)
+        src.stop(when + 0.02)
+    }
+}
+
+function startMetronome(currentBPM, numBeats) {
+    stopMetronome()
+
+    const beatDuration = 60 / currentBPM
+    const mode = document.getElementById('metronomeSound').value
+
+    const metEvents = []
+    for (let i = 0; i < numBeats; i++) {
+        metEvents.push({ time: i * beatDuration, beat: i })
+    }
+
+    metronomePart = new Tone.Part((time, val) => {
+        const ctx = Tone.getContext().rawContext
+        const strong = (val.beat % 4 === 0)
+        scheduleClick(ctx, time, strong, mode)
+    }, metEvents)
+
+    metronomePart.start(0)
+}
+
+function stopMetronome() {
+    if (metronomePart) {
+        metronomePart.stop()
+        metronomePart.dispose()
+        metronomePart = null
+    }
+}
+// ── Fine Metronome ──────────────────────────────────────────────────────────
+
+// ── Pause / Continue ────────────────────────────────────────────────────────
+let isPaused = false
+
+function pauseResumeMusic() {
+    const pauseBtn = document.getElementById('pauseBtn')
+    if (!isPaused) {
+        Tone.Transport.pause(); stopMetronome()
+        isPaused = true; pauseBtn.textContent = 'Continue'; pauseBtn.style.background = '#27ae60'
+    } else {
+        if (document.getElementById("metronome").checked) {
+            const currentBPM = parseInt(bpmSlider.value)
+            const numBeats = Math.ceil(midiData.duration / 0.5 / 4) * 4
+            startMetronome(currentBPM, numBeats)
+        }
+        Tone.Transport.start()
+        isPaused = false; pauseBtn.textContent = 'Pause'; pauseBtn.style.background = '#e67e22'
+    }
+}
+
+function resetPauseBtn() {
+    isPaused = false
+    const pauseBtn = document.getElementById('pauseBtn')
+    pauseBtn.textContent = 'Pause'; pauseBtn.style.background = '#e67e22'
+}
+
+// ── Playback ────────────────────────────────────────────────────────────────
+async function playMusic() {
+    if (!midiData) return
+    await Tone.start()
+    Tone.Transport.stop(); Tone.Transport.cancel()
+
+    const context = Tone.getContext().rawContext
+    synth = await Soundfont.instrument(context, "acoustic_grand_piano")
+
+    const currentBPM = parseInt(bpmSlider.value)
+    const scale = 120 / currentBPM
+    Tone.Transport.bpm.value = currentBPM
+
+    let lastNoteEnd = 0
+    midiData.tracks.forEach(track => {
+        track.notes.forEach(note => { lastNoteEnd = Math.max(lastNoteEnd, note.time + note.duration) })
+    })
+
+    const totalBeats = Math.ceil(lastNoteEnd / 0.5 / 4) * 4
+    const totalDuration = totalBeats * 0.5 * scale
+
+    let events = []
+    midiData.tracks.forEach(track => {
+        track.notes.forEach(note => {
+            events.push({ time: note.time * scale, note: note.name, duration: note.duration * scale, velocity: note.velocity })
+        })
+    })
+
+    part = new Tone.Part((time, value) => {
+        synth.play(value.note, time, { duration: value.duration, gain: value.velocity })
+    }, events)
+    part.start(0)
+
+    const loopEnabled = document.getElementById("loopCheck").checked
+    if (loopEnabled) {
+        Tone.Transport.loop = true
+        Tone.Transport.loopStart = "0"
+        Tone.Transport.loopEnd = totalDuration + "s"
+    } else {
+        Tone.Transport.loop = false
+    }
+
+    if (document.getElementById("metronome").checked) {
+        const numBeats = Math.ceil(midiData.duration / 0.5 / 4) * 4
+        startMetronome(currentBPM, numBeats)
+    }
+
+    Tone.Transport.start()
+    resetPauseBtn()
+}
+
+function stopMusic() {
+    Tone.Transport.stop(); Tone.Transport.cancel()
+    if (part) { part.stop(); part = null }
+    stopMetronome(); resetPauseBtn()
+}
+
+function downloadMidi() {
+    if (!midiBlobGlobal) { alert("Import MIDI files first!"); return }
+    const url = URL.createObjectURL(midiBlobGlobal)
+    const a = document.createElement("a")
+    a.href = url; a.download = "geco_join.mid"
+    document.body.appendChild(a); a.click()
+    document.body.removeChild(a); URL.revokeObjectURL(url)
+}
+
+// ── Score rendering via backend ─────────────────────────────────────────────
+async function renderScoreFromXML(xmlText) {
+    showLoading("🖊 Rendering notation...")
+    await renderScoreWithKeySig(null, xmlText)
+}
+
+async function importMidi(input) {
+    const files = Array.from(input.files).filter(f => f.name.endsWith('.mid') || f.name.endsWith('.midi'))
+    if (files.length === 0) return
+    input.value = ""
+
+    for (const f of files) {
+        const buf = await f.arrayBuffer()
+        stackPush(f.name, new Blob([buf], { type: "audio/midi" }))
+    }
+    stackJoin()
+}
+
+
+function appendMidi() {
+    document.getElementById('midiAppendInput').click()
+}
+
+async function handleAppend(input) {
+    const files = Array.from(input.files).filter(f => f.name.endsWith('.mid') || f.name.endsWith('.midi'))
+    if (files.length === 0) return
+    input.value = ""
+
+    const f = files[0]
+    const buf = await f.arrayBuffer()
+    stackPush(f.name, new Blob([buf], { type: "audio/midi" }))
+    stackJoin()
+}
+
+// ── Contextual help ─────────────────────────────────────────────────────────
+const helpPanel = document.getElementById("helpPanel")
+const helpDefault = "<em>Hover over or focus any control to see its description.</em>"
+
+function showHelp(el) {
+    const msg = el.dataset.help || el.closest("[data-help]")?.dataset.help
+    if (msg) helpPanel.innerHTML = msg
+}
+function clearHelp() { helpPanel.innerHTML = helpDefault }
+
+document.querySelectorAll("[data-help]").forEach(el => {
+    el.addEventListener("mouseover",  e => { showHelp(e.currentTarget); e.stopPropagation() })
+    el.addEventListener("focusin",    e => { showHelp(e.currentTarget); e.stopPropagation() })
+    el.addEventListener("mouseout",   clearHelp)
+    el.addEventListener("focusout",   clearHelp)
+})
+
+</script>
+</body>
+</html>

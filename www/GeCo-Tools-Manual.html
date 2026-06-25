@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>GeCo-Tools — Quick Reference Manual</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Source+Serif+4:ital,wght@0,300;0,400;1,300&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink:          #1E1810;
+    --ink-mid:      #4E3E2C;
+    --ink-light:    #8C7A62;
+    --parchment:    #F4EDD8;
+    --parchment-dk: #E6D9BC;
+    --cream:        #FAF6EC;
+    --accent:       #7A4E2D;
+    --accent-light: #C8956C;
+    --rule:         rgba(90,60,30,.16);
+    --staff:        rgba(90,60,30,.10);
+    --green:        #4E7A2D;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-weight: 300;
+    line-height: 1.8;
+    font-size: 17px;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+      repeating-linear-gradient(
+        180deg,
+        transparent 0px, transparent 18px,
+        var(--staff) 18px, var(--staff) 19px
+      );
+    background-size: 100% 95px;
+    opacity: .45;
+  }
+
+  header {
+    position: relative; z-index: 1;
+    background: var(--ink);
+    color: var(--parchment);
+    padding: 3.5rem 2rem 2.8rem;
+    text-align: center;
+    overflow: hidden;
+  }
+  header::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 4px;
+    background: repeating-linear-gradient(
+      90deg,
+      var(--accent-light) 0, var(--accent-light) 6px,
+      transparent 6px, transparent 10px
+    );
+  }
+  .header-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .72rem;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--accent-light);
+    margin-bottom: 1rem;
+  }
+  header h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(2.2rem, 5vw, 3.6rem);
+    font-weight: 600;
+    letter-spacing: .03em;
+    color: var(--parchment);
+    margin-bottom: .2rem;
+  }
+  .header-sub {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent-light);
+    margin-bottom: 1.4rem;
+  }
+  .version-badge {
+    display: inline-block;
+    border: 1px solid rgba(200,149,108,.45);
+    border-radius: 2px;
+    padding: .18rem .9rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .72rem;
+    color: var(--accent-light);
+    letter-spacing: .1em;
+  }
+
+  nav {
+    position: sticky; top: 0; z-index: 10;
+    background: var(--parchment-dk);
+    border-bottom: 1px solid var(--rule);
+    box-shadow: 0 1px 0 var(--rule);
+  }
+  nav ul {
+    display: flex; flex-wrap: wrap;
+    list-style: none;
+    max-width: 920px; margin: 0 auto;
+    padding: 0 1rem;
+  }
+  nav li a {
+    display: block;
+    padding: .72rem 1rem;
+    font-family: 'Playfair Display', serif;
+    font-size: .87rem;
+    color: var(--accent);
+    text-decoration: none;
+    letter-spacing: .03em;
+    border-bottom: 2px solid transparent;
+    transition: border-color .18s, color .18s;
+  }
+  nav li a:hover { border-color: var(--accent); color: var(--ink); }
+
+  main {
+    position: relative; z-index: 1;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 3.5rem 2rem 6rem;
+  }
+
+  section { margin-bottom: 4rem; }
+
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .7rem;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--accent-light);
+    margin-bottom: .35rem;
+  }
+
+  section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--ink);
+    padding-bottom: .55rem;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 1.5rem;
+  }
+
+  section h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.12rem;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent);
+    margin: 2rem 0 .65rem;
+  }
+
+  p + p { margin-top: .9rem; }
+
+  .callout {
+    background: var(--parchment);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 4px 4px 0;
+    padding: 1rem 1.5rem;
+    margin: 1.5rem 0;
+    font-size: .94rem;
+    color: var(--ink-mid);
+    line-height: 1.7;
+  }
+  .callout em { color: var(--accent); font-style: italic; }
+
+  /* ── Tool cards ── */
+  .tool-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 1.1rem;
+    margin: 1.6rem 0;
+  }
+  .tool-card {
+    background: var(--parchment);
+    border: 1px solid var(--parchment-dk);
+    border-radius: 6px;
+    padding: 1.3rem 1.4rem 1.2rem;
+    position: relative;
+  }
+  .tool-card.primary {
+    border-color: var(--accent-light);
+    border-width: 1.5px;
+  }
+  .tool-card .tc-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .65rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--accent-light);
+    margin-bottom: .3rem;
+  }
+  .tool-card.primary .tc-label { color: var(--accent); }
+  .tool-card h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: .5rem;
+  }
+  .tool-card p {
+    font-size: .88rem;
+    color: var(--ink-mid);
+    line-height: 1.6;
+  }
+  .tc-icon {
+    font-size: 1.6rem;
+    margin-bottom: .5rem;
+    display: block;
+  }
+
+  /* ── Feature list ── */
+  .feature-list {
+    list-style: none;
+    margin: .8rem 0 1.2rem;
+    padding: 0;
+  }
+  .feature-list li {
+    display: flex;
+    gap: .7rem;
+    padding: .45rem 0;
+    border-bottom: .5px solid var(--rule);
+    font-size: .93rem;
+    color: var(--ink-mid);
+    line-height: 1.5;
+  }
+  .feature-list li:last-child { border-bottom: none; }
+  .feature-list li::before {
+    content: '◆';
+    color: var(--accent-light);
+    flex-shrink: 0;
+    font-size: .7rem;
+    margin-top: .35rem;
+  }
+  .feature-list strong { color: var(--ink); font-weight: 400; font-style: italic; }
+
+  /* ── App section cards ── */
+  .app-section {
+    background: var(--parchment);
+    border: 1px solid var(--parchment-dk);
+    border-radius: 8px;
+    padding: 1.8rem 2rem;
+    margin: 2rem 0;
+  }
+  .app-section-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: .8rem;
+  }
+  .app-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+  }
+  .app-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .app-subtitle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .68rem;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--accent-light);
+    margin-top: .1rem;
+  }
+
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .81rem;
+    background: var(--parchment-dk);
+    color: var(--green);
+    padding: .1em .45em;
+    border-radius: 3px;
+  }
+
+  table {
+    width: 100%; border-collapse: collapse;
+    font-size: .9rem; margin: 1.3rem 0;
+  }
+  thead th {
+    background: var(--parchment-dk);
+    color: var(--ink);
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    padding: .65rem 1rem;
+    text-align: left;
+    border-bottom: 1.5px solid var(--rule);
+  }
+  tbody td {
+    padding: .55rem 1rem;
+    border-bottom: .5px solid var(--rule);
+    color: var(--ink-mid);
+    vertical-align: top;
+    line-height: 1.55;
+  }
+  tbody tr:hover td { background: rgba(244,237,216,.55); }
+
+  a { color: var(--accent); text-decoration-color: rgba(122,78,45,.3); }
+  a:hover { text-decoration-color: var(--accent); }
+
+  .link-block {
+    display: inline-flex; align-items: center; gap: .55rem;
+    background: var(--parchment);
+    border: 1.5px solid var(--accent-light);
+    border-radius: 4px;
+    padding: .65rem 1.3rem;
+    text-decoration: none;
+    color: var(--accent);
+    font-family: 'Playfair Display', serif;
+    font-size: .95rem;
+    margin-top: .9rem;
+    transition: background .18s;
+  }
+  .link-block:hover { background: var(--parchment-dk); text-decoration: none; }
+
+  footer {
+    position: relative; z-index: 1;
+    text-align: center;
+    padding: 2.5rem 1rem 3.5rem;
+    border-top: 1px solid var(--rule);
+    font-size: .82rem;
+    color: var(--ink-light);
+    font-style: italic;
+    letter-spacing: .05em;
+  }
+  footer .sig {
+    display: block;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: var(--accent-light);
+    margin-bottom: .4rem;
+    font-style: normal;
+  }
+
+  @media (max-width: 600px) {
+    main { padding: 2rem 1.1rem 4rem; }
+    nav ul { justify-content: center; }
+    nav li a { padding: .6rem .7rem; font-size: .82rem; }
+    .tool-cards { grid-template-columns: 1fr; }
+    .app-section { padding: 1.2rem 1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <p class="header-eyebrow">Quick Reference Manual</p>
+  <h1>GeCo-Tools</h1>
+  <p class="header-sub">A toolbox for music generation and practice</p>
+  <span class="version-badge">R. Olmi &amp; M. Bittelli</span>
+</header>
+
+<!-- NAVIGATION -->
+<nav aria-label="Manual Sections">
+  <ul>
+    <li><a href="#hub">GeCo-Tools Hub</a></li>
+    <li><a href="#geco-tool">Compose by Interval Matrix</a></li>
+    <li><a href="#k-random">K-Random</a></li>
+    <li><a href="#twelve-tone">Twelve-Tone</a></li>
+    <li><a href="#geco-join">GeCo-Join</a></li>
+    <li><a href="#practice">Practice</a></li>
+    <li><a href="#more">Additional resources</a></li>
+  </ul>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main>
+
+  <!-- § 01 HUB -->
+  <section id="hub">
+    <p class="section-label">§ 01</p>
+    <h2>GeCo-Tools — The Hub</h2>
+    <p>
+      <strong>GeCo-Tools</strong> is the central launcher of the suite. It opens as a single page
+      with a dark, glass-effect menu panel positioned over a full-screen background image.
+      From here the user reaches each of the five specialized tools with a single click,
+      and can also access the manual and video tutorials through the collapsible
+      <em>Guides &amp; Tutorials</em> dropdown.
+    </p>
+
+    <div class="callout">
+      <em>Navigation:</em> every sub-application has a <code>← Back to GeCo-Tools</code> button
+      (top-left, purple) that returns to this hub at any time.
+    </div>
+
+    <div class="tool-cards">
+      <div class="tool-card primary">
+        <span class="tc-icon">🎼</span>
+        <p class="tc-label">Core module</p>
+        <h4>Compose by Interval Matrix</h4>
+        <p>Deterministic melodic generation from user-defined interval cycles. → <a href="#geco-tool">§ 02</a></p>
+      </div>
+      <div class="tool-card">
+        <span class="tc-icon">🎲</span>
+        <p class="tc-label">Module A</p>
+        <h4>K-Random</h4>
+        <p>Controlled random generation of short melodic sequences over pitch-class sets. → <a href="#k-random">§ 03</a></p>
+      </div>
+      <div class="tool-card">
+        <span class="tc-icon">🔢</span>
+        <p class="tc-label">Module B</p>
+        <h4>Twelve-Tone Studies</h4>
+        <p>Generate and transform 12-note serial rows with full dodecaphonic operations. → <a href="#twelve-tone">§ 04</a></p>
+      </div>
+      <div class="tool-card">
+        <span class="tc-icon">📎</span>
+        <p class="tc-label">Module C</p>
+        <h4>Sequence Join</h4>
+        <p>Concatenate multiple MIDI files on a Forth-style stack, then export as one. → <a href="#geco-join">§ 05</a></p>
+      </div>
+      <div class="tool-card">
+        <span class="tc-icon">🎹</span>
+        <p class="tc-label">Module D</p>
+        <h4>Practice</h4>
+        <p>Import an interval preset and produce a ready-to-play melodic sequence. → <a href="#practice">§ 06</a></p>
+      </div>
+    </div>
+
+    <p>
+      All five tools share the same visual language (blue header bar, white panel, score area) and
+      the same common features: in-browser audio playback with Piano or Sax B♭ soundfonts,
+      adjustable BPM (60–240), optional metronome with three click sounds, MIDI export/import,
+      score rendering via <em>OpenSheetMusicDisplay</em>, and an animated pitch-class circle
+      that lights up notes in real time during playback.
+    </p>
+  </section>
+
+  <!-- § 02 GECO-TOOL -->
+  <section id="geco-tool">
+    <p class="section-label">§ 02</p>
+    <h2>Compose by Interval Matrix — GeCo-Tool</h2>
+    <p>
+      GeCo-Tool is the core compositional engine. The user defines a chain of intervals
+      (in semitones, positive = ascending, negative = descending) and chooses a <em>sequence type</em>
+      that determines how many intervals form one repeating block. The engine applies the block
+      cyclically from a chosen starting note and stops automatically the first time the pitch
+      returns exactly to the starting pitch class — guaranteeing a self-closing, geometrically
+      coherent loop. Two calculated fields, <strong>Jump</strong> (algebraic sum of intervals)
+      and <strong>Length</strong> (total number of notes before closure), update live as parameters
+      are edited.
+    </p>
+
+    <h3>Sequence Types</h3>
+    <ul class="feature-list">
+      <li><strong>Binary</strong> — one <em>interval</em> + one <em>leap</em> per cycle block (2 values).</li>
+      <li><strong>Ternary</strong> — three consecutive intervals per block (3 values).</li>
+      <li><strong>Quaternary</strong> — two interval/leap pairs per block (4 values).</li>
+      <li><strong>Senary</strong> — three interval/leap pairs per block (6 values).</li>
+      <li><strong>Multidimensional</strong> — freely set N intervals (1–12) per block.</li>
+    </ul>
+
+    <h3>Rhythm Modes</h3>
+    <ul class="feature-list">
+      <li><strong>Constant</strong> — all notes share the same duration (whole → sixteenth).</li>
+      <li><strong>Sequence-constrained</strong> — durations change at cycle boundaries.</li>
+      <li><strong>Length-constrained</strong> — durations change every N notes, N ∈ {2, 3, 5, 6}.</li>
+      <li><strong>Free</strong> — each note gets an independent random duration.</li>
+    </ul>
+
+    <h3>Pitch-Class Transformations</h3>
+    <ul class="feature-list">
+      <li><strong>T (Transpose)</strong> — shifts all pitches by a chosen number of semitones (−12 to +12).</li>
+      <li><strong>I (Inversion)</strong> — mirrors every interval around the first note.</li>
+      <li><strong>R (Retrograde)</strong> — reverses the pitch sequence.</li>
+      <li><strong>RI (Retrograde-Inversion)</strong> — inversion followed by retrograde.</li>
+    </ul>
+
+    <h3>Rhythmic Transformations</h3>
+    <ul class="feature-list">
+      <li><strong>S+</strong> — cyclically advances the duration pattern by two steps.</li>
+      <li><strong>S−</strong> — cyclically retards the duration pattern by two steps.</li>
+      <li><strong>I</strong> — rhythmic inversion: long and short durations swap rank.</li>
+      <li><strong>R</strong> — rhythmic retrograde: duration sequence reversed, pitches unchanged.</li>
+    </ul>
+
+    <h3>Additional Options</h3>
+    <ul class="feature-list">
+      <li><strong>Harmony</strong> — adds a bass-clef accompaniment in three styles: Classic (paired notes), On the beat, Off the beat.</li>
+      <li><strong>Octaves</strong> — constrains the melody to approx. 1 or 2 octaves of range.</li>
+      <li><strong>Bass Clef</strong> — transposes output two octaves down and notates in bass clef.</li>
+      <li><strong>Swing</strong> — delays off-beat eighth notes; intensity set by a slider (50 % = straight, 67 % = full 2:1 swing).</li>
+      <li><strong>Key Signature</strong> — sets the displayed key signature (does not alter pitches or MIDI).</li>
+      <li><strong>MIDI Import/Export</strong> — saves or reloads sequences as <code>.mid</code> + <code>.txt</code> parameter files.</li>
+      <li><strong>Docs panel</strong> — in-app access to HTML documents and PDF resources (interval tables, scale presets, theory references).</li>
+    </ul>
+  </section>
+
+  <!-- § 03 K-RANDOM -->
+  <section id="k-random">
+    <p class="section-label">§ 03</p>
+    <h2>K-Random — Random Generation and Practice</h2>
+    <p>
+      K-Random generates short melodic sequences of exactly <strong>K notes</strong> (2–12)
+      by sampling randomly from pitch-class sets with optional repetition control.
+      It is designed both as a compositional tool for aleatoric fragments and as a
+      sight-reading / ear-training aid.
+    </p>
+
+    <h3>Generation Parameters</h3>
+    <ul class="feature-list">
+      <li><strong>Start Note</strong> — the pitch class that begins the sequence (C–B); octave assigned automatically.</li>
+      <li><strong>K (number of notes)</strong> — length of the sequence (2–12). Cannot exceed 12 if <em>Repeated</em> is off.</li>
+      <li><strong>Repeated</strong> — when unchecked, each pitch class appears at most once (chromatic subset); when checked, repetitions are allowed.</li>
+    </ul>
+
+    <h3>Rhythm</h3>
+    <ul class="feature-list">
+      <li><strong>Constant</strong> — uniform note length chosen from the selector.</li>
+      <li><strong>Length-constrained</strong> — durations change every N notes, N ∈ {2, 3, 5, 6}.</li>
+      <li><strong>Free</strong> — each note receives an independent random duration.</li>
+      <li><strong>Allow Triplets</strong> — enables triplet groupings with a probability slider (0–100 %).</li>
+    </ul>
+
+    <h3>Pitch-Class and Rhythmic Transformations</h3>
+    <p>
+      The same four pitch-class operations (T, I, R, RI) and four rhythmic operations (S+, S−, I, R)
+      available in GeCo-Tool can be applied to any generated sequence after the fact.
+    </p>
+
+    <h3>Pitch-Class Circle</h3>
+    <p>
+      An animated clock-face circle (top left) lights active notes in gold during playback and
+      traces melodic arcs between them; the first and last arcs are highlighted in white.
+      A row of coloured interval boxes below the controls shows the signed semitone distance
+      between each consecutive pair of notes.
+    </p>
+  </section>
+
+  <!-- § 04 TWELVE-TONE -->
+  <section id="twelve-tone">
+    <p class="section-label">§ 04</p>
+    <h2>Twelve-Tone Studies</h2>
+    <p>
+      The Twelve-Tone Calculator generates melodic sequences from a user-defined vector of
+      <strong>12 intervals</strong> (i1–i12, in semitones), starting from a chosen pitch class.
+      It is oriented toward dodecaphonic and serial composition in the tradition of the
+      Second Viennese School, but works equally well for any 12-note interval chain.
+    </p>
+
+    <h3>Generation Parameters</h3>
+    <ul class="feature-list">
+      <li><strong>Start Note</strong> — the pitch class where the row begins (C–B).</li>
+      <li><strong>Interval Vector i1–i12</strong> — twelve signed integers defining the twelve successive melodic steps. Default is all 1s (chromatic ascent).</li>
+      <li><strong>Limit to 12 notes</strong> — truncates the generated output to exactly 12 notes.</li>
+    </ul>
+
+    <h3>Rhythm, Harmony, Transformations</h3>
+    <p>
+      All rhythm modes (constant, sequence-constrained, length-constrained, free),
+      the Harmony bass-clef accompaniment option, and both pitch-class and rhythmic
+      transformation sets (T, I, R, RI / S+, S−, I, R) are identical to those in GeCo-Tool.
+    </p>
+
+    <h3>MIDI Export</h3>
+    <p>
+      Download saves two files simultaneously: <code>twelve_tone.mid</code> (the sequence)
+      and <code>twelve_tone.txt</code> (all parameter settings), which can be reloaded
+      together via <em>Import MIDI</em> to restore the exact state.
+    </p>
+  </section>
+
+  <!-- § 05 GECO-JOIN -->
+  <section id="geco-join">
+    <p class="section-label">§ 05</p>
+    <h2>Sequence Join — GeCo-Join</h2>
+    <p>
+      GeCo-Join is a MIDI file joiner. It lets you load multiple <code>.mid</code> files
+      onto a Forth-style last-in / first-out stack, concatenates them in stack order into
+      a single continuous sequence, renders the result as standard notation, and allows
+      playback or export as a new MIDI file.
+    </p>
+
+    <h3>Importing Files</h3>
+    <ul class="feature-list">
+      <li><strong>Import MIDI</strong> — opens a file picker accepting one or more <code>.mid</code> files; all selected files are pushed onto the stack and immediately joined.</li>
+      <li><strong>Append MIDI</strong> — adds a single file to the top of the existing stack and re-joins automatically.</li>
+    </ul>
+
+    <h3>Stack Operations</h3>
+    <ul class="feature-list">
+      <li><strong>Pop</strong> — removes the top (last) file from the stack.</li>
+      <li><strong>Rotate</strong> — moves the top file to the bottom, cycling play order: <code>[A, B, C] → [C, A, B]</code>.</li>
+      <li><strong>Swap</strong> — exchanges the last two files: <code>[A, B, C] → [A, C, B]</code>.</li>
+      <li><strong>Reset</strong> — clears the stack and reloads the page.</li>
+    </ul>
+
+    <p>
+      Every stack operation immediately re-joins the remaining files and re-renders the score.
+      The Key Signature selector adjusts the displayed notation without altering audio or MIDI content.
+    </p>
+
+    <div class="callout">
+      <em>Typical use:</em> generate several fragments in GeCo-Tool or K-Random, export each
+      as a MIDI file, then assemble and reorder them here before a final export to your DAW.
+    </div>
+  </section>
+
+  <!-- § 06 PRACTICE -->
+  <section id="practice">
+    <p class="section-label">§ 06</p>
+    <h2>Practice</h2>
+    <p>
+      Practice is a focused playback and notation tool designed for instrument practice and
+      ear training. Instead of generating sequences from scratch, it <strong>imports a preset</strong>
+      — a <code>.txt</code> file in GeCo syntax containing a list of intervals — and immediately
+      renders the corresponding melodic sequence as notation, ready for playback.
+    </p>
+
+    <h3>Generation Parameters</h3>
+    <ul class="feature-list">
+      <li><strong>Start Note</strong> — pitch class on which the imported sequence begins (C–B).</li>
+      <li><strong>Note Length</strong> — uniform duration for every note: Whole, Half, Quarter, Eighth, or Sixteenth.</li>
+    </ul>
+
+    <h3>Preset Import</h3>
+    <ul class="feature-list">
+      <li><strong>Import Preset</strong> — loads a <code>.txt</code> interval preset (e.g. a scale or arpeggio pattern exported from GeCo-Tool).</li>
+      <li>GeCo-Tool <code>.txt</code> export files are fully compatible, making it easy to practise any generated pattern at a chosen tempo and starting note.</li>
+    </ul>
+
+    <h3>Transformations and Export</h3>
+    <p>
+      The full set of pitch-class transformations (T, I, R, RI) is available after import,
+      allowing the user to practise a scale pattern in inversion or retrograde without
+      editing the original file. Download exports the current sequence as a <code>.mid</code> file.
+    </p>
+
+    <div class="callout">
+      <em>Typical use:</em> download one of the scale or arpeggio preset packs from GeCo-Tool's
+      Docs panel, open Practice, import a preset, choose your instrument and BPM, and use the
+      loop playback with metronome for a structured practice session.
+    </div>
+  </section>
+
+  <!-- § 07 MORE -->
+  <section id="more">
+    <p class="section-label">§ 07</p>
+    <h2>Additional documentation and utility files</h2>
+    <p>
+    Additional resources are available through the Docs section of "Compose by Interval Matrix".
+  </p>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <span class="sig">♩</span>
+  GeCo-Tools Quick Reference Manual &nbsp;·&nbsp; R. Olmi &amp; M. Bittelli
+</footer>
+
+</body>
+</html>
