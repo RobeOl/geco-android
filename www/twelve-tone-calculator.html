@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Twelve-Tone Calculator</title>
 
 <script src="https://unpkg.com/tone"></script>
@@ -18,14 +19,15 @@
         font-weight: bold;
     }
 
-    .container {
-        width: 1100px;
-        margin: 30px auto;
-        background: white;
-        padding: 25px;
-        border-radius: 10px;
-        position: relative;
-    }
+    .container{
+    width:100%;
+    max-width:1200px;
+    margin:30px auto;
+    background:white;
+    padding:25px;
+    border-radius:10px;
+    box-sizing:border-box;
+}
 
     button {
         width: 100%;
@@ -580,6 +582,8 @@ const ENV = "remote"
 const BASE_URL = ENV === "local" ? "http://localhost:5001" : "https://serie1.onrender.com"
 let serverAwake = ENV === "local"  // true in locale, false in remoto
 
+const IS_CAPACITOR = !!window.Capacitor?.isNativePlatform?.()
+
 let midiData
 let part
 let synth
@@ -978,14 +982,6 @@ function stopMusic(){
 function downloadMidi(){
     if(!midiBlobGlobal){ alert("Generate MIDI first!"); return }
 
-    // MIDI
-    const urlMid = URL.createObjectURL(midiBlobGlobal)
-    const aMid = document.createElement("a")
-    aMid.href = urlMid; aMid.download = "twelve_tone.mid"
-    document.body.appendChild(aMid); aMid.click()
-    document.body.removeChild(aMid); URL.revokeObjectURL(urlMid)
-
-    // TXT
     const PC_LABELS = ['C','C#','D','Eb','E','F','F#','G','Ab','A','Bb','B']
     const startNoteVal = parseInt(document.getElementById("startNote").value)
     const startNote    = PC_LABELS[startNoteVal]
@@ -1007,7 +1003,7 @@ function downloadMidi(){
         tempoDetail = `constant (${lenLabels[noteLen] || noteLen})`
     }
 
-    const content =
+    const txtContent =
 `Twelve-Tone Calculator — Generation Parameters
 ===============================================
 Start Note:    ${startNote}
@@ -1015,12 +1011,45 @@ Sequence:      Multidimensional ${seqParams}
 Tempo:         ${tempoDetail}
 Harmony:       ${harmonyType}
 `
-    const blob = new Blob([content], { type: "text/plain" })
-    const urlTxt = URL.createObjectURL(blob)
-    const aTxt = document.createElement("a")
-    aTxt.href = urlTxt; aTxt.download = "twelve_tone.txt"
-    document.body.appendChild(aTxt); aTxt.click()
-    document.body.removeChild(aTxt); URL.revokeObjectURL(urlTxt)
+
+    if(IS_CAPACITOR){
+        saveAndShareOnAndroid(midiBlobGlobal, txtContent)
+    } else {
+        browserDownload(midiBlobGlobal, "twelve_tone.mid")
+        browserDownload(new Blob([txtContent], {type:"text/plain"}), "twelve_tone.txt")
+    }
+}
+
+function browserDownload(blob, filename){
+    const url = URL.createObjectURL(blob)
+    const a   = document.createElement("a")
+    a.href = url; a.download = filename
+    document.body.appendChild(a); a.click()
+    document.body.removeChild(a); URL.revokeObjectURL(url)
+}
+
+async function saveAndShareOnAndroid(midiBlob, txtContent){
+    const { Filesystem, Share } = Capacitor.Plugins
+    const midiBase64 = await blobToBase64(midiBlob)
+    const txtBase64  = btoa(unescape(encodeURIComponent(txtContent)))
+    await Filesystem.writeFile({ path: "twelve_tone.mid", data: midiBase64, directory: "CACHE" })
+    await Filesystem.writeFile({ path: "twelve_tone.txt", data: txtBase64,  directory: "CACHE" })
+    const { uri: uriMid } = await Filesystem.getUri({ path: "twelve_tone.mid", directory: "CACHE" })
+    const { uri: uriTxt } = await Filesystem.getUri({ path: "twelve_tone.txt", directory: "CACHE" })
+    await Share.share({
+        title:       "Twelve-Tone export",
+        dialogTitle: "Save or open files",
+        files:       [uriMid, uriTxt]
+    })
+}
+
+function blobToBase64(blob){
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onloadend = () => resolve(reader.result.split(",")[1])
+        reader.onerror  = reject
+        reader.readAsDataURL(blob)
+    })
 }
 
 // ── Import MIDI ────────────────────────────────────────────────────────────

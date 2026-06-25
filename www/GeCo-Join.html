@@ -3,6 +3,7 @@
 
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GeCo-Join: MIDI File Joiner</title>
 
 <script src="https://unpkg.com/tone"></script>
@@ -19,14 +20,15 @@
         font-weight: bold;
     }
 
-    .container {
-        width: 1200px;
-        margin: 30px auto;
-        background: white;
-        padding: 25px;
-        border-radius: 10px;
-        position: relative;
-    }
+    .container{
+    width:100%;
+    max-width:1200px;
+    margin:30px auto;
+    background:white;
+    padding:25px;
+    border-radius:10px;
+    box-sizing:border-box;
+}
 
     button {
         width: 100%;
@@ -500,6 +502,8 @@
 const ENV = "remote"
 const BASE_URL = ENV === "local" ? "http://localhost:5003" : "https://serie3.onrender.com"
 let serverAwake = ENV === "local"
+
+const IS_CAPACITOR = !!window.Capacitor?.isNativePlatform?.()
 
 async function checkServer() {
     if (ENV === "local") return
@@ -1012,11 +1016,37 @@ function stopMusic() {
 
 function downloadMidi() {
     if (!midiBlobGlobal) { alert("Import MIDI files first!"); return }
-    const url = URL.createObjectURL(midiBlobGlobal)
-    const a = document.createElement("a")
-    a.href = url; a.download = "geco_join.mid"
-    document.body.appendChild(a); a.click()
-    document.body.removeChild(a); URL.revokeObjectURL(url)
+
+    if (IS_CAPACITOR) {
+        saveAndShareOnAndroid(midiBlobGlobal)
+    } else {
+        const url = URL.createObjectURL(midiBlobGlobal)
+        const a = document.createElement("a")
+        a.href = url; a.download = "geco_join.mid"
+        document.body.appendChild(a); a.click()
+        document.body.removeChild(a); URL.revokeObjectURL(url)
+    }
+}
+
+async function saveAndShareOnAndroid(midiBlob) {
+    const { Filesystem, Share } = Capacitor.Plugins
+    const midiBase64 = await blobToBase64(midiBlob)
+    await Filesystem.writeFile({ path: "geco_join.mid", data: midiBase64, directory: "CACHE" })
+    const { uri } = await Filesystem.getUri({ path: "geco_join.mid", directory: "CACHE" })
+    await Share.share({
+        title:       "GeCo-Join export",
+        dialogTitle: "Save or open MIDI",
+        files:       [uri]
+    })
+}
+
+function blobToBase64(blob) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onloadend = () => resolve(reader.result.split(",")[1])
+        reader.onerror  = reject
+        reader.readAsDataURL(blob)
+    })
 }
 
 // ── Score rendering via backend ─────────────────────────────────────────────
