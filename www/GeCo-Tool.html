@@ -762,13 +762,7 @@ button:hover{
             📊 Complete Ternary Interval Matrix
           </span>
           <div style="display:flex; gap:6px; flex-shrink:0;">
-            <button onclick="togglePdfViewer('pdfViewer_ternary')" style="
-                width:auto; padding:5px 11px; margin:0;
-                background:#3498db; color:white; border:none;
-                border-radius:5px; font-size:12px; cursor:pointer;">
-              👁 View
-            </button>
-            <a href="docs/complete_ternary_interval_matrix.pdf" download style="
+            <a href="#" onclick="downloadStaticFile('docs/complete_ternary_interval_matrix.pdf','complete_ternary_interval_matrix.pdf'); return false;" style="
                 display:flex; align-items:center; gap:5px;
                 background:#27ae60; color:white; border-radius:5px;
                 padding:5px 11px; text-decoration:none;
@@ -777,34 +771,16 @@ button:hover{
             </a>
           </div>
         </div>
-        <div id="pdfViewer_ternary" style="display:none; border-top:1px solid #aed6f1;">
-          <iframe
-            src="docs/complete_ternary_interval_matrix.pdf"
-            style="width:100%; height:500px; border:none; display:block;"
-            title="Complete Ternary Interval Matrix">
-            <p style="padding:16px; color:#888; font-size:13px;">
-              Il tuo browser non supporta la visualizzazione inline dei PDF.
-              <a href="docs/complete_ternary_interval_matrix.pdf" target="_blank">Apri il documento</a>.
-            </p>
-          </iframe>
-        </div>
       </div>
-
       <!-- Aggiungi altri PDF qui seguendo lo stesso schema -->
       <!-- PDF entry: NOME DEL TUO DOCUMENTO -->
-<div style="background:#f7fbff; border:1px solid #aed6f1; border-radius:8px; overflow:hidden;">
+    <div style="background:#f7fbff; border:1px solid #aed6f1; border-radius:8px; overflow:hidden;">
     <div style="display:flex; align-items:center; justify-content:space-between; padding:9px 14px; gap:8px;">
       <span style="font-size:13px; font-weight:bold; color:#2c3e50;">
         📊 Introduction to the Set Theory
       </span>
       <div style="display:flex; gap:6px; flex-shrink:0;">
-        <button onclick="togglePdfViewer('pdfViewer_Forte')" style="
-            width:auto; padding:5px 11px; margin:0;
-            background:#3498db; color:white; border:none;
-            border-radius:5px; font-size:12px; cursor:pointer;">
-          👁 View
-        </button>
-        <a href="docs/Intro_Set_Theory.pdf" download style="
+        <a href="#" onclick="downloadStaticFile('docs/Intro_Set_Theory.pdf','Intro_Set_Theory.pdf'); return false;" style="
             display:flex; align-items:center; gap:5px;
             background:#27ae60; color:white; border-radius:5px;
             padding:5px 11px; text-decoration:none;
@@ -812,17 +788,6 @@ button:hover{
           ⬇ Download
         </a>
       </div>
-    </div>
-    <div id="pdfViewer_Forte" style="display:none; border-top:1px solid #aed6f1;">
-      <iframe
-        src="docs/Intro_Set_Theory.pdf"
-        style="width:100%; height:500px; border:none; display:block;"
-        title="Introduction to Set Theory">
-        <p style="padding:16px; color:#888; font-size:13px;">
-          Il tuo browser non supporta la visualizzazione inline dei PDF.
-          <a href="docs/Intro_Set_Theory.pdf" target="_blank">Apri il documento</a>.
-        </p>
-      </iframe>
     </div>
   </div>
 
@@ -832,13 +797,7 @@ button:hover{
         📊 Triadic Harmonization
       </span>
       <div style="display:flex; gap:6px; flex-shrink:0;">
-        <button onclick="togglePdfViewer('pdfViewer_triads')" style="
-            width:auto; padding:5px 11px; margin:0;
-            background:#3498db; color:white; border:none;
-            border-radius:5px; font-size:12px; cursor:pointer;">
-          👁 View
-        </button>
-        <a href="docs/triads.pdf" download style="
+        <a href="#" onclick="downloadStaticFile('docs/triads.pdf','triads.pdf'); return false;" style="
             display:flex; align-items:center; gap:5px;
             background:#27ae60; color:white; border-radius:5px;
             padding:5px 11px; text-decoration:none;
@@ -846,17 +805,6 @@ button:hover{
           ⬇ Download
         </a>
       </div>
-    </div>
-    <div id="pdfViewer_triads" style="display:none; border-top:1px solid #aed6f1;">
-      <iframe
-        src="docs/triads.pdf"
-        style="width:100%; height:500px; border:none; display:block;"
-        title="Triadic harmonization">
-        <p style="padding:16px; color:#888; font-size:13px;">
-          Il tuo browser non supporta la visualizzazione inline dei PDF.
-          <a href="docs/.pdf" target="_blank">Apri il documento</a>.
-        </p>
-      </iframe>
     </div>
   </div>
 
@@ -871,12 +819,12 @@ button:hover{
           <span style="font-size:13px; font-weight:bold; color:#2c3e50;">
             🎹 Scales
           </span>
-            <a href="files/geco_scale_presets.zip" download style="
+            <a href="#" onclick="downloadStaticFile('files/geco_scale_presets.zip','geco_scale_presets.zip'); return false;" style="
                 display:flex; align-items:center; gap:5px;
                 background:#27ae60; color:white; border-radius:5px;
                 padding:5px 11px; text-decoration:none;
                 font-size:12px; font-weight:bold;">
-              ⬇ Download
+                ⬇ Download
             </a>
           </div>
     </div>
@@ -887,7 +835,7 @@ button:hover{
           <span style="font-size:13px; font-weight:bold; color:#2c3e50;">
             🎹 Triads
           </span>
-            <a href="files/geco_triad_presets.zip" download style="
+            <a href="#" onclick="downloadStaticFile('files/geco_triad_presets.zip','geco_triad_presets.zip'); return false;" style="
                 display:flex; align-items:center; gap:5px;
                 background:#27ae60; color:white; border-radius:5px;
                 padding:5px 11px; text-decoration:none;
@@ -903,7 +851,7 @@ button:hover{
           <span style="font-size:13px; font-weight:bold; color:#2c3e50;">
             🎹 Triad Pairs
           </span>
-            <a href="files/geco_triadic_couples_presets.zip" download style="
+            <a href="#" onclick="downloadStaticFile('files/geco_triadic_couples_presets.zip','geco_triadic_couples_presets.zip'); return false;" style="
                 display:flex; align-items:center; gap:5px;
                 background:#27ae60; color:white; border-radius:5px;
                 padding:5px 11px; text-decoration:none;
@@ -919,7 +867,7 @@ button:hover{
           <span style="font-size:13px; font-weight:bold; color:#2c3e50;">
             🎹 Triad Arpeggios
           </span>
-            <a href="files/triadic_arpeggio_presets.zip" download style="
+            <a href="#" onclick="downloadStaticFile('files/triadic_arpeggio_presets.zip','triadic_arpeggio_presets.zip'); return false;" style="
                 display:flex; align-items:center; gap:5px;
                 background:#27ae60; color:white; border-radius:5px;
                 padding:5px 11px; text-decoration:none;
@@ -2561,6 +2509,42 @@ function blobToBase64(blob){
         reader.onerror  = reject
         reader.readAsDataURL(blob)
     })
+}
+
+async function downloadStaticFile(filePath, fileName){
+    if(IS_CAPACITOR){
+        try{
+            const response = await fetch(filePath)
+            const blob = await response.blob()
+            const base64 = await blobToBase64(blob)
+
+            const { Filesystem, Share } = Capacitor.Plugins
+
+            await Filesystem.writeFile({
+                path: fileName,
+                data: base64,
+                directory: "CACHE"
+            })
+
+            const { uri } = await Filesystem.getUri({ path: fileName, directory: "CACHE" })
+
+            await Share.share({
+                title: fileName,
+                text: fileName,
+                url: uri,
+                dialogTitle: "Salva o apri il file"
+            })
+        }catch(err){
+            alert("Errore durante il download: " + err.message)
+        }
+    } else {
+        const a = document.createElement("a")
+        a.href = filePath
+        a.download = fileName
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
+    }
 }
 
 
