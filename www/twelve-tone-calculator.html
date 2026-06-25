@@ -75,8 +75,8 @@
         position: absolute;
         top: 70px;
         left: 10px;
-        width: 260px;
-        height: 260px;
+        width: 180px;
+        height: 180px;
     }
     #pcCircle { overflow: visible; }
 
@@ -419,7 +419,7 @@
 
     <!-- Pitch-Class Circle -->
     <div id="pcCircleWrap">
-        <svg id="pcCircle" width="260" height="260" viewBox="-110 -110 220 220"></svg>
+        <svg id="pcCircle" width="180" height="180" viewBox="-110 -110 220 220"></svg>
     </div>
 
     <h1 style="margin:0 0 16px 0; color:#2c3e50; font-size:26px;">
@@ -1171,7 +1171,7 @@ document.querySelectorAll("[data-help]").forEach(el => {
 ;(function(){
     const PC_NAMES = ['C','C♯','D','E♭','E','F','F♯','G','A♭','A','B♭','B']
     const R  = 76
-    const RN = 10
+    const RN = 8
     const NS = 'http://www.w3.org/2000/svg'
     const svg = document.getElementById('pcCircle')
 
