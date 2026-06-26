@@ -1443,11 +1443,12 @@ async function playMusic(){
 
     if(!midiData) return
 
-    alert("DEBUG: playMusic() avviata")
+    console.log("DEBUG: playMusic() avviata")
 
     try{
 
     await Tone.start()
+    console.log("DEBUG: Tone.start() completato, context.state=" + Tone.context.state)
     Tone.Transport.stop()
     Tone.Transport.cancel()
 
@@ -1456,9 +1457,11 @@ async function playMusic(){
 
     // Carica i soundfont necessari
     synth = await Soundfont.instrument(context, "acoustic_grand_piano")
+    console.log("DEBUG: soundfont piano caricato")
     let synthSax = null
     if (isSaxBb) {
         synthSax = await Soundfont.instrument(context, "tenor_sax")
+        console.log("DEBUG: soundfont sax caricato")
     }
 
     // Trasposizione Bb: -2 semitoni (lo strumento Bb suona un tono sopra il notato)
@@ -1534,6 +1537,7 @@ async function playMusic(){
     }
 
     Tone.Transport.start()
+    alert("DEBUG dopo start(): state=" + Tone.Transport.state + " seconds=" + Tone.Transport.seconds + " context=" + Tone.context.state)
     resetPauseBtn()
     pcPlay()
 
