@@ -1443,6 +1443,10 @@ async function playMusic(){
 
     if(!midiData) return
 
+    alert("DEBUG: playMusic() avviata")
+
+    try{
+
     await Tone.start()
     Tone.Transport.stop()
     Tone.Transport.cancel()
@@ -1532,6 +1536,11 @@ async function playMusic(){
     Tone.Transport.start()
     resetPauseBtn()
     pcPlay()
+
+    }catch(err){
+        alert("ERRORE in playMusic: " + err.message)
+        console.error(err)
+    }
 }
 
 function stopMusic(){
