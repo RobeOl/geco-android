@@ -356,6 +356,24 @@
     .app-section { padding: 1.2rem 1.2rem; }
   }
 </style>
+
+<style>
+  .back-btn {
+      position: fixed; /* Rende il posizionamento indipendente dal testo centrato */
+      top: 5px;          /* Allineato verticalmente al padding del container */
+      left: 20px;         /* Allineato orizzontalmente al padding del container */
+      background: #b429b9;
+      /* background: #2980b9; */
+      color: white;
+      padding: 8px 18px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      z-index: 10000;
+  }
+  .back-btn:hover { background: #1a6a9a; }
+</style>
+
 </head>
 <body>
 
@@ -366,6 +384,10 @@
   <p class="header-sub">A toolbox for music generation and practice</p>
   <span class="version-badge">R. Olmi &amp; M. Bittelli</span>
 </header>
+
+<!-- <a class="back-btn" href="#" onclick="window.close(); return false;">← Back to GeCo-Tools</a> -->
+<a class="back-btn" href="index.html">← Back to App Menu
+</a>
 
 <!-- NAVIGATION -->
 <nav aria-label="Manual Sections">
