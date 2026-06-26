@@ -181,11 +181,11 @@ button:hover{
 
 /* ── Pitch-Class Circle ── */
 #pcCircleWrap {
-    position: absolute;
-    top: 100px;
-    left: 10px;
-    width: 260px;
-    height: 260px;
+    position: fixed;
+    top: 75px;
+    left: 15px;
+    width: 180px;
+    height: 180px;
 }
 #pcCircle {
     overflow: visible;
@@ -960,7 +960,7 @@ button:hover{
 
     <!-- Pitch-Class Circle -->
     <div id="pcCircleWrap">
-        <svg id="pcCircle" width="260" height="260" viewBox="-110 -110 220 220"></svg>
+        <svg id="pcCircle" width="180" height="180" viewBox="-110 -110 220 220"></svg>
     </div>
 
     <div class="testo_interval">Interval Strategy</div>
@@ -2663,7 +2663,7 @@ document.querySelectorAll("[data-help]").forEach(el => {
 ;(function(){
     const PC_NAMES = ['C','C♯','D','E♭','E','F','F♯','G','A♭','A','B♭','B']
     const R  = 76    // radius of node centres (scaled for 220px viewBox)
-    const RN = 10    // node radius
+    const RN = 8    // node radius
     const NS = 'http://www.w3.org/2000/svg'
     const svg = document.getElementById('pcCircle')
 

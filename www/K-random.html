@@ -100,11 +100,11 @@ button:hover{
 <style>
 /* ── Pitch-Class Circle ── */
 #pcCircleWrap {
-    position: absolute;
-    top: 80px;
-    left: 10px;
-    width: 260px;
-    height: 260px;
+    position: fixed;
+    top: 85px;
+    left: 15px;
+    width: 180px;
+    height: 180px;
 }
 #pcCircle {
     overflow: visible;
@@ -511,7 +511,7 @@ button:hover{
 
     <!-- Pitch-Class Circle -->
     <div id="pcCircleWrap">
-        <svg id="pcCircle" width="260" height="260" viewBox="-110 -110 220 220"></svg>
+        <svg id="pcCircle" width="180" height="180" viewBox="-110 -110 220 220"></svg>
     </div>
 
 <!-- <h2>Generative Composition</h2> -->
@@ -1443,12 +1443,7 @@ async function playMusic(){
 
     if(!midiData) return
 
-    console.log("DEBUG: playMusic() avviata")
-
-    try{
-
     await Tone.start()
-    console.log("DEBUG: Tone.start() completato, context.state=" + Tone.context.state)
     Tone.Transport.stop()
     Tone.Transport.cancel()
 
@@ -1457,11 +1452,9 @@ async function playMusic(){
 
     // Carica i soundfont necessari
     synth = await Soundfont.instrument(context, "acoustic_grand_piano")
-    console.log("DEBUG: soundfont piano caricato")
     let synthSax = null
     if (isSaxBb) {
         synthSax = await Soundfont.instrument(context, "tenor_sax")
-        console.log("DEBUG: soundfont sax caricato")
     }
 
     // Trasposizione Bb: -2 semitoni (lo strumento Bb suona un tono sopra il notato)
@@ -1537,14 +1530,8 @@ async function playMusic(){
     }
 
     Tone.Transport.start()
-    alert("DEBUG dopo start(): state=" + Tone.Transport.state + " seconds=" + Tone.Transport.seconds + " context=" + Tone.context.state)
     resetPauseBtn()
     pcPlay()
-
-    }catch(err){
-        alert("ERRORE in playMusic: " + err.message)
-        console.error(err)
-    }
 }
 
 function stopMusic(){
@@ -1934,7 +1921,7 @@ function applyParamsFromTxt(txt) {
 ;(function(){
     const PC_NAMES = ['C','C♯','D','E♭','E','F','F♯','G','A♭','A','B♭','B']
     const R  = 76
-    const RN = 10
+    const RN = 8
     const NS = 'http://www.w3.org/2000/svg'
     const svg = document.getElementById('pcCircle')
 

@@ -100,11 +100,11 @@ button:hover{
 <style>
 /* ── Pitch-Class Circle ── */
 #pcCircleWrap {
-    position: absolute;
-    top: 0px;
-    left: 10px;
-    width: 260px;
-    height: 260px;
+    position: fixed;
+    top: 5px;
+    left: 15px;
+    width: 180px;
+    height: 180px;
 }
 #pcCircle {
     overflow: visible;
@@ -445,7 +445,7 @@ button:hover{
 
     <!-- Pitch-Class Circle -->
     <div id="pcCircleWrap">
-        <svg id="pcCircle" width="260" height="260" viewBox="-110 -110 220 220"></svg>
+        <svg id="pcCircle" width="180" height="180" viewBox="-110 -110 220 220"></svg>
     </div>
 
 <!-- <h2>Generative Composition</h2> -->
@@ -1652,7 +1652,7 @@ function applyParamsFromTxt(txt) {
 ;(function(){
     const PC_NAMES = ['C','C♯','D','E♭','E','F','F♯','G','A♭','A','B♭','B']
     const R  = 76
-    const RN = 10
+    const RN = 8
     const NS = 'http://www.w3.org/2000/svg'
     const svg = document.getElementById('pcCircle')
 
