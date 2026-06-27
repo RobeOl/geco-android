@@ -1616,27 +1616,25 @@ function browserDownload(blob, filename){
     document.body.removeChild(a); URL.revokeObjectURL(url)
 }
 
-async function saveAndShareOnAndroid(midiBlob, txtContent, gecoContent){
-    const { Filesystem, Directory } = Capacitor.Plugins
+async function saveAndShareOnAndroid(midiBlob, txtContent, gecoContent) {
+    const { Filesystem, Share } = Capacitor.Plugins
 
-    // Converti il blob MIDI in base64
     const midiBase64 = await blobToBase64(midiBlob)
+    const txtBase64  = btoa(unescape(encodeURIComponent(txtContent)))
+    const gecoBase64 = btoa(unescape(encodeURIComponent(gecoContent)))
 
-    // Salva i tre file nella cache dell'app
-    await Filesystem.writeFile({ path: "k_random_music.mid", data: midiBase64,
-        directory: Directory.Cache })
-    await Filesystem.writeFile({ path: "k_random_music.txt", data: btoa(unescape(encodeURIComponent(txtContent))),
-        directory: Directory.Cache })
-    await Filesystem.writeFile({ path: "k_random_GeCo.txt",  data: btoa(unescape(encodeURIComponent(gecoContent))),
-        directory: Directory.Cache })
+    await Filesystem.writeFile({ path: "k_random_music.mid", data: midiBase64, directory: "CACHE" })
+    await Filesystem.writeFile({ path: "k_random_music.txt", data: txtBase64,  directory: "CACHE" })
+    await Filesystem.writeFile({ path: "k_random_GeCo.txt",  data: gecoBase64, directory: "CACHE" })
 
-    // Recupera l'URI nativo e condividi
-    const { uri } = await Filesystem.getUri({ path: "k_random_music.mid", directory: Directory.Cache })
-    await Capacitor.Plugins.Share.share({
-        title: "K-random MIDI",
-        text:  "K-random — exported files",
-        url:   uri,
-        dialogTitle: "Save or open MIDI"
+    const { uri: uriMid  } = await Filesystem.getUri({ path: "k_random_music.mid", directory: "CACHE" })
+    const { uri: uriTxt  } = await Filesystem.getUri({ path: "k_random_music.txt", directory: "CACHE" })
+    const { uri: uriGeco } = await Filesystem.getUri({ path: "k_random_GeCo.txt",  directory: "CACHE" })
+
+    await Share.share({
+        title:       "K-random export",
+        dialogTitle: "Save or open files",
+        files:       [uriMid, uriTxt, uriGeco]
     })
 }
 
