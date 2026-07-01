@@ -498,8 +498,8 @@
 
 <script>
 
-// const ENV = "local"   // cambia in "remote" per produzione
-const ENV = "remote"
+const ENV = "local"   // cambia in "remote" per produzione
+// const ENV = "remote"
 const BASE_URL = ENV === "local" ? "http://localhost:5003" : "https://serie3.onrender.com"
 let serverAwake = ENV === "local"
 
@@ -758,6 +758,7 @@ function injectKeySig(xmlText, fifths) {
     })
     return new XMLSerializer().serializeToString(doc)
 }
+
 
 async function renderScoreWithKeySig(xmlUrl = null, xmlText = null) {
     let rawXml = xmlText

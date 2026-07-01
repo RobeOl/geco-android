@@ -26,14 +26,12 @@
         font-weight:bold;
     }
 
-    .container{
-    width:100%;
-    max-width:1200px;
+.container{
+    width:1200px;
     margin:30px auto;
     background:white;
     padding:25px;
     border-radius:10px;
-    box-sizing:border-box;
 }
 
 button{
@@ -182,7 +180,7 @@ button:hover{
 /* ── Pitch-Class Circle ── */
 #pcCircleWrap {
     position: fixed;
-    top: 75px;
+    top: 85px;
     left: 15px;
     width: 180px;
     height: 180px;
@@ -248,11 +246,11 @@ button:hover{
     /* ── Info button (top-left) ── */
     #infoBtn {
         position: fixed;
-        top: 40px;
+        top: 45px;
         left: 20px;
         width: auto;
         padding: 8px 14px;
-        background: #2980b9;
+        background: #d68910;
         color: white;
         border: none;
         border-radius: 8px;
@@ -261,7 +259,7 @@ button:hover{
         z-index: 10000;
         margin-top: 0;
     }
-    #infoBtn:hover { background: #1a6a9a; opacity:1; }
+    #infoBtn:hover { background: #b06e0c; opacity:1; }
     
     /* ── About modal overlay ── */
     #aboutModal {
@@ -318,79 +316,6 @@ button:hover{
         line-height: 1;
     }
     #closeAbout:hover { color: #333; opacity:1; }
-    
-    /* ── Docs button (top-left, below About) ── */
-    #docsBtn {
-        position: fixed;
-        top: 40px;
-        left: 120px;
-        width: auto;
-        padding: 8px 14px;
-        background: #27ae60;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-size: 16px;
-        cursor: pointer;
-        z-index: 10000;
-        margin-top: 0;
-    }
-    #docsBtn:hover { background: #1e8449; opacity:1; }
-    
-    /* ── Docs modal overlay ── */
-    #docsModal {
-        display: none;
-        position: fixed;
-        top: 0; left: 0;
-        width: 100%; height: 100%;
-        background: rgba(0,0,0,0.65);
-        z-index: 30000;
-        align-items: center;
-        justify-content: center;
-    }
-    #docsModal.open { display: flex; }
-    
-    #docsBox {
-        background: white;
-        border-radius: 12px;
-        padding: 36px 40px;
-        max-width: 800px;
-        width: 90%;
-        max-height: 85vh;
-        overflow-y: auto;
-        position: relative;
-        font-size: 14px;
-        line-height: 1.7;
-        color: #222;
-        text-align: left;
-    }
-    #docsBox h2 {
-        margin-top: 0;
-        color: #27ae60;
-        font-size: 20px;
-    }
-    #docsBox h3 {
-        color: #1e8449;
-        font-size: 14px;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-        margin-top: 20px;
-        margin-bottom: 8px;
-    }
-    #closeDocsBtn {
-        position: absolute;
-        top: 14px; right: 18px;
-        background: none;
-        border: none;
-        font-size: 22px;
-        cursor: pointer;
-        color: #888;
-        width: auto;
-        padding: 0;
-        margin: 0;
-        line-height: 1;
-    }
-    #closeDocsBtn:hover { color: #333; opacity:1; }
     
     /* ── Contextual help panel ── */
     #helpPanel {
@@ -578,14 +503,8 @@ button:hover{
 <!-- ℹ️ INFO BUTTON -->
 <button id="infoBtn" onclick="document.getElementById('aboutModal').classList.add('open')">ℹ️ About</button>
 
-<!-- 📚 DOCS BUTTON -->
-<button id="docsBtn" onclick="document.getElementById('docsModal').classList.add('open')">📚 Docs</button>
- 
 <!-- ℹ️ INFO BUTTON -->
 <button id="infoBtn" onclick="document.getElementById('aboutModal').classList.add('open')">ℹ️ About</button>
-
-<!-- 📚 DOCS BUTTON -->
-<button id="docsBtn" onclick="document.getElementById('docsModal').classList.add('open')">📚 Docs</button>
 
 <!-- ℹ️ ABOUT MODAL -->
 <div id="aboutModal" onclick="if(event.target===this) this.classList.remove('open')">
@@ -593,7 +512,6 @@ button:hover{
     <button id="closeAbout" onclick="document.getElementById('aboutModal').classList.remove('open')" title="Close">✕</button>
 
     <h2>GeCo-Tool — Generative Compositional Framework</h2>
-    <h3>(See the <strong>📚 Docs</strong> button for detailed documentation and PDF resources)</h3>
     <p>
       GeCo-Tool is a web application for generating and exploring musical sequences derived from the
       <strong>interval matrix</strong>: a systematic representation of all transpositions of a given
@@ -659,17 +577,7 @@ button:hover{
       <li><strong>BPM</strong> — Sets the playback tempo (60–240 bpm).</li>
     </ul>
 
-    <div style="border-top:1px solid #d0e8f5; margin-top:20px; padding-top:16px; display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-      <p style="margin:0; font-size:13px; color:#2980b9; flex:1;">
-        📚 For documentation and PDF resources, use the <strong>Docs</strong> button.
-      </p>
-      <button onclick="document.getElementById('aboutModal').classList.remove('open'); document.getElementById('docsModal').classList.add('open')" style="
-          display:inline-flex; align-items:center; gap:6px;
-          background:#eafaf1; border:1px solid #a9dfbf; border-radius:7px;
-          padding:8px 13px; color:#1e8449; cursor:pointer;
-          font-size:13px; font-weight:bold; width:auto; margin-top:0;">
-        📚 Open Docs
-      </button>
+    <div style="border-top:1px solid #d0e8f5; margin-top:20px; padding-top:16px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
       <button onclick="document.getElementById('aboutModal').classList.remove('open')" style="
           display:inline-flex; align-items:center; gap:6px;
           background:#f0f0f0; border:1px solid #ccc; border-radius:7px;
@@ -684,242 +592,6 @@ button:hover{
     </p>
   </div>
 </div>
-
-<!-- 📚 DOCS MODAL -->
-<div id="docsModal" onclick="if(event.target===this) this.classList.remove('open')">
-  <div id="docsBox">
-    <button id="closeDocsBtn" onclick="document.getElementById('docsModal').classList.remove('open')" title="Close">✕</button>
-
-    <h2>📚 Documentation &amp; Resources</h2>
-
-    <h3>🌐 HTML Documents</h3>
-    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px;">
-      <a href="help/GeCo-Tool-docs.html" target="_blank" style="
-          display:flex; align-items:center; gap:8px;
-          background:#eaf4fb; border:1px solid #aed6f1; border-radius:7px;
-          padding:9px 14px; text-decoration:none; color:#2980b9;
-          font-size:13px; font-weight:bold;">
-        📖 Full Documentation
-      </a>
-      <a href="help/binary_explorations.html" target="_blank" style="
-          display:flex; align-items:center; gap:8px;
-          background:#eaf4fb; border:1px solid #aed6f1; border-radius:7px;
-          padding:9px 14px; text-decoration:none; color:#2980b9;
-          font-size:13px; font-weight:bold;">
-        🔢 Binary Explorations
-      </a>
-      <a href="help/sequence_length.html" target="_blank" style="
-          display:flex; align-items:center; gap:8px;
-          background:#eaf4fb; border:1px solid #aed6f1; border-radius:7px;
-          padding:9px 14px; text-decoration:none; color:#2980b9;
-          font-size:13px; font-weight:bold;">
-        🔢 Sequence Length
-      </a>
-      <a href="help/presentation.html" target="_blank" style="
-          display:flex; align-items:center; gap:8px;
-          background:#eaf4fb; border:1px solid #aed6f1; border-radius:7px;
-          padding:9px 14px; text-decoration:none; color:#2980b9;
-          font-size:13px; font-weight:bold;">
-        📖 Presentation
-      </a>
-      <a href="help/interval_Table.html" target="_blank" style="
-          display:flex; align-items:center; gap:8px;
-          background:#eaf4fb; border:1px solid #aed6f1; border-radius:7px;
-          padding:9px 14px; text-decoration:none; color:#2980b9;
-          font-size:13px; font-weight:bold;">
-        📖 Interval Table
-      </a>
-      <a href="help/scales.html" target="_blank" style="
-          display:flex; align-items:center; gap:8px;
-          background:#eaf4fb; border:1px solid #aed6f1; border-radius:7px;
-          padding:9px 14px; text-decoration:none; color:#2980b9;
-          font-size:13px; font-weight:bold;">
-        📖 Scales
-      </a>
-      <a href="help/triadic_pairs.html" target="_blank" style="
-          display:flex; align-items:center; gap:8px;
-          background:#eaf4fb; border:1px solid #aed6f1; border-radius:7px;
-          padding:9px 14px; text-decoration:none; color:#2980b9;
-          font-size:13px; font-weight:bold;">
-        🔢 Triadic Pairs
-      </a>
-      <a href="help/triadic_arpeggio.html" target="_blank" style="
-          display:flex; align-items:center; gap:8px;
-          background:#eaf4fb; border:1px solid #aed6f1; border-radius:7px;
-          padding:9px 14px; text-decoration:none; color:#2980b9;
-          font-size:13px; font-weight:bold;">
-        🔢 Triadic Arpeggios
-      </a>
-    </div>
-
-    <h3>📄 PDF Documents</h3>
-    <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:20px;">
-
-      <!-- PDF entry: Complete Ternary Interval Matrix -->
-      <div style="background:#f7fbff; border:1px solid #aed6f1; border-radius:8px; overflow:hidden;">
-        <div style="display:flex; align-items:center; justify-content:space-between; padding:9px 14px; gap:8px;">
-          <span style="font-size:13px; font-weight:bold; color:#2c3e50;">
-            📊 Complete Ternary Interval Matrix
-          </span>
-          <div style="display:flex; gap:6px; flex-shrink:0;">
-            <a href="#" onclick="downloadStaticFile('docs/complete_ternary_interval_matrix.pdf','complete_ternary_interval_matrix.pdf'); return false;" style="
-                display:flex; align-items:center; gap:5px;
-                background:#27ae60; color:white; border-radius:5px;
-                padding:5px 11px; text-decoration:none;
-                font-size:12px; font-weight:bold;">
-              ⬇ Download
-            </a>
-          </div>
-        </div>
-      </div>
-      <!-- Aggiungi altri PDF qui seguendo lo stesso schema -->
-      <!-- PDF entry: NOME DEL TUO DOCUMENTO -->
-    <div style="background:#f7fbff; border:1px solid #aed6f1; border-radius:8px; overflow:hidden;">
-    <div style="display:flex; align-items:center; justify-content:space-between; padding:9px 14px; gap:8px;">
-      <span style="font-size:13px; font-weight:bold; color:#2c3e50;">
-        📊 Introduction to the Set Theory
-      </span>
-      <div style="display:flex; gap:6px; flex-shrink:0;">
-        <a href="#" onclick="downloadStaticFile('docs/Intro_Set_Theory.pdf','Intro_Set_Theory.pdf'); return false;" style="
-            display:flex; align-items:center; gap:5px;
-            background:#27ae60; color:white; border-radius:5px;
-            padding:5px 11px; text-decoration:none;
-            font-size:12px; font-weight:bold;">
-          ⬇ Download
-        </a>
-      </div>
-    </div>
-  </div>
-
-  <div style="background:#f7fbff; border:1px solid #aed6f1; border-radius:8px; overflow:hidden;">
-    <div style="display:flex; align-items:center; justify-content:space-between; padding:9px 14px; gap:8px;">
-      <span style="font-size:13px; font-weight:bold; color:#2c3e50;">
-        📊 Triadic Harmonization
-      </span>
-      <div style="display:flex; gap:6px; flex-shrink:0;">
-        <a href="#" onclick="downloadStaticFile('docs/triads.pdf','triads.pdf'); return false;" style="
-            display:flex; align-items:center; gap:5px;
-            background:#27ae60; color:white; border-radius:5px;
-            padding:5px 11px; text-decoration:none;
-            font-size:12px; font-weight:bold;">
-          ⬇ Download
-        </a>
-      </div>
-    </div>
-  </div>
-
-    </div>
-
-    <h3>📄 Download</h3>
-    <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:20px;">
-
-    <!-- ZIP file: Scales -->
-    <div style="background:#f7fbff; border:1px solid #aed6f1; border-radius:8px; overflow:hidden;">
-        <div style="display:flex; align-items:center; justify-content:space-between; padding:9px 14px; gap:8px;">
-          <span style="font-size:13px; font-weight:bold; color:#2c3e50;">
-            🎹 Scales
-          </span>
-            <a href="#" onclick="downloadStaticFile('files/geco_scale_presets.zip','geco_scale_presets.zip'); return false;" style="
-                display:flex; align-items:center; gap:5px;
-                background:#27ae60; color:white; border-radius:5px;
-                padding:5px 11px; text-decoration:none;
-                font-size:12px; font-weight:bold;">
-                ⬇ Download
-            </a>
-          </div>
-    </div>
-
-    <!-- ZIP file: Triad pairs -->
-    <div style="background:#f7fbff; border:1px solid #aed6f1; border-radius:8px; overflow:hidden;">
-        <div style="display:flex; align-items:center; justify-content:space-between; padding:9px 14px; gap:8px;">
-          <span style="font-size:13px; font-weight:bold; color:#2c3e50;">
-            🎹 Triads
-          </span>
-            <a href="#" onclick="downloadStaticFile('files/geco_triad_presets.zip','geco_triad_presets.zip'); return false;" style="
-                display:flex; align-items:center; gap:5px;
-                background:#27ae60; color:white; border-radius:5px;
-                padding:5px 11px; text-decoration:none;
-                font-size:12px; font-weight:bold;">
-              ⬇ Download
-            </a>
-          </div>
-    </div>
-
-    <!-- ZIP file: Triad couples -->
-    <div style="background:#f7fbff; border:1px solid #aed6f1; border-radius:8px; overflow:hidden;">
-        <div style="display:flex; align-items:center; justify-content:space-between; padding:9px 14px; gap:8px;">
-          <span style="font-size:13px; font-weight:bold; color:#2c3e50;">
-            🎹 Triad Pairs
-          </span>
-            <a href="#" onclick="downloadStaticFile('files/geco_triadic_couples_presets.zip','geco_triadic_couples_presets.zip'); return false;" style="
-                display:flex; align-items:center; gap:5px;
-                background:#27ae60; color:white; border-radius:5px;
-                padding:5px 11px; text-decoration:none;
-                font-size:12px; font-weight:bold;">
-              ⬇ Download
-            </a>
-          </div>
-    </div>
-
-    <!-- ZIP file: Triadic arpeggios -->
-    <div style="background:#f7fbff; border:1px solid #aed6f1; border-radius:8px; overflow:hidden;">
-        <div style="display:flex; align-items:center; justify-content:space-between; padding:9px 14px; gap:8px;">
-          <span style="font-size:13px; font-weight:bold; color:#2c3e50;">
-            🎹 Triad Arpeggios
-          </span>
-            <a href="#" onclick="downloadStaticFile('files/triadic_arpeggio_presets.zip','triadic_arpeggio_presets.zip'); return false;" style="
-                display:flex; align-items:center; gap:5px;
-                background:#27ae60; color:white; border-radius:5px;
-                padding:5px 11px; text-decoration:none;
-                font-size:12px; font-weight:bold;">
-              ⬇ Download
-            </a>
-          </div>
-    </div>
-
-    </div>
-
-    <h3>📄 YouTube</h3>
-    <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:20px;">
-
-      <!-- YouTube video 1 -->
-      <div style="background:#f7fbff; border:1px solid #aed6f1; border-radius:8px; overflow:hidden;">
-        <div style="display:flex; align-items:center; justify-content:space-between; padding:9px 14px; gap:8px;">
-          <span style="font-size:13px; font-weight:bold; color:#2c3e50;">
-            🎬 Main features of GeCo-Tool
-          </span>
-          <a href="https://youtu.be/sJ0nzU4a-Do?si=ztGa3uH4HrAFKG65" target="_blank">
-            Watch on YouTube
-          </a>
-          </div>
-        </div>
-
-        <!-- YouTube video 2 -->
-      <div style="background:#f7fbff; border:1px solid #aed6f1; border-radius:8px; overflow:hidden;">
-        <div style="display:flex; align-items:center; justify-content:space-between; padding:9px 14px; gap:8px;">
-          <span style="font-size:13px; font-weight:bold; color:#2c3e50;">
-            🎬 Scales with GeCo-Tool
-          </span>
-          <a href="https://youtu.be/KEHosYN2aYY?si=2rUQvr9ZN3FZUswH" target="_blank">
-            Watch on YouTube
-          </a>
-          </div>
-        </div>
-
-    </div>
-
-    <div style="border-top:1px solid #d5f5e3; padding-top:14px; text-align:right;">
-      <button onclick="document.getElementById('docsModal').classList.remove('open')" style="
-          display:inline-flex; align-items:center; gap:6px;
-          background:#f0f0f0; border:1px solid #ccc; border-radius:7px;
-          padding:8px 14px; color:#555; cursor:pointer;
-          font-size:13px; font-weight:bold; width:auto; margin-top:0;">
-        ✕ Close
-      </button>
-    </div>
-  </div>
-</div>
-
 
 <div id="loadingOverlay" style="
     position:fixed;
@@ -954,7 +626,7 @@ button:hover{
 </div>
 
 <!-- <a class="back-btn" href="#" onclick="window.close(); return false;">← Back to GeCo-Tools</a> -->
-<a class="back-btn" href="../index.html">← Back to GeCo-Tools</a>
+<a class="back-btn" href="index.html">← Back to GeCo-Tools</a>
 
 <div class="container" style="position:relative;">
 
@@ -2414,6 +2086,7 @@ function stopMusic(){
     pauseBtn.style.background = '#e67e22'
 }
 
+
 function downloadMidi(){
     if(!midiBlobGlobal){
         alert("Generate MIDI first!")
@@ -2896,21 +2569,6 @@ document.querySelectorAll("[data-help]").forEach(el => {
     }
 })()
 // ── END PITCH-CLASS CIRCLE ─────────────────────────────────────────────────
-
-// ── PDF viewer toggle ──────────────────────────────────────────────────────
-function togglePdfViewer(id) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    if (el.style.display === 'none') {
-        el.style.display = 'block';
-        // reload iframe src to force rendering (some browsers need this)
-        const iframe = el.querySelector('iframe');
-        if (iframe) { const s = iframe.src; iframe.src = ''; iframe.src = s; }
-    } else {
-        el.style.display = 'none';
-    }
-}
-// ── END PDF viewer toggle ──────────────────────────────────────────────────
 
 function applyParamsFromTxt(txt){
     const line = key => {

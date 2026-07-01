@@ -639,6 +639,20 @@ This does not affect the audio or MIDI; it only affects the notation.">
 
 </div>
 
+<div id="serverStatus" style="
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    background: #e67e22;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    z-index: 9999;
+    font-weight: bold;">
+    🚀 The server is starting... please wait a few seconds
+</div>
+
 <script>
 
 // Cambia solo questa riga per passare da locale a produzione
@@ -1034,6 +1048,7 @@ function resetApp(){
 
 async function checkServer() {
     if (ENV === "local") return   // in locale non serve il check
+    document.getElementById("serverStatus").style.display = "block"
 
     try {
         const res = await fetch(`${BASE_URL}/health`)

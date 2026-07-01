@@ -26,7 +26,7 @@
         font-weight:bold;
     }
 
-    .container{
+.container{
     width:100%;
     max-width:1200px;
     margin:30px auto;
@@ -799,7 +799,7 @@ const ENV = "remote"
 const BASE_URL = ENV === "local" ? "http://localhost:5002" : "https://serie.onrender.com"
 let serverAwake = ENV === "local"  // true in locale, false in remoto
 
-const IS_CAPACITOR = !!window.Capacitor?.isNativePlatform?.()
+const IS_CAPACITOR = !!window.Capacitor?.isNativePlatform?.()   
 
 async function checkServer() {
     if (ENV === "local") return
@@ -1052,6 +1052,7 @@ function injectKeySig(xmlText, fifths) {
     return new XMLSerializer().serializeToString(doc)
 }
 
+
 async function renderScoreWithKeySig(xmlUrl = null, xmlText = null) {
     let rawXml = xmlText
     if (!rawXml && xmlUrl) {
@@ -1141,29 +1142,6 @@ function updateTripletOptions(){
 
 updateConstantOptions();
 updateTripletOptions();
-
-async function checkServer() {
-    if (ENV === "local") return   // in locale non serve il check
-
-    try {
-        const res = await fetch(`${BASE_URL}/health`)
-        if (res.ok) {
-            serverAwake = true
-            document.getElementById("serverStatus").style.display = "none"
-        } else {
-            retryCheck()
-        }
-    } catch (e) {
-        retryCheck()
-    }
-}
-
-function retryCheck() {
-    setTimeout(checkServer, 3000)
-}
-
-checkServer()
-
 
 async function generateMusic(){
 
@@ -1707,6 +1685,7 @@ async function importMidi(input) {
         hideLoading()
     }
 }
+
 
 // ── Import GeCo TXT (solo TXT, senza MIDI) ────────────────────────────────
 async function importGecoTxt(txt) {
