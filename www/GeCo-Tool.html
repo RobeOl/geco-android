@@ -1361,26 +1361,40 @@ function injectKeySig(xmlText, fifths) {
     const uniqueLetterSpellings = respellSequenceUniqueLetters(pcsSeq, fifths)
 
     const keyNodes = doc.querySelectorAll("key")
-    if (keyNodes.length > 0) {
-        keyNodes.forEach(keyNode => {
-            let fifthsEl = keyNode.querySelector("fifths")
-            if (!fifthsEl) {
-                fifthsEl = doc.createElement("fifths")
-                keyNode.insertBefore(fifthsEl, keyNode.firstChild)
-            }
-            fifthsEl.textContent = fifths
-        })
-    } else {
-        const attrNodes = doc.querySelectorAll("attributes")
-        if (attrNodes.length > 0) {
-            const keyEl = doc.createElement("key")
+
+    // 1) Aggiorna tutti i nodi <key> già presenti nel documento (qualsiasi parte/pentagramma)
+    keyNodes.forEach(keyNode => {
+        let fifthsEl = keyNode.querySelector("fifths")
+        if (!fifthsEl) {
+            fifthsEl = doc.createElement("fifths")
+            keyNode.insertBefore(fifthsEl, keyNode.firstChild)
+        }
+        fifthsEl.textContent = fifths
+    })
+
+    // 2) Assicura che OGNI parte (es. mano destra E mano sinistra/Harmony) abbia
+    //    un proprio <key> nella prima misura, anche se l'XML generato non lo includeva.
+    //    Senza questo passaggio, una parte priva di <key> proprio resta sempre
+    //    all'armatura di default (Do maggiore), anche cambiando la selezione.
+    const partNodes = doc.querySelectorAll("part")
+    partNodes.forEach(partEl => {
+        const firstMeasure = partEl.querySelector("measure")
+        if (!firstMeasure) return
+        let attrEl = firstMeasure.querySelector("attributes")
+        if (!attrEl) {
+            attrEl = doc.createElement("attributes")
+            firstMeasure.insertBefore(attrEl, firstMeasure.firstChild)
+        }
+        let keyEl = attrEl.querySelector("key")
+        if (!keyEl) {
+            keyEl = doc.createElement("key")
             const fifthsEl = doc.createElement("fifths")
             fifthsEl.textContent = fifths
             keyEl.appendChild(fifthsEl)
-            const timeEl = attrNodes[0].querySelector("time")
-            attrNodes[0].insertBefore(keyEl, timeEl || attrNodes[0].firstChild)
+            const timeEl = attrEl.querySelector("time")
+            attrEl.insertBefore(keyEl, timeEl || attrEl.firstChild)
         }
-    }
+    })
 
     noteEls.forEach((noteEl, idx) => {
         const pitchEl = noteEl.querySelector("pitch")
